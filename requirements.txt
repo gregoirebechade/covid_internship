@@ -1,3 +1,6 @@
 covasim
 matplotlib.pyplot
 numpy
+pandas
+scipy.optimize
+json
