@@ -75,10 +75,9 @@ def sir_for_optim(x, beta, gamma, d):
 
 
 
-
-betas=np.arange(2, 31, 0.5)
-gammas=np.arange(0,31, 0.5)
-ds=np.arange(2, 31, 0.5)
+betas=np.linspace(0.1, 0.8, 29)
+gammas=np.linspace(0.0005, 0.005, 10)
+ds=np.linspace(0.0005, 0.005, 10)/2
 min=np.sum(np.abs(sir_for_optim(dates_of_pandemic,  0.5, 0.6, 0.3) - new_deaths))
 print(min)
 dicoresults=dict()
