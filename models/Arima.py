@@ -42,10 +42,10 @@ class ARIMA_Model(Model):
     
     def predict(self, reach, alpha):
         assert self.trained, 'The model has not been trained yet'
-        predifore=self.fitted.get_forecast(reach).predicted_mean
+        predifore=self.fitted.get_forecast(reach).predicted_mean # this is an array of size reach
+        assert type(predifore) == np.ndarray, 'The prediction should be a numpy array'
         # confidence_intervals=[self.fitted.get_forecast(reach).conf_int(alpha=alp) for alp in alphas]
         interval = self.fitted.get_forecast(reach).conf_int(alpha=alpha)
-       
         ci_low=[max(elt[0],0) for elt in interval]
         ci_high=[elt[1] for elt in interval]
         return predifore, [ci_low, ci_high]

@@ -24,36 +24,38 @@ def IS(interval : tuple, point : float, alpha: float) -> float:
 
 
 
-def WIS(prediction: float, interval : tuple, point_of_evaluation : float, alphas: list, weights: list) -> float:
+def WIS(prediction: float, intervals : list, point_of_evaluation : float, alphas: list, weights: list) -> float:
     """
+    point of evaluation  is the real value that we try to predict
 
     WIS computes the Weighted Interval Score of a model that predicts a point and a list of confidence intervals.
     The fuction taks as an input a prediction, a list of confidence intervals of precision alpha, a list of weights to apply to the different intervals and a point to evaluate the prediction on.
     
     """ 
-    assert interval[0] < interval[1]
     assert all([alpha >= 0 for alpha in alphas])
     assert all([alpha <= 1 for alpha in alphas])
+    assert len(alphas)==len(weights)-1
     K = len(alphas)
     loss=0
-    for k in range(1, K): 
-        
-        loss += weights[k]*IS(interval, point_of_evaluation, alphas[k])
+    for k in range( K): 
+        alpha=alphas[k]
+        interval=intervals[k]
+        loss += weights[k+1]*IS(interval, point_of_evaluation, alpha) # the first weight is for the prediction
     loss += weights[0]* abs(prediction - point_of_evaluation)
-    return loss
+    return loss/(K+1/2)
 
 
 def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
-    
     loss=0
-
     for index in evaluation_point_indexs: 
         model.train(train_dates = [i for i in range(index)], data = data[:index] )
-        for alpha in alphas: 
-            prediction, intervals = model.predict(reach, alpha)
-            prediction=prediction[-1]
-            interval_low=intervals[0][-1]
-            interval_high=intervals[1][-1]
-            wis=WIS(prediction=prediction, interval = (interval_low, interval_high), point_of_evaluation = data[index+reach], alphas = alphas , weights = weights)
-            loss+=wis
+        intervals=[]
+        for alpha in alphas:
+            prediction, interval = model.predict(reach, alpha)
+            interval_low=interval[0][-1]
+            interval_high=interval[1][-1]
+            intervals.append((interval_low, interval_high)) 
+        prediction=prediction[-1]
+        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[index+reach], alphas = alphas , weights = weights)
+        loss+=wis
     return loss / len(evaluation_point_indexs) # average loss over all evaluation points
