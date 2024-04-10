@@ -5,7 +5,7 @@ import numpy as np
 
 class ARIMA_Model(Model):
 
-    def train(self, train_dates, data, grid_search=False): 
+    def train(self, train_dates, data, grid_search=False, p=3, d=0, q=3): 
         self.data=data
         if grid_search:
             min = 1000
@@ -29,16 +29,15 @@ class ARIMA_Model(Model):
                             except np.linalg.LinAlgError as err : 
                                 pass
         else :
-            pmin=3
-            dmin=0
-            qmin=3
+            pmin=p
+            dmin=d
+            qmin=q
         self.model = ARIMA(data, order=(pmin,dmin,qmin))
         self.p=pmin
         self.d=dmin
         self.q=qmin
         self.fitted=self.model.fit()
         self.trained= True
-        # self.data=data
     
     def predict(self, reach, alpha):
         assert self.trained, 'The model has not been trained yet'
