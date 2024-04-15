@@ -30,6 +30,7 @@ def derive(x, beta, N, gamma, d):
 
 
 def run_sir(x0, beta, gamma,d,  t, dt):
+    
     x=x0
     S=[x[0]]
     I=[x[1]]
@@ -134,7 +135,8 @@ class SIRD_model(Model):
     def train(self, train_dates, data):
         self.data=data
         self.train_dates=train_dates
-        p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04],  bounds=([0,0,0], [5,5,5]))
+        # p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 4.37, 2.2, 2.0],  bounds=([0,0,0], [5,5,5]))
+        p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04],  bounds=([0,0,0], [10,5,5]))
         self.beta=p[0]
         self.gamma=p[1]
         self.d=p[2]
@@ -143,6 +145,11 @@ class SIRD_model(Model):
 
 
     def predict(self, reach, alpha, method='covariance'):
+        S,I,R,D=run_sir([s_0, i_0, r_0, d_0], self.beta, self.gamma, self.d , len(self.train_dates), 0.001)
+        self.S=S
+        self.I=I
+        self.R=R
+        self.D=D
         assert self.trained, 'The model has not been trained yet'
         deads=sir_for_optim(np.array([i for i in range(len(self.train_dates)+reach)]), self.beta, self.gamma,self.d)
         prediction =  deads[-reach:]
@@ -173,10 +180,10 @@ class SIRD_model(Model):
             # beta_r=max(0, np.random.normal(self.beta, perr[0], 1)[0])
             # gamma_r=max(0,np.random.normal(self.gamma, perr[1], 1)[0])
             # d_r=max(0,np.random.normal(self.d, perr[2], 1)[0])
-            a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
+            # a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
 
             
-            a=np.random.multivariate_normal([self.beta,self.d], cov_2, 1)[0] # not sampling along gamma 
+            a=np.random.multivariate_normal([self.beta,self.d], cov_2, 1)[0] # not sampling along gamma because gamma is centered on zero so when we sample along gamma and we resample when the value of one of the component is over zero, we elminiate half of the values and have very bad predictions
             while not (a>0).all(): 
                 a=np.random.multivariate_normal([self.beta,self.d], cov_2, 1)[0]
             
@@ -194,8 +201,93 @@ class SIRD_model(Model):
             # gamma_r=a[1]
             gamma_r = self.gamma
             d_r=a[1]
+            
 
-            deads_sampled=sir_for_optim(np.array([i for i in range(len(self.data) + reach)]), beta_r, gamma_r,d_r)
+            # sampling with sir for optim with startpoint = 0
+            # deads_sampled=sir_for_optim(np.array([i for i in range(len(self.data) + reach)]), beta_r, gamma_r,d_r)
+            # prediction_sampled =  deads_sampled[-reach:]
+ 
+            # sampling with run_sir  with startpoint = last datapoint: 
+            s_sampled, i_sampled, r_sampled, deads_sampled = run_sir([S[-1], I[-1], R[-1], D[-1]], beta_r, gamma_r, d_r, reach+1, 0.001)
+            zer=np.array([D[-1]])
+            d_arr=np.array(deads_sampled[1:])
+            prediction_sampled= differenciate(np.concatenate((zer,d_arr))) # returns a value per day
+            intervals.append(prediction_sampled)
+
+
+
+        self.beta_sampled=beta_sampled
+        self.gamma_sampled=gamma_sampled
+        self.d_sampled=d_sampled
+        intervals=np.array(intervals).transpose()
+        self.intervals=intervals
+        ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
+        ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
+        return prediction, [ci_low, ci_high]
+        
+
+def sir_reset_state(x, beta, gamma, d, s0, i0, r0, d0 ): 
+    _,_,_,D=  run_sir([s0, i0, r0, d0], beta, gamma, d , len(x), 0.001)
+    zer=np.array([0])
+    d_arr=np.array(D)
+    return differenciate(np.concatenate((zer,d_arr))) 
+
+
+       
+class SIRD_model_15_days(Model): 
+    
+    def train(self, train_dates, data):
+        self.data=data
+        self.train_dates=train_dates
+        p,cov= curve_fit(sir_reset_state, self.train_dates[-15:],data[-15:], p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04, 1000000 - data[-15]*11, 10 * data[-15], 1, data[-15]],  bounds=([0,0,0, 0, 0, 0, 0], [5,5,5, np.inf, np.inf, np.inf, np.inf]))
+        self.beta=p[0]
+        self.gamma=p[1]
+        self.d=p[2]
+        self.s0=p[3]
+        self.i0=p[4]
+        self.r0=p[5]
+        self.d0=p[6]
+        self.cov=cov
+        self.trained= True
+
+
+    def predict(self, reach, alpha, method='covariance'):
+        assert self.trained, 'The model has not been trained yet'
+        deads=sir_reset_state(np.array([i for i in range(15 + reach)]), self.beta, self.gamma,self.d, self.s0, self.i0, self.r0, self.d0)
+        prediction =  deads[-reach:]
+        if method == 'covariance': 
+            perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
+        
+        intervals=[prediction]
+        beta_sampled=[]
+        gamma_sampled=[]
+        d_sampled=[]
+        s0_sampled=[]
+        i0_sampled=[]
+        r0_sampled=[]
+        d0_sampled=[]
+
+        for i in range(100): 
+            a=np.random.multivariate_normal([self.beta,self.gamma, self.d, self.s0, self.i0, self.r0, self.d0 ], self.cov, 1)[0] 
+            while not (a>0).all(): 
+                a=np.random.multivariate_normal([self.beta,self.gamma, self.d, self.s0, self.i0, self.r0, self.d0 ], self.cov, 1)[0] 
+            
+            
+            beta_sampled.append(a[0])
+            gamma_sampled.append(self.gamma)
+            d_sampled.append(a[1])
+            s0_sampled.append(a[2])
+            i0_sampled.append(a[3])
+            r0_sampled.append(a[4])
+            d0_sampled.append(a[5])
+            beta_r=a[0]
+            gamma_r = a[1]
+            d_r=a[2]
+            s0_r=a[3]
+            i0_r=a[4]
+            r0_r=a[5]
+            d0_r=a[6]
+            deads_sampled=sir_reset_state(np.array([i for i in range(15 + reach)]), beta_r, gamma_r,d_r, s0_r, i0_r, r0_r, d0_r)
             prediction_sampled =  deads_sampled[-reach:]
             intervals.append(prediction_sampled)
         self.beta_sampled=beta_sampled
@@ -208,7 +300,3 @@ class SIRD_model(Model):
         return prediction, [ci_low, ci_high]
         
 
-    
-
-
-       
