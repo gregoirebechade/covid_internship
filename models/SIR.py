@@ -115,6 +115,16 @@ def grad_f_for_delta_method(train_dates, data):
     return grad
 
 
+def get_sousmatrice(matrix): 
+    result=np.zeros((2,2))
+
+    result[0][0]=matrix[0][0]
+    result[0][1]=matrix[0][2]
+    result[1][0]=matrix[2][0]
+    result[1][1]=matrix[2][2]
+    return result
+
+
 class SIRD_model(Model): 
     s_0=1000000 -1
     i_0=1
@@ -157,25 +167,34 @@ class SIRD_model(Model):
         beta_sampled=[]
         gamma_sampled=[]
         d_sampled=[]
+        cov_2=get_sousmatrice(self.cov)
+
         for i in range(100): 
             # beta_r=max(0, np.random.normal(self.beta, perr[0], 1)[0])
             # gamma_r=max(0,np.random.normal(self.gamma, perr[1], 1)[0])
             # d_r=max(0,np.random.normal(self.d, perr[2], 1)[0])
             a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
+
+            
+            a=np.random.multivariate_normal([self.beta,self.d], cov_2, 1)[0] # not sampling along gamma 
+            while not (a>0).all(): 
+                a=np.random.multivariate_normal([self.beta,self.d], cov_2, 1)[0]
+            
             # a[1]=abs(a[1])
             # while not (a>0).all(): 
             #     a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
             #     a[1]=abs(a[1])
             beta_sampled.append(a[0])
-            gamma_sampled.append(a[1])
-            d_sampled.append(a[2])
+            gamma_sampled.append(self.gamma)
+            d_sampled.append(a[1])
             # beta_r= max(0, a[0])
             # gamma_r=max(0, a[1])
             # d_r=max(0, a[2])
             beta_r=a[0]
-            gamma_r=a[1]
-            d_r=a[2]
-            
+            # gamma_r=a[1]
+            gamma_r = self.gamma
+            d_r=a[1]
+
             deads_sampled=sir_for_optim(np.array([i for i in range(len(self.data) + reach)]), beta_r, gamma_r,d_r)
             prediction_sampled =  deads_sampled[-reach:]
             intervals.append(prediction_sampled)
