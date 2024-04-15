@@ -6,6 +6,7 @@ import sys
 sys.path.append('./models/')
 from Model import Model 
 df = pd.read_csv('deaths_and_infections.csv')
+from numpy.linalg import LinAlgError
 
 # remove a columns from a df: 
 df.drop(columns=['Unnamed: 0'], inplace=True)
@@ -75,6 +76,7 @@ def grad_f_for_delta_method(train_dates, data, interval):
 class ExponentialRegression(Model): 
     def train(self, train_dates, data):
         self.data=data
+        train_dates=np.array(train_dates)
         self.train_dates=train_dates
         min=len(data)-15
         max=len(data)-1
@@ -103,14 +105,21 @@ class ExponentialRegression(Model):
             print('estimate sigma')
             sigma2=estimate_sigma2(self.data[self.interval], exponential_func(self.train_dates[self.interval], *self.p), 4)
             A=compute_A(self.p, self.train_dates[self.interval])
-            cov=sigma2*np.linalg.inv(np.matmul(A.transpose(), A))/len(self.interval)
+            try : 
+                cov=sigma2*np.linalg.inv(np.matmul(A.transpose(), A))/len(self.interval)
+            except LinAlgError: 
+                hessian += np.eye(hessian.shape[0]) * 1e-5
+                cov = np.linalg.inv(hessian)
             perr=np.sqrt(np.diag(cov))
             self.perr=perr
         elif method == 'hessian':
-            print('hessian')
             hessian=hessian_obj_function(self.data[self.interval], self.p, self.train_dates[self.interval])
             self.hess=hessian
-            cov=np.linalg.inv(hessian)
+            try: 
+                cov=np.linalg.inv(hessian)
+            except LinAlgError:
+                hessian += np.eye(hessian.shape[0]) * 1e-5
+                cov = np.linalg.pinv(hessian)
             perr=np.sqrt(abs(np.diag(cov)))
             self.perr=perr
         elif method == 'delta': 

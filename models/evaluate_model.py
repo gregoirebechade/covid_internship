@@ -47,7 +47,8 @@ def WIS(prediction: float, intervals : list, point_of_evaluation : float, alphas
 
 def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
     loss=0
-    for index in evaluation_point_indexs: 
+    for index in evaluation_point_indexs:
+        print(index) 
         model.train(train_dates = [i for i in range(index)], data = data[:index] )
         intervals=[]
         for alpha in alphas:

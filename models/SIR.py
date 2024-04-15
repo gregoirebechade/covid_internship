@@ -66,11 +66,54 @@ def differenciate(x):
 def sir_for_optim(x, beta, gamma, d):
     # x is a list of dates (0 - 122)
     x0=[s_0, i_0, r_0, d_0]
-    t=len(x-1)
+    t=len(x)
     S,I,R,D=run_sir(x0, beta, gamma,d,  t, dt)
     zer=np.array([0])
     d_arr=np.array(D)
     return differenciate(np.concatenate((zer,d_arr))) # returns a value per day
+
+
+def objective_function(data, theta, X):
+    deads = sir_for_optim(X, theta[0], theta[1], theta[2])
+    return np.sum((data-deads)**2)/(2)
+
+def hessian_objective_function(data, theta, X): 
+    d_theta=0.0001
+    hessian=np.zeros((len(theta), len(theta)))
+    for i in range(len(theta)): 
+        for j in range(len(theta)):
+            theta_plus_i=theta.copy()
+            theta_plus_j=theta.copy()
+            theta_plus_ij=theta.copy()
+            theta_plus_i[i]+=d_theta
+            theta_plus_j[j]+=d_theta
+            theta_plus_ij[i]+=d_theta
+            theta_plus_ij[j]+=d_theta
+            hessian[i,j]=(objective_function(data, theta_plus_ij, X)-objective_function(data, theta_plus_i, X)-objective_function(data, theta_plus_j, X)+objective_function(data, theta, X))/(d_theta**2)
+    return hessian
+
+
+def estimate_sigma2(data, prediction,d): 
+    return np.sum((data-prediction)**2)/(len(data)-d)
+
+
+
+
+def f_for_delta_method(train_dates, data): 
+
+    theta,cov= curve_fit(sir_for_optim, train_dates,data, p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04],  bounds=([0,0,0], [5,5,5]))
+
+    return theta
+
+def grad_f_for_delta_method(train_dates, data): 
+    d_n=0.1
+    grad=np.zeros(( len(data), 3) )
+    for i in range(len(data)): 
+        data_plus=data.copy()
+        data_plus[i]+=d_n
+        grad[i]=(f_for_delta_method(train_dates, data)-f_for_delta_method(train_dates, data))/d_n
+    return grad
+
 
 class SIRD_model(Model): 
     s_0=1000000 -1
@@ -89,23 +132,50 @@ class SIRD_model(Model):
         self.trained= True
 
 
-    def predict(self, reach, alpha):
+    def predict(self, reach, alpha, method='covariance'):
         assert self.trained, 'The model has not been trained yet'
         deads=sir_for_optim(np.array([i for i in range(len(self.train_dates)+reach)]), self.beta, self.gamma,self.d)
         prediction =  deads[-reach:]
-        perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
-        # we only take into account the approximation error and not the variance of the new_deaths. 
+        if method == 'covariance': 
+            perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
+        elif method == 'hessian':
+            print('hessian')
+            hessian=hessian_objective_function(self.data, [self.beta, self. gamma, self.d], self.train_dates)
+            self.hess=hessian
+            cov=np.linalg.inv(hessian)
+            perr=np.sqrt(abs(np.diag(cov)))
+            self.perr=perr
+        elif method == 'delta': 
+            print('delta')
+            p=[self.beta, self.gamma, self.d]
+            sigma2=estimate_sigma2(self.data, deads[:-reach], len(p)) * np.identity(len(self.data))
+            grad=grad_f_for_delta_method(self.train_dates, self.data)
+            perr = np.sqrt(np.diag(np.matmul(np.matmul(grad.transpose(), sigma2) , grad)))
+            self.perr = perr
+
         intervals=[prediction]
         beta_sampled=[]
         gamma_sampled=[]
         d_sampled=[]
         for i in range(100): 
-            beta_r=max(0, np.random.normal(self.beta, perr[0], 1)[0])
-            gamma_r=max(0,np.random.normal(self.gamma, perr[1], 1)[0])
-            d_r=max(0,np.random.normal(self.d, perr[2], 1)[0])
-            beta_sampled.append(beta_r)
-            gamma_sampled.append(gamma_r)
-            d_sampled.append(d_r)
+            # beta_r=max(0, np.random.normal(self.beta, perr[0], 1)[0])
+            # gamma_r=max(0,np.random.normal(self.gamma, perr[1], 1)[0])
+            # d_r=max(0,np.random.normal(self.d, perr[2], 1)[0])
+            a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
+            # a[1]=abs(a[1])
+            # while not (a>0).all(): 
+            #     a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
+            #     a[1]=abs(a[1])
+            beta_sampled.append(a[0])
+            gamma_sampled.append(a[1])
+            d_sampled.append(a[2])
+            # beta_r= max(0, a[0])
+            # gamma_r=max(0, a[1])
+            # d_r=max(0, a[2])
+            beta_r=a[0]
+            gamma_r=a[1]
+            d_r=a[2]
+            
             deads_sampled=sir_for_optim(np.array([i for i in range(len(self.data) + reach)]), beta_r, gamma_r,d_r)
             prediction_sampled =  deads_sampled[-reach:]
             intervals.append(prediction_sampled)
