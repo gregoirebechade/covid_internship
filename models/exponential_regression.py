@@ -7,18 +7,19 @@ sys.path.append('./models/')
 from Model import Model 
 df = pd.read_csv('deaths_and_infections.csv')
 from numpy.linalg import LinAlgError
+import scipy.stats
 
 # remove a columns from a df: 
 df.drop(columns=['Unnamed: 0'], inplace=True)
 new_deaths=np.array(df['new_deaths'])
 death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
 dates_of_pandemic=np.arange(len(new_deaths))
-def exponential_func(x, a, b, c, d):
-    return a*np.exp(b*(x-d))+c
+def exponential_func(x, a, b, c):
+    return a*np.exp(b*(x))+c
 # IC with the formula in paper 3: 
 
 def h(theta, x_i):
-    return theta[0]*np.exp(theta[1]*(x_i-theta[3]))+theta[2]
+    return theta[0]*np.exp(theta[1]*(x_i))+theta[2]
 
 def grad_theta(theta, x_i): 
     d_theta=0.0001
@@ -61,40 +62,52 @@ def hessian_obj_function(data, theta, X):
 
 
 def f_for_delta_method(train_dates, data, interval): 
-    theta, _ = curve_fit(exponential_func, train_dates[interval], data[interval], p0=[ 1.33991316e+01 , 1.21453531e-01,  -1.92062731e+02, 0], maxfev = 10000)
+    theta, _ = curve_fit(exponential_func, train_dates[interval], data[interval], p0=[ 1.33991316e+01 , 1.21453531e-01,  -1.92062731e+02], maxfev = 10000)
     return theta
 
 def grad_f_for_delta_method(train_dates, data, interval): 
     d_n=0.1
-    grad=np.zeros(( len(data), 4) )
+    grad=np.zeros(( len(data), 3) )
     for i in range(len(data)): 
         data_plus=data.copy()
         data_plus[i]+=d_n
         grad[i]=(f_for_delta_method(train_dates, data, interval)-f_for_delta_method(train_dates, data, interval))/d_n
     return grad
 
+
+
+def grad_theta_h(theta, x): 
+    a=theta[0]
+    b=theta[1]
+    c=theta[2]
+    grad=np.zeros(3)
+    grad[0]=np.exp(b*x) 
+    grad[1]=a*x*np.exp(b*x)
+    grad[2]=1
+    return grad 
+
 class ExponentialRegression(Model): 
     def train(self, train_dates, data):
         self.data=data
         train_dates=np.array(train_dates)
         self.train_dates=train_dates
-        min=len(data)-15
+        min=len(data)-30
         max=len(data)-1
         interval=[i for i in range(min,max)]
         self.interval=interval
-        self.p, self.cov =curve_fit(exponential_func, train_dates[interval], data[interval], p0=[ 1,1,0,-20], maxfev = 1000000)
+        self.p, self.cov =curve_fit(exponential_func, train_dates[interval], data[interval], p0=[ 1,1,1], maxfev = 1000000)
         self.trained=True
 
 
-    def predict(self, reach, alpha, method='hessian'):
+    def predict(self, reach, alpha, method='covariance'):
         assert self.trained, 'The model has not been trained yet'
         a=self.p[0]
         b=self.p[1]
         c=self.p[2]
-        d=self.p[3]
         window_prediction=np.array([i for i in range(len(self.train_dates), len(self.train_dates) + reach )])
       
-        prediction=exponential_func(window_prediction,a,b,c,d)
+        prediction=exponential_func(window_prediction,a,b,c)
+        self.prediction=prediction
 
         if method == 'covariance': # we implemented four methods to compute the confidence intervals
             print('covariance method')
@@ -111,8 +124,10 @@ class ExponentialRegression(Model):
                 hessian += np.eye(hessian.shape[0]) * 1e-5
                 cov = np.linalg.inv(hessian)
             perr=np.sqrt(np.diag(cov))
+            self.cov=cov
             self.perr=perr
         elif method == 'hessian':
+            print('hessian')
             hessian=hessian_obj_function(self.data[self.interval], self.p, self.train_dates[self.interval])
             self.hess=hessian
             try: 
@@ -121,9 +136,11 @@ class ExponentialRegression(Model):
                 hessian += np.eye(hessian.shape[0]) * 1e-5
                 cov = np.linalg.pinv(hessian)
             perr=np.sqrt(abs(np.diag(cov)))
+            self.cov=cov
             self.perr=perr
         elif method == 'delta': 
-            sigma2=estimate_sigma2(self.data[self.interval], exponential_func(self.train_dates[self.interval], *self.p), 4) * np.identity(len(self.data))
+            print('delta')
+            sigma2=estimate_sigma2(self.data[self.interval], exponential_func(self.train_dates[self.interval], *self.p), 3) * np.identity(len(self.data))
             grad=grad_f_for_delta_method(self.train_dates, self.data, self.interval)
             perr = np.sqrt(np.diag(np.matmul(np.matmul(grad.transpose(), sigma2) , grad)))
             self.perr = perr
@@ -132,26 +149,40 @@ class ExponentialRegression(Model):
         a_sampled=[]
         b_sampled=[]
         c_sampled=[]
-        d_sampled=[]
         for i in range(100): 
-            a_r= np.random.normal(self.p[0], perr[0], 1)[0]
-            b_r=np.random.normal(self.p[1], perr[1], 1)[0]
-            c_r=np.random.normal(self.p[2], perr[2], 1)[0]
-            d_r=np.random.normal(self.p[3], perr[3], 1)[0]
+            # a_r= np.random.normal(self.p[0], perr[0], 1)[0]
+            # b_r=np.random.normal(self.p[1], perr[1], 1)[0]
+            # c_r=np.random.normal(self.p[2], perr[2], 1)[0]
+            a_r, b_r, c_r = np.random.multivariate_normal(self.p, self.cov)
             a_sampled.append(a_r)
             b_sampled.append(b_r)
             c_sampled.append(c_r)
-            d_sampled.append(d_r)
-            prediction_sampled=exponential_func(window_prediction,a_r, b_r,c_r, d_r)
+            prediction_sampled=exponential_func(window_prediction,a_r, b_r,c_r)
             intervals.append(prediction_sampled)
         self.a_sampled=a_sampled
         self.b_sampled=b_sampled
         self.c_sampled=c_sampled
-        self.d_sampled=d_sampled
         intervals=np.array(intervals).transpose()
         self.intervals=intervals
         ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
+
+
+        ##############################
+        ci_low=[]
+        ci_high=[]
+        for i in range(len(prediction)):
+            index = self.interval[i] 
+            grad=grad_theta_h(self.p, index)
+            varhtheta=self.cov 
+            varprediction=np.matmul(np.matmul(grad.transpose(), varhtheta), grad)
+            up = scipy.stats.norm.ppf(0.025, loc=prediction[i], scale=np.sqrt(varprediction))
+            ci_low.append(up)
+            down = scipy.stats.norm.ppf(0.975, loc=prediction[i], scale=np.sqrt(varprediction))
+            ci_high.append(down)
+        self.ci_low=ci_low
+        self.ci_high=ci_high
+
         return prediction, [ci_low, ci_high]
 
 

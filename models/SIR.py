@@ -160,6 +160,7 @@ class SIRD_model(Model):
             hessian=hessian_objective_function(self.data, [self.beta, self. gamma, self.d], self.train_dates)
             self.hess=hessian
             cov=np.linalg.inv(hessian)
+            self.cov=cov
             perr=np.sqrt(abs(np.diag(cov)))
             self.perr=perr
         elif method == 'delta': 
@@ -170,7 +171,7 @@ class SIRD_model(Model):
             perr = np.sqrt(np.diag(np.matmul(np.matmul(grad.transpose(), sigma2) , grad)))
             self.perr = perr
 
-        intervals=[prediction]
+        intervals=[np.array(prediction)]
         beta_sampled=[]
         gamma_sampled=[]
         d_sampled=[]
@@ -190,7 +191,7 @@ class SIRD_model(Model):
             # a[1]=abs(a[1])
             # while not (a>0).all(): 
             #     a=np.random.multivariate_normal([self.beta,self.gamma,self.d], self.cov, 1)[0]
-            #     a[1]=abs(a[1])
+                # a[1]=abs(a[1])
             beta_sampled.append(a[0])
             gamma_sampled.append(self.gamma)
             d_sampled.append(a[1])
@@ -208,16 +209,107 @@ class SIRD_model(Model):
             # prediction_sampled =  deads_sampled[-reach:]
  
             # sampling with run_sir  with startpoint = last datapoint: 
-            s_sampled, i_sampled, r_sampled, deads_sampled = run_sir([S[-1], I[-1], R[-1], D[-1]], beta_r, gamma_r, d_r, reach+1, 0.001)
+            s_sampled, i_sampled, r_sampled, deads_sampled = run_sir([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], beta_r, gamma_r, d_r, reach+1, 0.001)
             zer=np.array([D[-1]])
-            d_arr=np.array(deads_sampled[1:])
-            prediction_sampled= differenciate(np.concatenate((zer,d_arr))) # returns a value per day
+            last_new_deaths=np.array([self.D[-1]- self.D[-2]])
+            d_arr=np.array(differenciate(np.array(deads_sampled)))
+            # print('last new deaths:')
+            # print((last_new_deaths))
+            # print('darr: ')
+           
+            # print((d_arr))
+            prediction_sampled= (np.concatenate((last_new_deaths,d_arr))) # returns a value per day
+            prediction_sampled=d_arr
+            # print('prediction sampled: ')
+            # print(prediction_sampled)
+            # print()
+            # print('----------------')
+
             intervals.append(prediction_sampled)
 
-
-
+        
         self.beta_sampled=beta_sampled
         self.gamma_sampled=gamma_sampled
+        self.d_sampled=d_sampled
+        intervals=np.array(intervals).transpose()
+        self.intervals=intervals
+        ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
+        ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
+        return prediction, [ci_low, ci_high]
+        
+
+
+
+
+def sir_for_optim_2(x, beta, d):
+    # x is a list of dates (0 - 122)
+    x0=[s_0, i_0, r_0, d_0]
+    t=len(x)
+    S,I,R,D=run_sir(x0, beta, 0.2,d,  t, dt)
+    zer=np.array([0])
+    d_arr=np.array(D)
+    return differenciate(np.concatenate((zer,d_arr))) # returns a value per day
+
+
+
+class SIRD_model_2(Model): 
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    d_0=0
+    dt=0.001
+    def train(self, train_dates, data):
+        self.data=data
+        self.train_dates=train_dates
+        # p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 4.37, 2.2, 2.0],  bounds=([0,0,0], [5,5,5]))
+        p,cov= curve_fit(sir_for_optim_2, self.train_dates,data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
+        self.beta=p[0]
+        self.d=p[1]
+        self.gamma=0.2
+        self.cov=cov
+        self.trained= True
+
+
+    def predict(self, reach, alpha, method='covariance'):
+        S,I,R,D=run_sir([s_0, i_0, r_0, d_0], self.beta, self.gamma, self.d , len(self.train_dates), 0.001)
+        self.S=S
+        self.I=I
+        self.R=R
+        self.D=D
+        assert self.trained, 'The model has not been trained yet'
+        deads=sir_for_optim(np.array([i for i in range(len(self.train_dates)+reach)]), self.beta, self.gamma,self.d)
+        prediction =  deads[-reach:]
+        if method == 'covariance': 
+            perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
+        self.perr=perr
+
+        intervals=[np.array(prediction)]
+        beta_sampled=[]
+        d_sampled=[]
+
+        for i in range(100):
+        
+            a=np.random.multivariate_normal([self.beta,self.d], self.cov, 1)[0] # not sampling along gamma because gamma is centered on zero so when we sample along gamma and we resample when the value of one of the component is over zero, we elminiate half of the values and have very bad predictions
+            while not (a>0).all(): 
+                a=np.random.multivariate_normal([self.beta,self.d], self.cov, 1)[0]
+            
+           
+            beta_sampled.append(a[0])
+            d_sampled.append(a[1])
+            beta_r=a[0]
+            d_r=a[1]
+            
+
+            _, _, _, deads_sampled = run_sir([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], beta_r, self.gamma, d_r, reach+1, 0.001)
+            zer=np.array([D[-1]])
+            last_new_deaths=np.array([self.D[-1]- self.D[-2]])
+            d_arr=np.array(differenciate(np.array(deads_sampled)))
+            prediction_sampled= (np.concatenate((last_new_deaths,d_arr))) # returns a value per day
+            prediction_sampled=d_arr
+            intervals.append(prediction_sampled)
+
+        
+        self.beta_sampled=beta_sampled
         self.d_sampled=d_sampled
         intervals=np.array(intervals).transpose()
         self.intervals=intervals
@@ -231,7 +323,6 @@ def sir_reset_state(x, beta, gamma, d, s0, i0, r0, d0 ):
     zer=np.array([0])
     d_arr=np.array(D)
     return differenciate(np.concatenate((zer,d_arr))) 
-
 
        
 class SIRD_model_15_days(Model): 
