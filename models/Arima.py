@@ -49,16 +49,16 @@ class ARIMA_Model(Model):
         ci_high=[elt[1] for elt in interval]
         return predifore, [ci_low, ci_high]
     
-    def plot(self, reach, alpha): 
-        assert self.trained, 'The model has not been trained yet'
-        prediction, intervals = self.predict(reach, alpha)
-        ci_low=intervals[0]
-        ci_high=intervals[1]
-        plt.plot([i for i in range(len(self.data))], self.data, label='real data')
-        plt.plot([i for i in range(len(self.data), len(self.data) + reach)] , prediction, label='forecast ')
-        plt.fill_between([i for i in range(len(self.data), len(self.data) + reach)], ci_low, ci_high, color='black', alpha=.3, label='confidence interval at ' + str(round((1-alpha)*100)) + '%')
-        plt.legend()
-        plt.axvline(len(self.data), linestyle='--')
-        plt.xlim(0,len(self.data)+reach)
-        plt.show()
+    # def plot(self, reach, alpha): 
+    #     assert self.trained, 'The model has not been trained yet'
+    #     prediction, intervals = self.predict(reach, alpha)
+    #     ci_low=intervals[0]
+    #     ci_high=intervals[1]
+    #     plt.plot([i for i in range(len(self.data))], self.data, label='real data')
+    #     plt.plot([i for i in range(len(self.data), len(self.data) + reach)] , prediction, label='forecast ')
+    #     plt.fill_between([i for i in range(len(self.data), len(self.data) + reach)], ci_low, ci_high, color='black', alpha=.3, label='confidence interval at ' + str(round((1-alpha)*100)) + '%')
+    #     plt.legend()
+    #     plt.axvline(len(self.data), linestyle='--')
+    #     plt.xlim(0,len(self.data)+reach)
+    #     plt.show()
         

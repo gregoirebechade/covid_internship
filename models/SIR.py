@@ -276,7 +276,6 @@ class SIRD_model_2(Model):
     def train(self, train_dates, data):
         self.data=data
         self.train_dates=train_dates
-        # p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 4.37, 2.2, 2.0],  bounds=([0,0,0], [5,5,5]))
         p,cov= curve_fit(sir_for_optim_2, self.train_dates,data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
         self.beta=p[0]
         self.d=p[1]
@@ -312,9 +311,7 @@ class SIRD_model_2(Model):
             beta_r=a[0]
             d_r=a[1]
             _, _, _, deads_sampled = run_sir([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], beta_r, self.gamma, d_r, reach+1, 0.001)
-            # last_new_deaths=np.array([self.D[-1]- self.D[-2]])
             d_arr=np.array(differenciate(np.array(deads_sampled)))
-            # prediction_sampled= (np.concatenate((last_new_deaths,d_arr))) # returns a value per day
             prediction_sampled=d_arr
             intervals.append(prediction_sampled)
 
@@ -326,12 +323,7 @@ class SIRD_model_2(Model):
         ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
 
-
-
-
-
-
-        delta_method=True
+        delta_method=False
         if delta_method: 
             ci_low=[]
             ci_high=[]

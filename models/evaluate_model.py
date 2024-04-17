@@ -4,7 +4,7 @@ from Model import Model
 
 
 def IS(interval : tuple, point : float, alpha: float) -> float: 
-    assert interval[0] < interval[1]
+    assert interval[0] <= interval[1]
     assert alpha >= 0
     assert alpha <= 1
     l=interval[0]
@@ -12,10 +12,12 @@ def IS(interval : tuple, point : float, alpha: float) -> float:
     dispersion = u-l
     
     if point < l : 
+        
         underprediction= (2/alpha)*(l-point)
     else: 
         underprediction=0
     if point > u :
+       
         overprediction = (2/alpha)*(point-u)
     else: 
         overprediction=0
@@ -57,6 +59,6 @@ def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_
             interval_high=interval[1][-1]
             intervals.append((interval_low, interval_high)) 
         prediction=prediction[-1]
-        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[index+reach], alphas = alphas , weights = weights)
+        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[index+reach-1], alphas = alphas , weights = weights)
         loss+=wis
     return loss / len(evaluation_point_indexs) # average loss over all evaluation points

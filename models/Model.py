@@ -15,7 +15,7 @@ class Model:
     def predict(self, reach, alphas):
         pass # to be implemented in the child class 
 
-    def plot(self, reach, alpha): 
+    def plot(self, reach, alpha, title=None): 
         assert self.trained, 'The model has not been trained yet'
         prediction, intervals = self.predict(reach, alpha)
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
@@ -26,4 +26,5 @@ class Model:
         plt.legend()
         plt.axvline(len(self.data), linestyle='--')
         plt.xlim(0,len(self.data)+reach)
+        plt.title(title)
         plt.show()
