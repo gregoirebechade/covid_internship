@@ -63,4 +63,4 @@ with open('compte_rendu.txt', 'a') as myfile:
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
         myfile.write('The best model is ' + str(np.argmin(dicoresults[point]))+'\n')
-        myfile.write()
+        myfile.write('   ')
