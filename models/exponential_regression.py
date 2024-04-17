@@ -14,6 +14,8 @@ df.drop(columns=['Unnamed: 0'], inplace=True)
 new_deaths=np.array(df['new_deaths'])
 death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
 dates_of_pandemic=np.arange(len(new_deaths))
+
+
 def exponential_func(x, a, b, c):
     return a*np.exp(b*(x))+c
 # IC with the formula in paper 3: 
@@ -105,6 +107,7 @@ class ExponentialRegression(Model):
         b=self.p[1]
         c=self.p[2]
         window_prediction=np.array([i for i in range(len(self.train_dates), len(self.train_dates) + reach )])
+        self.window_prediction=window_prediction
       
         prediction=exponential_func(window_prediction,a,b,c)
         self.prediction=prediction
@@ -171,18 +174,23 @@ class ExponentialRegression(Model):
         ##############################
         ci_low=[]
         ci_high=[]
+        grads= []
+        vars=[]
         for i in range(len(prediction)):
-            index = self.interval[i] 
+            index = self.window_prediction[i] 
             grad=grad_theta_h(self.p, index)
+            grads.append(grad)
             varhtheta=self.cov 
             varprediction=np.matmul(np.matmul(grad.transpose(), varhtheta), grad)
-            up = scipy.stats.norm.ppf(0.025, loc=prediction[i], scale=np.sqrt(varprediction))
+            vars.append(varprediction)
+            up = scipy.stats.norm.ppf(alpha/2, loc=prediction[i], scale=np.sqrt(varprediction))
             ci_low.append(up)
-            down = scipy.stats.norm.ppf(0.975, loc=prediction[i], scale=np.sqrt(varprediction))
+            down = scipy.stats.norm.ppf(1-(alpha/2), loc=prediction[i], scale=np.sqrt(varprediction))
             ci_high.append(down)
         self.ci_low=ci_low
         self.ci_high=ci_high
-
+        self.grads=grads
+        self.vars=vars
         return prediction, [ci_low, ci_high]
 
 
