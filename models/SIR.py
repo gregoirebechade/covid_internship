@@ -324,7 +324,9 @@ class SIRD_model_2(Model):
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
 
         delta_method=False
+
         if delta_method: 
+            print('delta-method')
             ci_low=[]
             ci_high=[]
             grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.beta, self.d], reach) # size 3 x reach
@@ -338,6 +340,8 @@ class SIRD_model_2(Model):
                 ci_high.append(up)
             self.ci_low=ci_low
             self.ci_high=ci_high
+        else: 
+            print('sampling parameters')
 
 
         return prediction, [ci_low, ci_high]
