@@ -183,10 +183,10 @@ class ExponentialRegression(Model):
             varhtheta=self.cov 
             varprediction=np.matmul(np.matmul(grad.transpose(), varhtheta), grad)
             vars.append(varprediction)
-            up = scipy.stats.norm.ppf(alpha/2, loc=prediction[i], scale=np.sqrt(varprediction))
-            ci_low.append(up)
-            down = scipy.stats.norm.ppf(1-(alpha/2), loc=prediction[i], scale=np.sqrt(varprediction))
-            ci_high.append(down)
+            down = scipy.stats.norm.ppf(alpha/2, loc=prediction[i], scale=np.sqrt(varprediction))
+            ci_low.append(down)
+            up = scipy.stats.norm.ppf(1-(alpha/2), loc=prediction[i], scale=np.sqrt(varprediction))
+            ci_high.append(up)
         self.ci_low=ci_low
         self.ci_high=ci_high
         self.grads=grads

@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import sys
 sys.path.append('./../')
+import scipy.stats
+
 
 
 df = pd.read_csv('deaths_and_infections.csv')
@@ -251,6 +253,19 @@ def sir_for_optim_2(x, beta, d):
     return differenciate(np.concatenate((zer,d_arr))) # returns a value per day
 
 
+def grad_theta_h_theta(x0, theta, reach ): 
+    grad=np.zeros((len(theta), reach))
+    for i in range(len(grad)): 
+        theta_plus=theta.copy()
+        theta_plus[i]+=0.0001
+        _, _, _, deads_grad = run_sir([x0[0], x0[1], x0[2], x0[3]], theta_plus[0], 0.2, theta_plus[1], reach+1, 0.001)
+        _, _, _, deads = run_sir([x0[0], x0[1], x0[2], x0[3]], theta[0], 0.2, theta[1], reach+1, 0.001)
+        d_arr_grad=np.array(differenciate(np.array(deads_grad)))
+        d_arr=np.array(differenciate(np.array(deads)))
+        grad[i]=(d_arr_grad-d_arr)/0.0001
+    return grad
+
+
 
 class SIRD_model_2(Model): 
     s_0=1000000 -1
@@ -278,7 +293,8 @@ class SIRD_model_2(Model):
         self.D=D
         assert self.trained, 'The model has not been trained yet'
         deads=sir_for_optim(np.array([i for i in range(len(self.train_dates)+reach)]), self.beta, self.gamma,self.d)
-        prediction =  deads[-reach:]
+        self.prediction =  deads[-reach:]
+        prediction=self.prediction
         if method == 'covariance': 
             perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
         self.perr=perr
@@ -288,23 +304,17 @@ class SIRD_model_2(Model):
         d_sampled=[]
 
         for i in range(100):
-        
             a=np.random.multivariate_normal([self.beta,self.d], self.cov, 1)[0] # not sampling along gamma because gamma is centered on zero so when we sample along gamma and we resample when the value of one of the component is over zero, we elminiate half of the values and have very bad predictions
             while not (a>0).all(): 
                 a=np.random.multivariate_normal([self.beta,self.d], self.cov, 1)[0]
-            
-           
             beta_sampled.append(a[0])
             d_sampled.append(a[1])
             beta_r=a[0]
             d_r=a[1]
-            
-
             _, _, _, deads_sampled = run_sir([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], beta_r, self.gamma, d_r, reach+1, 0.001)
-            zer=np.array([D[-1]])
-            last_new_deaths=np.array([self.D[-1]- self.D[-2]])
+            # last_new_deaths=np.array([self.D[-1]- self.D[-2]])
             d_arr=np.array(differenciate(np.array(deads_sampled)))
-            prediction_sampled= (np.concatenate((last_new_deaths,d_arr))) # returns a value per day
+            # prediction_sampled= (np.concatenate((last_new_deaths,d_arr))) # returns a value per day
             prediction_sampled=d_arr
             intervals.append(prediction_sampled)
 
@@ -315,6 +325,29 @@ class SIRD_model_2(Model):
         self.intervals=intervals
         ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
+
+
+
+
+
+
+        delta_method=True
+        if delta_method: 
+            ci_low=[]
+            ci_high=[]
+            grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.beta, self.d], reach) # size 3 x reach
+            cov=self.cov
+            vars=(grad.transpose() @ cov @ grad).transpose()[0]
+            assert(len(vars)==reach, str(len(vars)) + 'different from ' + str(reach))
+            for i in range(len(vars)): 
+                down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_low.append(down)
+                up = scipy.stats.norm.ppf(1-(alpha/2), loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_high.append(up)
+            self.ci_low=ci_low
+            self.ci_high=ci_high
+
+
         return prediction, [ci_low, ci_high]
         
 
