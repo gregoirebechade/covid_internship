@@ -27,7 +27,7 @@ mymoving=MovingAverage()
 truth=Truth()
 alphas=[0.05,0.1,0.5]
 indexs_points=[[30], [40], [50], [60], [70], [80], [90], [100], [110]]
-reach=7
+reach=14
 weights=[1,1,1,1]
 
 
@@ -54,12 +54,12 @@ for index_points in indexs_points:
     dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
     
 # write results: 
-with open('comparing_models.json', 'w') as f:
+with open('comparing_models_14.json', 'w') as f:
     json.dump(dicoresults, f)
 
 
 
-with open('compte_rendu.txt', 'a') as myfile: 
+with open('compte_rendu_14.txt', 'a') as myfile: 
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
         myfile.write('The best model is ' + str(np.argmin(dicoresults[point]))+'\n')
