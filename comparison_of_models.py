@@ -32,7 +32,7 @@ weights=[1,1,1,1]
 
 
 dicoresults=dict()
-
+models=['SIR', 'Exponential', 'Moving Average', 'ARIMA']
 
 for index_points in indexs_points:
     try: 
@@ -62,5 +62,5 @@ with open('comparing_models_14.json', 'w') as f:
 with open('compte_rendu_14.txt', 'a') as myfile: 
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + str(np.argmin(dicoresults[point]))+'\n')
+        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
