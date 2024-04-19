@@ -282,8 +282,6 @@ class SIRD_model_2(Model):
         self.gamma=0.2
         self.cov=cov
         self.trained= True
-
-
     def predict(self, reach, alpha, method='covariance'):
         S,I,R,D=run_sir([s_0, i_0, r_0, d_0], self.beta, self.gamma, self.d , len(self.train_dates), 0.001)
         self.S=S
@@ -297,11 +295,9 @@ class SIRD_model_2(Model):
         if method == 'covariance': 
             perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
         self.perr=perr
-
         intervals=[np.array(prediction)]
         beta_sampled=[]
         d_sampled=[]
-
         for i in range(100):
             a=np.random.multivariate_normal([self.beta,self.d], self.cov, 1)[0] # not sampling along gamma because gamma is centered on zero so when we sample along gamma and we resample when the value of one of the component is over zero, we elminiate half of the values and have very bad predictions
             while not (a>0).all(): 
@@ -314,17 +310,13 @@ class SIRD_model_2(Model):
             d_arr=np.array(differenciate(np.array(deads_sampled)))
             prediction_sampled=d_arr
             intervals.append(prediction_sampled)
-
-        
         self.beta_sampled=beta_sampled
         self.d_sampled=d_sampled
         intervals=np.array(intervals).transpose()
         self.intervals=intervals
         ci_low=np.array([np.quantile(intervals[i], alpha/2) for i in range(reach)])
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
-
-        delta_method=False
-
+        delta_method=True
         if delta_method: 
             print('delta-method')
             ci_low=[]
@@ -342,8 +334,6 @@ class SIRD_model_2(Model):
             self.ci_high=ci_high
         else: 
             print('sampling parameters')
-
-
         return prediction, [ci_low, ci_high]
         
 
