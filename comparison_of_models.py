@@ -90,7 +90,7 @@ for index_points in indexs_points:
     dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
     
 # write results: 
-with open('comparing_models.json', 'w') as f:
+with open('comparing_models_14.json', 'w') as f:
     json.dump(dicoresults, f)
 
 
