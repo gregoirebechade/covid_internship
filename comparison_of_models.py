@@ -27,7 +27,7 @@ truth=Truth()
 alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
 indexs_points=[[30], [40], [50], [60], [70], [80], [90], [100], [110]]
 reach=7
-weights=np.concatenate((0.5, alphas * 0.5))
+weights=np.concatenate(([0.5], alphas * 0.5))
 dicoresults=dict()
 dicoresults=dict()
 
@@ -66,7 +66,7 @@ truth=Truth()
 alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
 indexs_points=[[30], [40], [50], [60], [70], [80], [90], [100], [110]]
 reach=14
-weights=np.concatenate((0.5, alphas * 0.5))
+weights=np.concatenate(([0.5], alphas * 0.5))
 dicoresults=dict()
 
 
@@ -93,7 +93,7 @@ for index_points in indexs_points:
 with open('comparing_models.json', 'w') as f:
     json.dump(dicoresults, f)
 
-    
+
 with open('compte_rendu.txt', 'a') as myfile: 
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
