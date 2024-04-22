@@ -56,6 +56,14 @@ with open('comparing_models.json', 'w') as f:
 
 
 
+with open('compte_rendu.txt', 'a') as myfile: 
+    for point in dicoresults.keys(): 
+        myfile.write('For the point: '+point+'\n')
+        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+        myfile.write('   ')
+
+
+
 
 
 myarima=ARIMA_Model()
@@ -94,26 +102,8 @@ with open('comparing_models_14.json', 'w') as f:
     json.dump(dicoresults, f)
 
 
-with open('compte_rendu.txt', 'a') as myfile: 
+with open('compte_rendu_14.txt', 'a') as myfile: 
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
         myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
-
-import json
-# load results: 
-with open('comparing_models.json', 'r') as f:
-    dicoresults = json.load(f)
-    
-new_deaths[[5,6]]
-plt.plot(new_deaths, label='True data')
-plt.plot([30, 40, 50, 60, 90, 100], new_deaths[[30, 40, 50, 60, 90, 100]], 'ro', label='ARIMA')
-plt.plot( [70, 80, 110], new_deaths[ [70, 80, 110]], 'bo', label= 'Moving Average')
-plt.legend()
-plt.title('Points of evaluation and best models for a 7-days ahead prediction')
-plt.plot(new_deaths, label='True data')
-plt.plot([30, 110], new_deaths[[30,110]],'go',   label='SIRD')
-plt.plot([ 40, 50, 60,  100], new_deaths[[ 40, 50, 60,  100]], 'ro', label='ARIMA')
-plt.plot( [70, 80, 90], new_deaths[ [70, 80, 90]], 'bo', label= 'Moving Average')
-plt.legend()
-plt.title('Points of evaluation and best models for a 14-days ahead prediction')

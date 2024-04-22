@@ -323,7 +323,8 @@ class SIRD_model_2(Model):
             ci_high=[]
             grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.beta, self.d], reach) # size 3 x reach
             cov=self.cov
-            vars=(grad.transpose() @ cov @ grad).transpose()[0]
+            vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
+            print(vars)
             assert(len(vars)==reach, str(len(vars)) + 'different from ' + str(reach))
             for i in range(len(vars)): 
                 down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))

@@ -1,5 +1,5 @@
 For the point: [30]
-The best model is SIRD
+The best model is Arima
    For the point: [40]
 The best model is Arima
    For the point: [50]
@@ -15,5 +15,5 @@ The best model is MovingAverage
    For the point: [100]
 The best model is MovingAverage
    For the point: [110]
-The best model is SIRD
+The best model is MovingAverage
    
