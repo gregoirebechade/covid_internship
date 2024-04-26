@@ -23,137 +23,6 @@ models = ['SIRD', 'SIRD2', 'ExponentialRegression', 'MovingAverage', 'Arima']
 
 
 
-# EVALUATION OF MULTI DIMENSIONAL MODELS :
-
-# importing multi_dimensional data
-
-df_mobility=pd.read_csv('mobility.csv')
-df_mobility.drop(columns=['Unnamed: 0'], inplace=True)
-mobility=np.array(df_mobility['mobility'])
-df = pd.read_csv('deaths_and_infections.csv')
-df.drop(columns=['Unnamed: 0'], inplace=True)
-new_deaths=np.array(df['new_deaths'])
-n_infected=np.array(df['n_infected'])
-death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
-mob_shifted=np.concatenate((np.array([ 0 for i in range(17)]), mobility))
-mob_17_days_ahead=(np.array([mob_shifted[i-17] for i in range(17, len(mob_shifted))]))
-
-
-data =np.array([ new_deaths, n_infected, mob_17_days_ahead ])
-dates_of_pandemic=np.arange(len(new_deaths))
-
-
-# 7 days-ahead prediction: 
-
-
-
-reach=7
-
-
-myvar=VAR_m()
-mysirmulti=Multi_SIRD_model()
-myexpmulti=MultiDimensionalExponentialRegression()
-mymovingmulti=MovingAverageMulti()
-
-dicoresults=dict()
-
-for index_points in indexs_points:
-    
-    try: 
-        perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except :
-        print('there has been an error with SIRD model for the point', index_points)
-        perf_sir=np.inf
-    try:  
-        perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except:
-        print('there has been an error with Exponential Regression model for the point', index_points)
-        perf_exp=np.inf
-    try:
-        perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except: 
-        print('there has been an error with Moving Average model for the point', index_points)
-        perf_moving=np.inf
-    try:
-        perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except:
-        print('there has been an error with ARIMA model for the point', index_points)
-        perf_arima=np.inf
-   
-
-    dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
-    
-# write results: 
-with open('comparing_models_3D_reach=7.json', 'w') as f:
-    json.dump(dicoresults, f)
-
-
-
-with open('compte_rendu_3D_reach=7.txt', 'a') as myfile: 
-    print('3D, reach = 7')
-    for point in dicoresults.keys(): 
-        myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
-        myfile.write('   ')
-
-
-
-
-
-
-
-# 14 days ahead prediction:
-
-
-
-reach=14
-
-
-myvar=VAR_m()
-mysirmulti=Multi_SIRD_model()
-myexpmulti=MultiDimensionalExponentialRegression()
-mymovingmulti=MovingAverageMulti()
-
-dicoresults=dict()
-
-for index_points in indexs_points:
-    print('3D, 14', index_points)
-    try: 
-        perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except :
-        perf_sir=np.inf
-    try:  
-        perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except:
-        perf_exp=np.inf
-    try:
-        perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except: 
-        perf_moving=np.inf
-    try:
-        perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-    except:
-        perf_arima=np.inf
-   
-
-    dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
-    
-# write results: 
-with open('comparing_models_3D_reach=14.json', 'w') as f:
-    json.dump(dicoresults, f)
-
-
-
-with open('compte_rendu_3D_reach=14.txt', 'a') as myfile: 
-    print('3D, reach = 14')
-    for point in dicoresults.keys(): 
-        myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
-        myfile.write('   ')
-
-
-
-
 
 ## EVALUATION OF MONO DIMENSIONAL MODELS : 
 
@@ -262,5 +131,138 @@ with open('compte_rendu_1D_reach=14.txt', 'a') as myfile:
         myfile.write('For the point: '+point+'\n')
         myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
+
+
+
+
+
+
+# # EVALUATION OF MULTI DIMENSIONAL MODELS :
+
+# # importing multi_dimensional data
+
+# df_mobility=pd.read_csv('mobility.csv')
+# df_mobility.drop(columns=['Unnamed: 0'], inplace=True)
+# mobility=np.array(df_mobility['mobility'])
+# df = pd.read_csv('deaths_and_infections.csv')
+# df.drop(columns=['Unnamed: 0'], inplace=True)
+# new_deaths=np.array(df['new_deaths'])
+# n_infected=np.array(df['n_infected'])
+# death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
+# mob_shifted=np.concatenate((np.array([ 0 for i in range(17)]), mobility))
+# mob_17_days_ahead=(np.array([mob_shifted[i-17] for i in range(17, len(mob_shifted))]))
+
+
+# data =np.array([ new_deaths, n_infected, mob_17_days_ahead ])
+# dates_of_pandemic=np.arange(len(new_deaths))
+
+
+# # 7 days-ahead prediction: 
+
+
+
+# reach=7
+
+
+# myvar=VAR_m()
+# mysirmulti=Multi_SIRD_model()
+# myexpmulti=MultiDimensionalExponentialRegression()
+# mymovingmulti=MovingAverageMulti()
+
+# dicoresults=dict()
+
+# for index_points in indexs_points:
+    
+#     try: 
+#         perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except :
+#         print('there has been an error with SIRD model for the point', index_points)
+#         perf_sir=np.inf
+#     try:  
+#         perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except:
+#         print('there has been an error with Exponential Regression model for the point', index_points)
+#         perf_exp=np.inf
+#     try:
+#         perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except: 
+#         print('there has been an error with Moving Average model for the point', index_points)
+#         perf_moving=np.inf
+#     try:
+#         perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except:
+#         print('there has been an error with ARIMA model for the point', index_points)
+#         perf_arima=np.inf
+   
+
+#     dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
+    
+# # write results: 
+# with open('comparing_models_3D_reach=7.json', 'w') as f:
+#     json.dump(dicoresults, f)
+
+
+
+# with open('compte_rendu_3D_reach=7.txt', 'a') as myfile: 
+#     print('3D, reach = 7')
+#     for point in dicoresults.keys(): 
+#         myfile.write('For the point: '+point+'\n')
+#         myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+#         myfile.write('   ')
+
+
+
+
+
+
+
+# # 14 days ahead prediction:
+
+
+
+# reach=14
+
+
+# myvar=VAR_m()
+# mysirmulti=Multi_SIRD_model()
+# myexpmulti=MultiDimensionalExponentialRegression()
+# mymovingmulti=MovingAverageMulti()
+
+# dicoresults=dict()
+
+# for index_points in indexs_points:
+#     print('3D, 14', index_points)
+#     try: 
+#         perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except :
+#         perf_sir=np.inf
+#     try:  
+#         perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except:
+#         perf_exp=np.inf
+#     try:
+#         perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except: 
+#         perf_moving=np.inf
+#     try:
+#         perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+#     except:
+#         perf_arima=np.inf
+   
+
+#     dicoresults[str(index_points)]=[perf_sir, perf_exp, perf_moving, perf_arima]
+    
+# # write results: 
+# with open('comparing_models_3D_reach=14.json', 'w') as f:
+#     json.dump(dicoresults, f)
+
+
+
+# with open('compte_rendu_3D_reach=14.txt', 'a') as myfile: 
+#     print('3D, reach = 14')
+#     for point in dicoresults.keys(): 
+#         myfile.write('For the point: '+point+'\n')
+#         myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+#         myfile.write('   ')
 
 
