@@ -1,4 +1,4 @@
-from Model import Model
+from Model import Model, Multi_Dimensional_Model
 from scipy.optimize import curve_fit
 import numpy as np
 import pandas as pd
@@ -147,6 +147,8 @@ class SIRD_model(Model):
 
 
     def predict(self, reach, alpha, method='covariance'):
+        print('attention, gamma not constant ')
+
         S,I,R,D=run_sir([s_0, i_0, r_0, d_0], self.beta, self.gamma, self.d , len(self.train_dates), 0.001)
         self.S=S
         self.I=I
@@ -410,4 +412,151 @@ class SIRD_model_15_days(Model):
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
         return prediction, [ci_low, ci_high]
         
+
+
+
+def run_sir_m(x0, a, b , gamma,d, mobility , dt):
+    t=len(mobility)
+    x=x0
+    S=[x[0]]
+    I=[x[1]]
+    R=[x[2]]
+    D=[x[3]] # deads 
+    n_iter=int(t/dt)
+    N=sum(x0)
+    for i in range(n_iter):
+        todays_mobility=mobility[int(i*dt)]
+        beta=a*todays_mobility+b
+        x=x+dt*derive(x, beta, N, gamma, d)
+        S.append(x[0])
+        I.append(x[1])
+        R.append(x[2])
+        D.append(x[3])
+    s_final=[]
+    i_final=[]
+    r_final=[]
+    d_final=[]
+    time=np.linspace(0, t, int(t/dt) )
+    for i in range(len(time)-1):
+        if abs(time[i]-int(time[i]))<dt: 
+            s_final.append(S[i])
+            i_final.append(I[i])
+            r_final.append(R[i])
+            d_final.append(D[i])
+    return s_final, i_final, r_final, d_final
+
+def sir_for_optim_m( x, a, b ,d, mobility): # returns first the number of deaths and then the number of total infected
+    
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    d_0=0
+    x0=np.array([s_0, i_0, r_0, d_0])
+    dt=0.001
+
+    S, I, R, D = run_sir_m(x0, a, b , 0.2,d, mobility ,   dt)
+    zer=np.array([0])
+    d_arr=np.array(D)
+    I_arr=np.array(I)
+    return np.concatenate((differenciate(np.concatenate((zer,d_arr))), I_arr))
+
+
+
+
+
+def sir_for_optim_normalized(x, a, b, d, mobility, new_deaths, n_infected, taking_I_into_account=True): # returns firts the number of deaths and then the number of total infected
+    I_and_D=sir_for_optim_m(x, a, b, d, mobility)
+    I=I_and_D[len(I_and_D)//2:]
+    D=I_and_D[:len(I_and_D)//2]
+    if taking_I_into_account: 
+        return np.concatenate((D/np.max(new_deaths), I/np.max(n_infected)))
+    else:
+        return D
+
+
+
+
+def grad_theta_h_theta(x0, theta, mob_predicted ): 
+    reach=len(mob_predicted) 
+    grad=np.zeros((len(theta), reach))
+    for i in range(len(grad)): ##################################
+        theta_plus=theta.copy()
+        theta_plus[i]+=0.0001
+        mob_extended=np.concatenate((mob_predicted, np.array([mob_predicted[-1]])))
+        _, _, _, deads_grad = run_sir_m([x0[0], x0[1], x0[2], x0[3]], theta_plus[0], theta_plus[1], 0.2,theta_plus[2] , mob_extended, 0.001)
+        _, _, _, deads= run_sir_m([x0[0], x0[1], x0[2], x0[3]], theta[0], theta[1], 0.2, theta[2], mob_extended, 0.001)
+        d_arr_grad= np.array(differenciate(np.array(deads_grad)))
+        d_arr=np.array(differenciate(np.array(deads)))
+        grad[i]=(d_arr_grad-d_arr)/0.0001
+    return grad
+
+
+class Multi_SIRD_model(Multi_Dimensional_Model): 
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    d_0=0
+    dt=0.001
+    def train(self, train_dates, data):
+        self.data=data
+        self.train_dates=train_dates
+        taking_I_into_account=False
+       
+        curve = lambda x, a, b, d : sir_for_optim_normalized(x, a, b, d, data[2], data[0], data[1], taking_I_into_account)
+        if taking_I_into_account: 
+            obj=np.concatenate((np.array(data[0]), np.array(data[1])))
+            coef=2
+        else: 
+            obj=np.array(data[0])
+            coef=1
+        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+        self.a=p[0]
+        self.b=p[1]
+        self.d=p[2]
+        self.gamma=0.2
+        self.cov=cov
+        self.trained= True
+    def predict(self, reach,  alpha, method='covariance'):
+        mob_predicted=np.array([data[2][-1] for i in range(reach)])
+        reach=len(mob_predicted)
+        s_0=1000000 -1
+        i_0=1
+        r_0=0
+        d_0=0
+        S,I,R,D=run_sir_m([s_0, i_0, r_0, d_0], self.a, self.b,0.2,  self.d , self.data[2], 0.001)
+        self.S=S
+        self.I=I
+        self.R=R
+        self.D=D
+        assert self.trained, 'The model has not been trained yet'
+        deads_and_n_infected=sir_for_optim_m(None, self.a, self.b,self.d, np.concatenate((np.array(self.data[2]), mob_predicted)))
+        deads=deads_and_n_infected[:len(np.array(self.data[2]))+len(mob_predicted)]
+        self.prediction =  deads[-reach:]
+        prediction=self.prediction
+        if method == 'covariance': 
+            perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
+        self.perr=perr
+        delta_method=True
+        if delta_method: 
+            ci_low=[]
+            ci_high=[]
+            mob_extended=np.concatenate( ((np.array([mob_predicted[0]]), mob_predicted)))
+            grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d], mob_predicted) # size 3 x reach
+            cov=self.cov
+            vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
+           
+            assert(len(vars)==reach), str(len(vars) + 'different from ' + str(reach))
+            for i in range(len(vars)): 
+                down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_low.append(down)
+                up = scipy.stats.norm.ppf(1-(alpha/2), loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_high.append(up)
+            self.ci_low=ci_low
+            self.ci_high=ci_high
+        else: 
+            print('sampling parameters')
+        return prediction, [ci_low, ci_high]
+
+
+
 
