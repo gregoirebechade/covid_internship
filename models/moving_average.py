@@ -45,8 +45,7 @@ class MovingAverage(Model):
     
 class MovingAverageMulti(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
-        self.data=data.transpose()[0]
-        data=self.data
+        self.data=data[0]
         self.train_dates=train_dates
         self.value=np.mean(data[-7:])
         self.trained=True

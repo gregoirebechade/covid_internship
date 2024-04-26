@@ -498,8 +498,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
     d_0=0
     dt=0.001
     def train(self, train_dates, data):
-        self.data=data.transpose()
-        data=self.data
+        self.data=data
         self.train_dates=train_dates
         taking_I_into_account=False
        
@@ -518,7 +517,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         self.cov=cov
         self.trained= True
     def predict(self, reach,  alpha, method='covariance'):
-        mob_predicted=np.array([data[2][-1] for i in range(reach)])
+        mob_predicted=np.array([self.data[2][-1] for i in range(reach)])
         reach=len(mob_predicted)
         s_0=1000000 -1
         i_0=1

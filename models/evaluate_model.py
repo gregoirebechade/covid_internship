@@ -4,7 +4,8 @@ from Model import Model
 
 
 def IS(interval : tuple, point : float, alpha: float) -> float: 
-    assert interval[0] <= interval[1]
+    assert interval[0] <= interval[1] , print(interval[0], interval[1])
+    
     assert alpha >= 0
     assert alpha <= 1
     l=interval[0]
@@ -60,6 +61,25 @@ def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_
             intervals.append((interval_low, interval_high)) 
         prediction=prediction[-1]
         wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[index+reach-1], alphas = alphas , weights = weights)
+        loss+=wis
+    return loss / len(evaluation_point_indexs) # average loss over all evaluation points
+
+
+
+def evaluate_model_multi(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
+    loss=0
+    for index in evaluation_point_indexs:
+        print(index)
+        data_train=data.transpose()[:index].transpose()
+        model.train(train_dates = [i for i in range(index)], data = data_train )
+        intervals=[]
+        for alpha in alphas:
+            prediction, interval = model.predict(reach, alpha)
+            interval_low=interval[0][-1]
+            interval_high=interval[1][-1]
+            intervals.append((interval_low, interval_high)) 
+        prediction=prediction[-1]
+        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[0][index+reach-1], alphas = alphas , weights = weights)
         loss+=wis
     return loss / len(evaluation_point_indexs) # average loss over all evaluation points
 

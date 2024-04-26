@@ -1,5 +1,7 @@
 from Model import Model, Multi_Dimensional_Model
 from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.api import VAR
+
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -51,11 +53,12 @@ class ARIMA_Model(Model):
     
 
 
-class VAR(Multi_Dimensional_Model):
+class VAR_m(Multi_Dimensional_Model):
 
     def train(self, train_dates, data): 
         # the data is a array of shape (3, n) where n is the number of days
         # we have to transpose it so the VAR model reads it correctly
+        self.data=data.transpose()
         self.model=VAR(self.data)
         self.fitted=self.model.fit(maxlags=15)
         self.trained= True
@@ -66,5 +69,11 @@ class VAR(Multi_Dimensional_Model):
         ints=self.fitted.forecast_interval(self.data[-lag:], steps=reach, alpha=alpha)
         pred=ints[0].transpose()[0]
         low=ints[1].transpose()[0]
-        high=ints[2].transpose()[0]        
+        high=ints[2].transpose()[0]  
+        low[np.where(low == None)] = np.nan 
+        high[np.where(high == None)] = np.nan
+        if np.isnan(low).any(): 
+            low=[0 for i in range(len(low))]
+        if np.isnan(high).any():
+            high=[abs(1000*max(pred)) for i in range(len(high))]  
         return pred, [low, high]

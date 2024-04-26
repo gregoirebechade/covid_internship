@@ -1,13 +1,13 @@
 import sys
 sys.path.append('./models/')
-from Arima import ARIMA_Model, VAR
+from Arima import ARIMA_Model, VAR_m
 from SIR  import SIRD_model_2, SIRD_model, Multi_SIRD_model
 from exponential_regression import ExponentialRegression, MultiDimensionalExponentialRegression
 from moving_average import MovingAverage, MovingAverageMulti
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from evaluate_model import evaluate_model
+from evaluate_model import evaluate_model, evaluate_model_multi
 import json
 
 
@@ -50,7 +50,7 @@ dates_of_pandemic=np.arange(len(new_deaths))
 reach=7
 
 
-myvar=VAR()
+myvar=VAR_m()
 mysirmulti=Multi_SIRD_model()
 myexpmulti=MultiDimensionalExponentialRegression()
 mymovingmulti=MovingAverageMulti()
@@ -58,21 +58,21 @@ mymovingmulti=MovingAverageMulti()
 dicoresults=dict()
 
 for index_points in indexs_points:
-    print('3D, 7', index_points)
+    
     try: 
-        perf_sir=evaluate_model(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except :
         perf_sir=np.inf
     try:  
-        perf_exp=evaluate_model(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
         perf_exp=np.inf
     try:
-        perf_moving=evaluate_model(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except: 
         perf_moving=np.inf
     try:
-        perf_arima=evaluate_model(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
         perf_arima=np.inf
    
@@ -105,7 +105,7 @@ with open('compte_rendu_3D_reach=7.txt', 'a') as myfile:
 reach=14
 
 
-myvar=VAR()
+myvar=VAR_m()
 mysirmulti=Multi_SIRD_model()
 myexpmulti=MultiDimensionalExponentialRegression()
 mymovingmulti=MovingAverageMulti()
@@ -115,19 +115,19 @@ dicoresults=dict()
 for index_points in indexs_points:
     print('3D, 14', index_points)
     try: 
-        perf_sir=evaluate_model(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except :
         perf_sir=np.inf
     try:  
-        perf_exp=evaluate_model(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
         perf_exp=np.inf
     try:
-        perf_moving=evaluate_model(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except: 
         perf_moving=np.inf
     try:
-        perf_arima=evaluate_model(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+        perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
         perf_arima=np.inf
    
