@@ -476,7 +476,7 @@ def sir_for_optim_normalized(x, a, b, d, mobility, new_deaths, n_infected, takin
 
 
 
-def grad_theta_h_theta(x0, theta, mob_predicted ): 
+def grad_theta_h_theta_m(x0, theta, mob_predicted ): 
     reach=len(mob_predicted) 
     grad=np.zeros((len(theta), reach))
     for i in range(len(grad)): ##################################
@@ -541,7 +541,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             ci_low=[]
             ci_high=[]
             mob_extended=np.concatenate( ((np.array([mob_predicted[0]]), mob_predicted)))
-            grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d], mob_predicted) # size 3 x reach
+            grad=grad_theta_h_theta_m([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d], mob_predicted) # size 3 x reach
             cov=self.cov
             vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
            
