@@ -1,4 +1,4 @@
-from Model import Model
+from Model import Model, Multi_Dimensional_Model
 from statsmodels.tsa.arima.model import ARIMA
 import matplotlib.pyplot as plt
 import numpy as np
@@ -49,16 +49,23 @@ class ARIMA_Model(Model):
         ci_high=[elt[1] for elt in interval]
         return predifore, [ci_low, ci_high]
     
-    # def plot(self, reach, alpha): 
-    #     assert self.trained, 'The model has not been trained yet'
-    #     prediction, intervals = self.predict(reach, alpha)
-    #     ci_low=intervals[0]
-    #     ci_high=intervals[1]
-    #     plt.plot([i for i in range(len(self.data))], self.data, label='real data')
-    #     plt.plot([i for i in range(len(self.data), len(self.data) + reach)] , prediction, label='forecast ')
-    #     plt.fill_between([i for i in range(len(self.data), len(self.data) + reach)], ci_low, ci_high, color='black', alpha=.3, label='confidence interval at ' + str(round((1-alpha)*100)) + '%')
-    #     plt.legend()
-    #     plt.axvline(len(self.data), linestyle='--')
-    #     plt.xlim(0,len(self.data)+reach)
-    #     plt.show()
-        
+
+
+class VAR(Multi_Dimensional_Model):
+
+    def train(self, train_dates, data): 
+        # the data is a array of shape (3, n) where n is the number of days
+        # we have to transpose it so the VAR model reads it correctly
+        self.data=data.transpose()
+        self.model=VAR(self.data)
+        self.fitted=self.model.fit(maxlags=15)
+        self.trained= True
+    
+    def predict(self, reach, alpha):
+        assert self.trained, 'The model has not been trained yet'
+        lag=self.fitted.k_ar
+        ints=self.fitted.forecast_interval(self.data[-lag:], steps=reach, alpha=alpha)
+        pred=ints[0].transpose()[0]
+        low=ints[1].transpose()[0]
+        high=ints[2].transpose()[0]        
+        return pred, [low, high]
