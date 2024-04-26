@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from evaluate_model import evaluate_model
 import json
 
+
 df = pd.read_csv('deaths_and_infections.csv')
 
 # remove a columns from a df: 
