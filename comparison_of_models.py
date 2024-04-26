@@ -13,6 +13,16 @@ import json
 
 
 
+# global values for the whole evaluation: 
+
+
+alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+indexs_points=[[30],[35], [40], [45], [50],[55], [60],[65],  [70],[75],  [80],[85], [90],[95], [100],[105] , [110]]
+weights=np.concatenate(([0.5], alphas * 0.5))
+models = ['SIRD', 'SIRD2', 'ExponentialRegression', 'MovingAverage', 'Arima']
+
+
+
 # EVALUATION OF MULTI DIMENSIONAL MODELS :
 
 # importing multi_dimensional data
@@ -150,16 +160,6 @@ df.drop(columns=['Unnamed: 0'], inplace=True)
 new_deaths=np.array(df['new_deaths'])
 death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
 dates_of_pandemic=np.arange(len(new_deaths))
-
-
-# global values for the whole evaluation: 
-
-
-alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-indexs_points=[[30],[35], [40], [45], [50],[55], [60],[65],  [70],[75],  [80],[85], [90],[95], [100],[105] [110]]
-weights=np.concatenate(([0.5], alphas * 0.5))
-models = ['SIRD', 'SIRD2', 'ExponentialRegression', 'MovingAverage', 'Arima']
-
 
 
 
