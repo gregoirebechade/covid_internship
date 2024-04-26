@@ -56,7 +56,6 @@ class VAR(Multi_Dimensional_Model):
     def train(self, train_dates, data): 
         # the data is a array of shape (3, n) where n is the number of days
         # we have to transpose it so the VAR model reads it correctly
-        self.data=data.transpose()
         self.model=VAR(self.data)
         self.fitted=self.model.fit(maxlags=15)
         self.trained= True

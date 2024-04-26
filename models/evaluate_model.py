@@ -62,3 +62,5 @@ def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_
         wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = data[index+reach-1], alphas = alphas , weights = weights)
         loss+=wis
     return loss / len(evaluation_point_indexs) # average loss over all evaluation points
+
+

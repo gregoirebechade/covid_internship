@@ -498,7 +498,8 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
     d_0=0
     dt=0.001
     def train(self, train_dates, data):
-        self.data=data
+        self.data=data.transpose()
+        data=self.data
         self.train_dates=train_dates
         taking_I_into_account=False
        

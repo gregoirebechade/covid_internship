@@ -222,7 +222,8 @@ def grad_theta_h_m(theta, x):
 
 class MultiDimensionalExponentialRegression(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
-        self.data=data
+        self.data=data.transpose()
+        data=self.data
         maxi=np.max(data[1])
         self.n_infected_normalized=np.array([i/maxi for i in data[1]]) # to avoid too big values in the exponential function
         n_infected_normalized=self.n_infected_normalized
