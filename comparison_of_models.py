@@ -62,18 +62,22 @@ for index_points in indexs_points:
     try: 
         perf_sir=evaluate_model_multi(model=mysirmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except :
+        print('there has been an error with SIRD model for the point', index_points)
         perf_sir=np.inf
     try:  
         perf_exp=evaluate_model_multi(model=myexpmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
+        print('there has been an error with Exponential Regression model for the point', index_points)
         perf_exp=np.inf
     try:
         perf_moving=evaluate_model_multi(model=mymovingmulti, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except: 
+        print('there has been an error with Moving Average model for the point', index_points)
         perf_moving=np.inf
     try:
         perf_arima=evaluate_model_multi(model=myvar, data=data, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
     except:
+        print('there has been an error with ARIMA model for the point', index_points)
         perf_arima=np.inf
    
 
