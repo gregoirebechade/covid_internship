@@ -19,12 +19,12 @@ import json
 alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
 indexs_points=[[30],[35], [40], [45], [50],[55], [60],[65],  [70],[75],  [80],[85], [90],[95], [100],[105] , [110]]
 weights=np.concatenate(([0.5], alphas * 0.5))
-models = ['SIRD', 'SIRD2', 'ExponentialRegression', 'MovingAverage', 'Arima']
 
 
 
 
 ## EVALUATION OF MONO DIMENSIONAL MODELS : 
+models1D = ['SIRD', 'ExponentialRegression', 'MovingAverage', 'Arima', 'SIRD2']
 
 # importing mono_dimensional data
 
@@ -81,7 +81,7 @@ with open('compte_rendu_1D_reach=7.txt', 'a') as myfile:
     print('1D, reach = 7')
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+        myfile.write('The best model is ' + models1D[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
 
 
@@ -129,7 +129,7 @@ with open('comparing_models_1D_reach=14.json', 'w') as f:
 with open('compte_rendu_1D_reach=14.txt', 'a') as myfile: 
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+        myfile.write('The best model is ' + models1D[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
 
 
@@ -138,6 +138,7 @@ with open('compte_rendu_1D_reach=14.txt', 'a') as myfile:
 
 
 # EVALUATION OF MULTI DIMENSIONAL MODELS :
+models3D = ['SIRD', 'ExponentialRegression', 'MovingAverage', 'Arima']
 
 # importing multi_dimensional data
 
@@ -207,7 +208,7 @@ with open('compte_rendu_3D_reach=7.txt', 'a') as myfile:
     print('3D, reach = 7')
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+        myfile.write('The best model is ' + models3D[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
 
 
@@ -262,7 +263,7 @@ with open('compte_rendu_3D_reach=14.txt', 'a') as myfile:
     print('3D, reach = 14')
     for point in dicoresults.keys(): 
         myfile.write('For the point: '+point+'\n')
-        myfile.write('The best model is ' + models[(np.argmin(dicoresults[point]))]+'\n')
+        myfile.write('The best model is ' + models3D[(np.argmin(dicoresults[point]))]+'\n')
         myfile.write('   ')
 
 
