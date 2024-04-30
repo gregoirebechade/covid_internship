@@ -1,6 +1,8 @@
 from Model import Model, Multi_Dimensional_Model
 from scipy.optimize import curve_fit
 import numpy as np
+from scipy.optimize import differential_evolution
+
 import pandas as pd
 import sys
 sys.path.append('./../')
@@ -488,7 +490,6 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         else: 
             print('sampling parameters')
         return prediction, [ci_low, ci_high]
-
 
 
 
