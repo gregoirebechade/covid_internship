@@ -435,18 +435,18 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         self.train_dates=train_dates
         taking_I_into_account=False
         # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
-        curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
+        # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
+        curve = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], taking_I_into_account) 
         if taking_I_into_account: 
             obj=np.concatenate((np.array(data[0]), np.array(data[1])))
             coef=2
         else: 
             obj=np.array(data[0])
             coef=1
-        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 1],  bounds=([-np.inf, -np.inf, 0, 0], [np.inf,np.inf, np.inf, np.inf]))
+        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
         self.a=p[0]
         self.b=p[1]
         self.d=p[2]
-        self.n=p[3]
         self.gamma=0.2
         self.cov=cov
         self.trained= True
@@ -457,13 +457,13 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         i_0=1
         r_0=0
         d_0=0
-        S,I,R,D=run_sir_m([s_0, i_0, r_0, d_0], self.a, self.b,0.2,  self.d ,shift( self.data[2], self.n), 0.001)
+        S,I,R,D=run_sir_m([s_0, i_0, r_0, d_0], self.a, self.b,0.2,  self.d ,self.data[2], 0.001)
         self.S=S
         self.I=I
         self.R=R
         self.D=D
         assert self.trained, 'The model has not been trained yet'
-        deads_and_n_infected=sir_for_optim_m(None, self.a, self.b,self.d, np.concatenate((np.array(shift( self.data[2], self.n)), mob_predicted)))
+        deads_and_n_infected=sir_for_optim_m(None, self.a, self.b,self.d, np.concatenate((np.array(self.data[2]), mob_predicted)))
         deads=deads_and_n_infected[:len(np.array(self.data[2]))+len(mob_predicted)]
         self.prediction =  deads[-reach:]
         prediction=self.prediction
@@ -475,7 +475,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             ci_low=[]
             ci_high=[]
             mob_extended=np.concatenate( ((np.array([mob_predicted[0]]), mob_predicted)))
-            grad=grad_theta_h_theta_m([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d, self.n], mob_predicted) # size 3 x reach
+            grad=grad_theta_h_theta_m([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d], mob_predicted) # size 3 x reach
             cov=self.cov
             vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
            
