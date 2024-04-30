@@ -440,7 +440,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         else: 
             obj=np.array(data[0])
             coef=1
-        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 8],  bounds=([-np.inf, -np.inf, 0, 0], [np.inf,np.inf, np.inf, np.inf]))
+        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 1],  bounds=([-np.inf, -np.inf, 0, 0], [np.inf,np.inf, np.inf, np.inf]))
         self.a=p[0]
         self.b=p[1]
         self.d=p[2]
