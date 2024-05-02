@@ -7,6 +7,7 @@ import pandas as pd
 import sys
 sys.path.append('./../')
 import scipy.stats
+from useful_functions import shift
 
 
 
@@ -315,13 +316,12 @@ def sir_for_optim_m( x, a, b ,d, mobility): # returns first the number of deaths
 
 
 
-
-def sir_for_optim_normalized(x, a, b, d, mobility, new_deaths, n_infected, taking_I_into_account=True): # returns firts the number of deaths and then the number of total infected
+def sir_for_optim_normalized(x, a, b, d, mobility, new_deaths, n_infected, shift1= 0, shift2 = 0 , taking_I_into_account=True): # returns firts the number of deaths and then the number of total infected
     I_and_D=sir_for_optim_m(x, a, b, d, mobility)
     I=I_and_D[len(I_and_D)//2:]
     D=I_and_D[:len(I_and_D)//2]
     if taking_I_into_account: 
-        return np.concatenate((D/np.max(new_deaths), I/np.max(n_infected)))
+        return np.concatenate((shift(D, shift1)/np.max(new_deaths), shift(I, shift2)/np.max(n_infected)))
     else:
         return D
 
@@ -342,30 +342,36 @@ def grad_theta_h_theta_m(x0, theta, mob_predicted ):
         grad[i]=(d_arr_grad-d_arr)/0.0001
     return grad
 
-def shift(x: np.array, n:float): 
-    return np.concatenate((np.array([ x[0] for i in range(int(n))]), x))[:len(x)] # we assume that the n first values are the same as the first value of the array
-
-
 class Multi_SIRD_model(Multi_Dimensional_Model): 
     s_0=1000000 -1
     i_0=1
     r_0=0
     d_0=0
     dt=0.001
+    def choose_model(self, taking_I_into_account, shifts):
+        self.taking_I_into_account=taking_I_into_account
+        self.shifts=shifts
+
     def train(self, train_dates, data):
         self.data=data
         self.train_dates=train_dates
-        taking_I_into_account=False
         # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
-        curve = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], taking_I_into_account) 
-        if taking_I_into_account: 
+        
+        curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
+        curve2 = lambda x, a, b, d, shift1, shift2 :   0.5*((1- (shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + ((shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1)+1, shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + (1-(shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + ((shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2)+1, taking_I_into_account=self.taking_I_into_account))
+        if self.taking_I_into_account: 
             obj=np.concatenate((np.array(data[0]), np.array(data[1])))
             coef=2
         else: 
             obj=np.array(data[0])
             coef=1
-        p,cov= curve_fit(curve,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+        if self.shifts: 
+            p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, 0, 0], [np.inf,np.inf, np.inf, np.inf, np.inf]))
+            self.shift1=p[3]
+            self.shift2=p[4]
+        else:
+            p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
         self.a=p[0]
         self.b=p[1]
         self.d=p[2]
