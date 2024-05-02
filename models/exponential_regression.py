@@ -219,6 +219,21 @@ def grad_theta_h_m(theta, x):
     return grad 
 
 
+def shift(x: np.array, n:float): 
+    return np.concatenate((np.array([ x[0] for i in range(int(n))]), x))[:len(x)] # we assume that the n first values are the same as the first value of the array
+
+def intermediate(x: np.array, a, b, c, d, e, shift1, shift2, n_infected_normalized, mobility): 
+    print('shift1', shift1)
+    print('shift2', shift2)
+    res=[]
+    for elt in x: 
+        uno=((shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e) + (1-(shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)+1], mobility[int(elt-shift2)]], a, b, c, d, e)
+        dos=((shift2 - int(shift2)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e) + (1-(shift2 - int(shift2)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)+1]], a, b, c, d, e)
+        # res.append(exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e))
+        res.append(0.5*uno + 0.5 * dos)
+    return res
+
+
 
 class MultiDimensionalExponentialRegression(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
@@ -232,7 +247,11 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
         max=len(data[0])-1
         interval=[i for i in range(min,max)]
         self.interval=interval
+        curve = lambda  i, a, b, c, d, e, shift1, shift2 : exponential_function_m([i, self.n_infected_normalized[i-int(shift1)], self.data[2][i-int(shift2)]], a, b, c, d, e)
+        # curve = lambda i, a, b, c, d, e , shift1, shift2 : intermediate (i, a, b, c, d, e, shift1, shift2, self.n_infected_normalized, self.data[2])
+
         self.p, self.cov =curve_fit(exponential_function_m, (train_dates[interval], n_infected_normalized[interval], data[2][interval]),data[0][interval],  p0=[ 1,1, 1, 1,1], maxfev = 1000000)
+        # self.p, self.cov =curve_fit(curve,train_dates[interval],  data[0][interval],  p0=[ 1,1, 1, 1,1, 3, 8], maxfev = 1000000)
         self.trained=True
 
 
@@ -243,11 +262,16 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
         c=self.p[2]
         d=self.p[3]
         e=self.p[4]
+        # shift1=self.p[5]
+        # shift2=self.p[6]
         window_prediction=np.array([i for i in range(len(self.train_dates), len(self.train_dates) + reach )])
         self.window_prediction=window_prediction
         last_value_of_mobility=self.data[2][-1]
         last_value_of_infected=self.n_infected_normalized[-1]
         prediction_interval=np.array([window_prediction, np.array([last_value_of_infected for i in range(len(window_prediction))]), np.array([last_value_of_mobility for i in range(len(window_prediction))])])
+        # prediction=[]
+        # for i in range(reach): 
+            # prediction.append(exponential_function_m([window_prediction[i], self.data[1][window_prediction[i]-int(shift1)], self.data[2][window_prediction[i]-int(shift2)]], a,b,c,d,e))
         prediction=exponential_function_m(prediction_interval,a,b,c,d,e)
         self.prediction=prediction
 
@@ -263,7 +287,7 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
             mobility=last_value_of_mobility
             grad=grad_theta_h_m(self.p, [index, n_infected, mobility])
             grads.append(grad)
-            varhtheta=self.cov 
+            varhtheta=self.cov[:5, :5]
             varprediction=np.matmul(np.matmul(grad.transpose(), varhtheta), grad)
             vars.append(varprediction)
             down = scipy.stats.norm.ppf(alpha/2, loc=prediction[i], scale=np.sqrt(varprediction))
