@@ -1,5 +1,5 @@
 from Model import Model, Multi_Dimensional_Model
-from scipy.optimize import curve_fit
+from scipy.optimize import curve_fit, minimize
 import numpy as np
 from scipy.optimize import differential_evolution
 
@@ -359,7 +359,11 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
         
         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
-        curve2 = lambda x, a, b, d, shift1, shift2 :   0.5*((1- (shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + ((shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1)+1, shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + (1-(shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) + ((shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2)+1, taking_I_into_account=self.taking_I_into_account))
+        curve2 = lambda x, a, b, d, shift1, shift2 :   ((1- (shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) 
+                                                        + ((shift1 - int(shift1))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1)+1, shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) 
+                                                        + (1-(shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2), taking_I_into_account=self.taking_I_into_account) 
+                                                        + ((shift2 - int(shift2))) * sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=int(shift1), shift2= int(shift2)+1, taking_I_into_account=self.taking_I_into_account))
+
         if self.taking_I_into_account: 
             obj=np.concatenate((np.array(data[0]), np.array(data[1])))
             coef=2
@@ -367,9 +371,10 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             obj=np.array(data[0])
             coef=1
         if self.shifts: 
-            p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, 0, 0], [np.inf,np.inf, np.inf, np.inf, np.inf]))
+            p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, -np.inf, -np.inf], [np.inf,np.inf, np.inf, np.inf, np.inf]))
             self.shift1=p[3]
             self.shift2=p[4]
+            print(curve2(np.array([i for i in range(coef*len(train_dates))]), *p))
         else:
             p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
         self.a=p[0]
