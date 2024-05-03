@@ -349,6 +349,14 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
     d_0=0
     dt=0.001
     def choose_model(self, taking_I_into_account, shifts):
+        if taking_I_into_account: 
+            print('Taking I into account')
+        else : 
+            print('Not taking I into account')
+        if shifts: 
+            print('shifting')
+        else: 
+            print('not shifting')
         self.taking_I_into_account=taking_I_into_account
         self.shifts=shifts
 
@@ -364,39 +372,55 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         else: 
             obj=np.array(data[0])
             coef=1
-        # x=np.array([i for i in range(coef*len(train_dates))])
-        # curve2 = lambda params :     ((1- (params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
-        #                             + ((params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3])+1, shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
-        #                             + (1-(params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
-        #                             + ((params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[2], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4])+1, taking_I_into_account=self.taking_I_into_account))- obj )**2)
-       
         if self.shifts: 
             if not self.taking_I_into_account:
                 print("It doesn't make sense to take the shifts into account if we do not take I into account")
             # p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, -np.inf, -np.inf], [np.inf,np.inf, np.inf, np.inf, np.inf]))
-            # res=minimize(curve2, [1, 1, 5.523e-04, 5, 10],  bounds = [(-np.inf, np.inf), (-np.inf, np.inf), (0, np.inf), (-np.inf, np.inf), (-np.inf, np.inf)])
-            best_result_so_far=np.inf
-            best_p=None
-            best_cov=None
-            best_shift1=None
-            best_shift2=None
-            for shift1 in range(20): 
-                for shift2 in range(20):
-                    print(shift1, shift2)
-                    curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
-                    p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
-                    local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
-                    if local_result<best_result_so_far:
-                        best_result_so_far=local_result
-                        best_p=p
-                        best_cov=cov
-                        best_shift1=shift1
-                        best_shift2=shift2
-            self.shift1=best_shift1
-            self.shift2=best_shift2
-            self.p=best_p
-            self.cov=best_cov
+            method1=False
+            if method1: 
+                print('direct optimization')
+                x=np.array([i for i in range(coef*len(train_dates))])
+                curve2 = lambda params :     ((1- (params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + ((params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3])+1, shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + (1-(params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + ((params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[2], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4])+1, taking_I_into_account=self.taking_I_into_account)- obj )**2))
+       
+                res=minimize(curve2, [1, 1, 5.523e-04, 5, 10],  bounds = [(-np.inf, np.inf), (-np.inf, np.inf), (0, np.inf), (-np.inf, np.inf), (-np.inf, np.inf)])
+                p=res.x
+                self.a=p[0]
+                self.b=p[1]
+                self.d=p[2]
+                self.shift1=p[3]
+                self.shift2=p[4]
+                self.cov=res.hess_inv            
+            else: 
+                print(' grid search on the shifts')
+                best_result_so_far=np.inf
+                best_p=None
+                best_cov=None
+                best_shift1=None
+                best_shift2=None
+                for shift1 in range(10): 
+                    for shift2 in range(10):
+                        print(shift1, shift2)
+                        curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
+                        p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+                        local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
+                        if local_result<best_result_so_far:
+                            best_result_so_far=local_result
+                            best_p=p
+                            best_cov=cov
+                            best_shift1=shift1
+                            best_shift2=shift2
+                self.shift1=best_shift1
+                self.shift2=best_shift2
+                self.p=best_p
+                self.a=self.p[0]
+                self.b=self.p[1]
+                self.d=self.p[2]
+                self.cov=best_cov
         else:
+            curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
             p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
             self.a=p[0]
             self.b=p[1]
