@@ -367,10 +367,10 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
         
         if self.taking_I_into_account: 
-            obj=np.concatenate((np.array(data[0]), np.array(data[1])))
+            obj=np.concatenate((np.array(data[0])/max(np.array(data[0])), np.array(data[1])/max(np.array(data[1]))))
             coef=2
         else: 
-            obj=np.array(data[0])
+            obj=np.array(data[0]/max(np.array(data[0])))
             coef=1
         if self.shifts: 
             if not self.taking_I_into_account:
@@ -400,13 +400,25 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 best_cov=None
                 best_shift1=None
                 best_shift2=None
-                for shift1 in range(10): 
-                    for shift2 in range(10):
+                for shift1 in range(-5, 5): 
+                    for shift2 in range(-5, 5):
                         print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
-                        p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+                        try: 
+                            p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+                        except RuntimeError: 
+                            print('oups')
                         local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
                         if local_result<best_result_so_far:
+                            print('new best result !!')
+                            print('a = ', p[0])
+                            print(' b = ', p[1])
+                            print('d = ', p[2] )
+                            print(' shift1 = ', shift1)
+                            print('shift2 = ', shift2)
+                            print('and the local result is..... ', local_result)
+                            print()
+                            print()
                             best_result_so_far=local_result
                             best_p=p
                             best_cov=cov
