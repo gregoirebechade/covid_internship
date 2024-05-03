@@ -371,6 +371,8 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         #                             + ((params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[2], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4])+1, taking_I_into_account=self.taking_I_into_account))- obj )**2)
        
         if self.shifts: 
+            if not self.taking_I_into_account:
+                print("It doesn't make sense to take the shifts into account if we do not take I into account")
             # p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, -np.inf, -np.inf], [np.inf,np.inf, np.inf, np.inf, np.inf]))
             # res=minimize(curve2, [1, 1, 5.523e-04, 5, 10],  bounds = [(-np.inf, np.inf), (-np.inf, np.inf), (0, np.inf), (-np.inf, np.inf), (-np.inf, np.inf)])
             best_result_so_far=np.inf
@@ -390,21 +392,16 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                         best_cov=cov
                         best_shift1=shift1
                         best_shift2=shift2
-                            
-            
-            
             self.shift1=best_shift1
             self.shift2=best_shift2
             self.p=best_p
             self.cov=best_cov
-
         else:
             p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
             self.a=p[0]
             self.b=p[1]
             self.d=p[2]
             self.cov=cov
-
         self.gamma=0.2
         self.trained= True
     def predict(self, reach,  alpha, method='covariance'):
