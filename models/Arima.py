@@ -53,20 +53,21 @@ class ARIMA_Model(Model):
     
 
 
+
 class VAR_m(Multi_Dimensional_Model):
 
     def train(self, train_dates, data): 
         # the data is a array of shape (3, n) where n is the number of days
-        # we have to transpose it so the VAR model reads it correctly
-        self.data=data.transpose()
-        self.model=VAR(self.data)
-        self.fitted=self.model.fit(maxlags=15)
+        # we have to transpose it so the VAR model reads it correctly but not in the self.data attribute as it is used in a different way for the .plot() method in the mother class
+        self.data=data
+        self.model=VAR(self.data.transpose())
+        self.fitted=self.model.fit()
         self.trained= True
     
     def predict(self, reach, alpha):
         assert self.trained, 'The model has not been trained yet'
         lag=self.fitted.k_ar
-        ints=self.fitted.forecast_interval(self.data[-lag:], steps=reach, alpha=alpha)
+        ints=self.fitted.forecast_interval(self.data.transpose()[-lag:], steps=reach, alpha=alpha)
         pred=ints[0].transpose()[0]
         low=ints[1].transpose()[0]
         high=ints[2].transpose()[0]  
@@ -76,4 +77,4 @@ class VAR_m(Multi_Dimensional_Model):
             low=[0 for i in range(len(low))]
         if np.isnan(high).any():
             high=[abs(1000*max(pred)) for i in range(len(high))]  
-        return pred, [low, high]
+        return pred, [list(low), list(high)]
