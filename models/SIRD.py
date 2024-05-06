@@ -365,7 +365,6 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         self.train_dates=train_dates
         # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
-        
         if self.taking_I_into_account: 
             obj=np.concatenate((np.array(data[0])/max(np.array(data[0])), np.array(data[1])/max(np.array(data[1]))))
             coef=2
@@ -384,7 +383,6 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                                             + ((params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3])+1, shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
                                             + (1-(params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
                                             + ((params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[2], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4])+1, taking_I_into_account=self.taking_I_into_account)- obj )**2))
-       
                 res=minimize(curve2, [1, 1, 5.523e-04, 5, 10],  bounds = [(-np.inf, np.inf), (-np.inf, np.inf), (0, np.inf), (-np.inf, np.inf), (-np.inf, np.inf)])
                 p=res.x
                 self.a=p[0]
@@ -401,16 +399,14 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 best_cov=None
                 best_shift1=None
                 best_shift2=None
-                for shift1 in range(-5, 5): 
-                    for shift2 in range(-5, 5):
+                for shift1 in range(1): 
+                    for shift2 in range(-15, 15):
                         print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
                         try: 
-                            
                             p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
                             local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
                             dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
-
                         except RuntimeError: 
                             print('oups')
                             dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
