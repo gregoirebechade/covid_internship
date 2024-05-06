@@ -400,7 +400,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 best_shift1=None
                 best_shift2=None
                 for shift1 in range(1): 
-                    for shift2 in range(-15, 15):
+                    for shift2 in range(-15, 0):
                         print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
                         try: 
