@@ -395,6 +395,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 self.cov=res.hess_inv            
             else: 
                 print(' grid search on the shifts')
+                dico_losses=dict()
                 best_result_so_far=np.inf
                 best_p=None
                 best_cov=None
@@ -405,10 +406,14 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                         print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
                         try: 
+                            
                             p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+                            local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
+                            dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
+
                         except RuntimeError: 
                             print('oups')
-                        local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
+                            dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
                         if local_result<best_result_so_far:
                             print('new best result !!')
                             print('a = ', p[0])
@@ -431,6 +436,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 self.b=self.p[1]
                 self.d=self.p[2]
                 self.cov=best_cov
+                self.all_losses=dico_losses
         else:
             curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
             p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))

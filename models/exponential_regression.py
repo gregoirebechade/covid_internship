@@ -171,7 +171,6 @@ class ExponentialRegression(Model):
         ci_high=np.array([np.quantile(intervals[i],1-alpha/2) for i in range(reach)])
 
 
-        ##############################
         ci_low=[]
         ci_high=[]
         grads= []
@@ -252,6 +251,37 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
 
         self.p, self.cov =curve_fit(exponential_function_m, (train_dates[interval], n_infected_normalized[interval], data[2][interval]),data[0][interval],  p0=[ 1,1, 1, 1,1], maxfev = 1000000)
         # self.p, self.cov =curve_fit(curve,train_dates[interval],  data[0][interval],  p0=[ 1,1, 1, 1,1, 3, 8], maxfev = 1000000)
+        grid_search=True
+        if grid_search : 
+            lossmin=np.inf
+            pmin=None
+            covmin =None
+            shift1min = None
+            shift2min = None
+            for shift1 in range( 15): 
+                for shift2 in range(15): 
+                    print(shift1, shift2)
+                    interval1=[i - shift1 for i in interval]
+                    interval2= [ i-shift2 for i in interval]
+                    try : 
+                        p, cov =curve_fit(exponential_function_m, (train_dates[interval], n_infected_normalized[interval1], data[2][interval2]),data[0][interval],  p0=[ 1,1, 1, 1,1], maxfev = 10000)
+                        loss=np.sum((np.array([exponential_function_m([train_dates[interval][i],n_infected_normalized[interval1][i],data[2][interval2][i] ], p[0], p[1], p[2], p[3], p[4])  for i in range(len(interval))]) - np.array(data[0][interval]))**2)
+                        if loss < lossmin: 
+                            print('new min found !!')
+                            print('the loss is : ', loss)
+                            lossmin = loss
+                            pmin = p
+                            covmin = cov
+                            shift1min = shift1
+                            shift2min = shift2
+                            print()
+                    except RuntimeError: 
+                        print('oups')
+            self.p = pmin
+            self. cov = covmin
+            self.shift1 = shift1min
+            self.shift2=shift2min
+            
         self.trained=True
 
 
