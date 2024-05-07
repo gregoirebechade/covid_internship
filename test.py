@@ -5,5 +5,5 @@ for i in range(200):
     print(i)
 
 
-with open('results.txt', 'w') as f:
+with open('results.txt', 'a') as f:
     f.write('test finished\n')
