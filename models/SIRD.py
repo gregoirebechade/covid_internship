@@ -174,6 +174,7 @@ class SIRD_model_2(Model):
         self.gamma_constant=gamma_constant
         self.delta_method=delta_method
     def train(self, train_dates, data):
+        self.name='SIRD'
         self.data=data
         self.train_dates=train_dates
         gamma_constant=self.gamma_constant
@@ -348,7 +349,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
     r_0=0
     d_0=0
     dt=0.001
-    def choose_model(self, taking_I_into_account, shifts):
+    def choose_model(self, taking_I_into_account, shifts, variation_of_shift1):
         if taking_I_into_account: 
             print('Taking I into account')
         else : 
@@ -357,11 +358,21 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             print('shifting')
         else: 
             print('not shifting')
+        if variation_of_shift1: 
+            print('variation of shift1')
+            self.range1=range(1)
+            self.range2=range(-15, 0)
+        else:
+            print('variation of shift2')
+            self.range1=range(15, 0)
+            self.range2=range(1)
         self.taking_I_into_account=taking_I_into_account
         self.shifts=shifts
+        self.variation_of_shift1=variation_of_shift1
 
     def train(self, train_dates, data):
         self.data=data
+        self.name='SIRD multi'
         self.train_dates=train_dates
         # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
@@ -399,16 +410,17 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 best_cov=None
                 best_shift1=None
                 best_shift2=None
-                for shift1 in range(1): 
-                    for shift2 in range(-15, 0):
+                for shift1 in self.range1: 
+                    for shift2 in self.range2:
                         print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
                         try: 
                             p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
                             local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
                             dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
-                        except RuntimeError: 
+                        except (RuntimeError, ValueError): 
                             print('oups')
+                            local_result=np.inf
                             dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
                         if local_result<best_result_so_far:
                             print('new best result !!')

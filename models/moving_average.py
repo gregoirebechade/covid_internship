@@ -18,6 +18,8 @@ dates_of_pandemic=np.arange(len(new_deaths))
 class MovingAverage(Model): 
     def train(self, train_dates, data):
         self.data=data
+        self.name = 'Moving Average'
+
         self.train_dates=train_dates
         self.value=np.mean(data[-7:])
         self.trained=True
@@ -45,6 +47,7 @@ class MovingAverage(Model):
     
 class MovingAverageMulti(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
+        self.name = 'Moving Average multi'
         self.data=data[0]
         self.train_dates=train_dates
         self.value=np.mean(data[-7:])

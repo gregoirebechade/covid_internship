@@ -4,6 +4,7 @@ import numpy as np
 class Model: 
     def __init__(self) :
         self.trained=False
+        self.type='1D'
     def reinitialize(self): 
         self.trained=False
         self.data=None
@@ -34,6 +35,7 @@ class Model:
 class Multi_Dimensional_Model: 
     def __init__(self) :
         self.trained=False
+        self.type='3D'
     def reinitialize(self): 
         self.trained=False
         self.data=None

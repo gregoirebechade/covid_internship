@@ -149,6 +149,7 @@ class SIRCD_Model(Model):
     def choose_model(self, delta_method): 
         self.delta_method=delta_method
     def train(self, train_dates, data):
+        self.name= 'SIRCD'
         self.data=data
         self.train_dates=train_dates
         p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04, 1, 1],  bounds=([0,0,0, 0, 0], [10,5,5, 5, 5]))

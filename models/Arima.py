@@ -8,6 +8,7 @@ import numpy as np
 class ARIMA_Model(Model):
 
     def train(self, train_dates, data, grid_search=False, p=3, d=0, q=3): 
+        self.name='Arima'
         self.data=data
         if grid_search:
             min = 1000
@@ -57,6 +58,7 @@ class ARIMA_Model(Model):
 class VAR_m(Multi_Dimensional_Model):
 
     def train(self, train_dates, data): 
+        self.name='VAR'
         # the data is a array of shape (3, n) where n is the number of days
         # we have to transpose it so the VAR model reads it correctly but not in the self.data attribute as it is used in a different way for the .plot() method in the mother class
         self.data=data
