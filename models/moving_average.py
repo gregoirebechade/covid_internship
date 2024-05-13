@@ -48,14 +48,14 @@ class MovingAverage(Model):
 class MovingAverageMulti(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
         self.name = 'Moving Average multi'
-        self.data=data[0]
+        self.data=data
         self.train_dates=train_dates
-        self.value=np.mean(data[-7:])
+        self.value=np.mean(data[0][-7:])
         self.trained=True
     
     def predict(self, reach, alpha, method='hessian'):
         assert self.trained, 'The model has not been trained yet'
-        sigma2=(1/(7-1))*np.sum((self.data[-7:]-self.value)**2)
+        sigma2=(1/(7-1))*np.sum((self.data[0][-7:]-self.value)**2)
         self.prediction=np.array([self.value for i in range(reach)])
         m_sampled=[]
         intervals=[self.prediction]
