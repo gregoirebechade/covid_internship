@@ -360,19 +360,21 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             print('not shifting')
         if variation_of_shift1: 
             print('variation of shift1')
-            self.range1=range(1)
-            self.range2=range(-15, 0)
+            self.name='SIRD multi 1'
+            self.range1=range(15)
+            self.range2=range(1)
         else:
             print('variation of shift2')
-            self.range1=range(15, 0)
-            self.range2=range(1)
+            self.name='SIRD multi 2'
+            self.range1=range(1)
+            self.range2=range(-15, 0)
+            
         self.taking_I_into_account=taking_I_into_account
         self.shifts=shifts
         self.variation_of_shift1=variation_of_shift1
 
     def train(self, train_dates, data):
         self.data=data
-        self.name='SIRD multi'
         self.train_dates=train_dates
         # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
         # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
@@ -469,8 +471,16 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
         assert self.trained, 'The model has not been trained yet'
         deads_and_n_infected=sir_for_optim_m(None, self.a, self.b,self.d, np.concatenate((np.array(self.data[2]), mob_predicted)))
         deads=deads_and_n_infected[:len(np.array(self.data[2]))+len(mob_predicted)]
-        self.prediction =  deads[-reach:]
+        if self.shift1==0: 
+            self.prediction =  deads[-reach:] # shifting of shift1 for the prediction
+        else : 
+            self.prediction =  deads[-reach-self.shift1:-self.shift1] # shifting of shift1 for the prediction
+
         prediction=self.prediction
+        print(-reach+self.shift1)
+        print(self.shift1)
+        print('the prediction: ')
+        print(prediction)
         if method == 'covariance': 
             perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
         self.perr=perr
