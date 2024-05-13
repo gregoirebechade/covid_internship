@@ -90,7 +90,7 @@ for reach in [7, 14]:
             except :
                 perf_sird=np.inf
             
-            with open('./results/comparing_models1D_reach='+str(reach)'.json', 'w') as f:
+            with open('./results/comparing_models1D_reach='+str(reach)+'.json', 'w') as f:
                 json.dump(dicoresults1D, f)
             
 
@@ -122,6 +122,6 @@ for reach in [7, 14]:
             dicoresults3D[str(index_points)]=[perfmovingmulti, perf_sirdmulti1, perf_sirdmulti2, perfvar, perfexpmulti]
             
 
-        with open('./results/comparing_models3D_reach='+str(reach)'.json', 'w') as f:
+        with open('./results/comparing_models3D_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
        
