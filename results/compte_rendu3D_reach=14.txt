@@ -34,4 +34,22 @@ The best model is Moving Average multi
 The best model is Moving Average multi
    For the point: [110]
 The best model is Moving Average multi
+   For the point: [30]
+The best model is Moving Average multi
+   For the point: [40]
+The best model is SIRD multi 2
+   For the point: [50]
+The best model is VAR
+   For the point: [60]
+The best model is VAR
+   For the point: [70]
+The best model is Moving Average multi
+   For the point: [80]
+The best model is Moving Average multi
+   For the point: [90]
+The best model is Moving Average multi
+   For the point: [100]
+The best model is Moving Average multi
+   For the point: [110]
+The best model is Moving Average multi
    

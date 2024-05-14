@@ -65,7 +65,7 @@ for reach in [7, 14]:
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[10], [15], [20]]
+    indexs_points=[[5], [10], [15], [20], [25], [30], [35], [40], [45], [50], [55], [60], [65], [70], [75], [80], [85], [90], [95], [100]]
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
     dicoresults1D=dict()
     dicoresults3D=dict()
@@ -90,8 +90,7 @@ for reach in [7, 14]:
             except :
                 perf_sird=np.inf
             
-            with open('./results/comparing_models1D_bis_reach='+str(reach)+'.json', 'w') as f:
-                json.dump(dicoresults1D, f)
+            
             
 
             ### 3D
@@ -124,4 +123,6 @@ for reach in [7, 14]:
 
         with open('./results/comparing_models3D_bis_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
+        with open('./results/comparing_models1D_bis_reach='+str(reach)+'.json', 'w') as f:
+                json.dump(dicoresults1D, f)
        

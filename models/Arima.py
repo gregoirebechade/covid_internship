@@ -50,6 +50,9 @@ class ARIMA_Model(Model):
         interval = self.fitted.get_forecast(reach).conf_int(alpha=alpha)
         ci_low=[max(elt[0],0) for elt in interval]
         ci_high=[elt[1] for elt in interval]
+        for i in range(len(predifore)): 
+            if predifore[i] < 0: 
+                predifore[i]=0
         return predifore, [ci_low, ci_high]
     
 
