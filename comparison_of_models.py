@@ -8,7 +8,7 @@ from Truth import Truth
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from evaluate_model import evaluate_model, evaluate_model_multi
+from evaluate_model import evaluate_model, evaluate_model_multi, evaluate_model_multi_RMSE, evaluate_model_RMSE
 import json
 
 df = pd.read_csv('deaths_and_infections.csv')
@@ -74,19 +74,19 @@ for reach in [7, 14]:
         for index_points in indexs_points:
             ############### 1D
             try: 
-                perf_arima=evaluate_model(model=myarima, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_arima=evaluate_model_RMSE(model=myarima, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perf_arima = np.inf
             try: 
-                perf_exp=evaluate_model(model=myexp, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_exp=evaluate_model_RMSE(model=myexp, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_exp=np.inf
             try: 
-                perf_moving=evaluate_model(model=mymoving, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
+                perf_moving=evaluate_model_RMSE(model=mymoving, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
             except: 
                 perf_moving = np.inf
             try : 
-                perf_sird=evaluate_model(model=mysird, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_sird=evaluate_model_RMSE(model=mysird, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except :
                 perf_sird=np.inf
             
@@ -96,23 +96,23 @@ for reach in [7, 14]:
             ### 3D
 
             try : 
-                perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfmovingmulti=evaluate_model_multi_RMSE(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perfmovingmulti=np.inf
             try : 
-                perf_sirdmulti1=evaluate_model_multi(model=mysirdmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_sirdmulti1=evaluate_model_multi_RMSE(model=mysirdmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perf_sirdmulti1 = np.inf
             try : 
-                perf_sirdmulti2=evaluate_model_multi(model=mysirdmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_sirdmulti2=evaluate_model_multi_RMSE(model=mysirdmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perf_sirdmulti2 = np.inf
             try : 
-                perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfvar=evaluate_model_multi_RMSE(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perfvar=np.inf
             try : 
-                perfexpmulti=evaluate_model_multi(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfexpmulti=evaluate_model_multi_RMSE(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perfexpmulti = np.inf
             
@@ -121,8 +121,8 @@ for reach in [7, 14]:
             dicoresults3D[str(index_points)]=[perfmovingmulti, perf_sirdmulti1, perf_sirdmulti2, perfvar, perfexpmulti]
             
 
-        with open('./results/comparing_models3D_bis_reach='+str(reach)+'.json', 'w') as f:
+        with open('./results/comparing_models3D_RMSE_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
-        with open('./results/comparing_models1D_bis_reach='+str(reach)+'.json', 'w') as f:
+        with open('./results/comparing_models1D_RMSE_reach='+str(reach)+'.json', 'w') as f:
                 json.dump(dicoresults1D, f)
        
