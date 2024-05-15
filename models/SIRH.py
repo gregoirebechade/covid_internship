@@ -1,0 +1,449 @@
+from Model import Model, Multi_Dimensional_Model
+from scipy.optimize import curve_fit, minimize
+import numpy as np
+from scipy.optimize import differential_evolution
+
+import pandas as pd
+import sys
+sys.path.append('./../')
+import scipy.stats
+from useful_functions import shift
+
+
+
+df = pd.read_csv('deaths_and_infections.csv')
+df.drop(columns=['Unnamed: 0'], inplace=True)
+new_deaths=np.array(df['new_deaths'])
+death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
+dates_of_pandemic=np.arange(len(new_deaths))
+
+s_0=1000000 -1
+i_0=1
+r_0=0
+h_0=0
+t=len(death_cumul-1)
+dt=0.001
+
+
+def derive_sirh(x, beta, N, gamma_i,gamma_h,  h):
+    S=x[0]
+    I=x[1]
+    R=x[2]
+    H=x[3]
+    return np.array([-beta*S*I/N, beta*S*I/N - (gamma_i+h)*I  , gamma_i*I + gamma_h *H, h * I - gamma_h * H ])
+
+
+
+def run_sirh(x0, beta, gamma_i, gamma_h,h,  t, dt):
+    
+    x=x0
+    S=[x[0]]
+    I=[x[1]]
+    R=[x[2]]
+    H=[x[3]] # hospitalized 
+    n_iter=int(t/dt)
+    N=sum(x0)
+    for i in range(n_iter):
+        x=x+dt*derive_sirh(x, beta, N, gamma_i, gamma_h, h)
+        S.append(x[0])
+        I.append(x[1])
+        R.append(x[2])
+        H.append(x[3])
+    s_final=[]
+    i_final=[]
+    r_final=[]
+    h_final=[]
+    time=np.linspace(0, t, int(t/dt) )
+    for i in range(len(time)-1):
+        if abs(time[i]-int(time[i]))<dt: 
+            s_final.append(S[i])
+            i_final.append(I[i])
+            r_final.append(R[i])
+            h_final.append(H[i])
+    return s_final, i_final, r_final, h_final
+    
+
+
+
+def differenciate(x): 
+    dx=[x[i+1]-x[i] for i in range(len(x)-1)]
+    return dx
+
+def sirh_for_optim(x, beta, gamma_i, gamma_h, h):
+    # x is a list of dates (0 - 122)
+    x0=[s_0, i_0, r_0, d_0]
+    t=len(x)
+    S,I,R,H=run_sirh(x0, beta, gamma_i, gamma_h,h,  t, dt)
+    h_arr=np.array(H)
+    return h_arr 
+
+
+
+
+
+
+
+
+def sirh_for_optim_2(x, beta, h):
+    # x is a list of dates (0 - 122)
+    x0=[s_0, i_0, r_0, h_0]
+    t=len(x)
+    S,I,R,H=run_sirh(x0, beta, 0.2, 0.3, h,  t, dt)
+    h_arr=np.array(H)
+    return h_arr 
+
+def grad_theta_h_theta(x0, theta, reach ): 
+    grad=np.zeros((len(theta), reach))
+    for i in range(len(grad)): 
+        if len(theta)==2: 
+            theta_plus=theta.copy()
+            theta_plus[i]+=0.0001
+            _, _, _, hospitalized_grad = run_sirh([x0[0], x0[1], x0[2], x0[3]], theta_plus[0], 0.2,0.3,  theta_plus[1], reach+1, 0.001)
+            _, _, _, hospitalized = run_sirh([x0[0], x0[1], x0[2], x0[3]], theta[0], 0.2, 0.3, theta[1], reach+1, 0.001)
+        elif len(theta)==4: 
+            theta_plus=theta.copy()
+            theta_plus[i]+=0.0001
+            _, _, _, hospitalized_grad = run_sirh([x0[0], x0[1], x0[2], x0[3]], theta_plus[0],  theta_plus[1],theta_plus[2], theta_plus[3],  reach+1, 0.001)
+            _, _, _, hospitalized = run_sirh([x0[0], x0[1], x0[2], x0[3]], theta[0], theta[1], theta[2],theta_plus[3],  reach+1, 0.001)
+        h_arr_grad=np.array(differenciate(np.array(hospitalized_grad)))
+        h_arr=np.array(differenciate(np.array(hospitalized)))
+        grad[i]=(h_arr_grad-h_arr)/0.0001
+    return grad
+
+
+
+class SIRH_model_2(Model): 
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    h_0=0
+    dt=0.001
+    def choose_model(self, gammas_constant, delta_method): 
+        self.gammas_constant=gammas_constant
+        self.delta_method=delta_method
+    def train(self, train_dates, data):
+        self.name='SIRH'
+        self.data=data
+        self.train_dates=train_dates
+        gammas_constant=self.gammas_constant
+        if gammas_constant: 
+            print('gammas constant')
+            p,cov= curve_fit(sirh_for_optim_2, self.train_dates,data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
+            self.beta=p[0]
+            self.d=p[1]
+            self.gamma_i=0.2
+            self.gamma_h=0.3
+            self.cov=cov
+            self.trained= True
+        else : 
+            print('gammas not constant ')
+            p,cov= curve_fit(sirh_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 ,2.555e-02,  5.523e-04],  bounds=([0,0,0], [10,5,5]))
+            self.beta=p[0]
+            self.gamma_i=p[1]
+            self.gamma_h=p[2]
+            self.h=p[3]
+            self.cov=cov
+            self.trained= True
+
+    def predict(self, reach, alpha):
+        S,I,R,H=run_sirh([s_0, i_0, r_0, h_0], self.beta, self.gamma_i, self.gamma_h, self.h , len(self.train_dates), 0.001)
+        self.S=S
+        self.I=I
+        self.R=R
+        self.H=H
+        assert self.trained, 'The model has not been trained yet'
+        hospitalized=sirh_for_optim(np.array([i for i in range(len(self.train_dates)+reach)]), self.beta, self.gamma_i, self.beta_h,self.h)
+        self.prediction =  hospitalized[-reach:]
+        prediction=self.prediction
+        delta_method=self.delta_method
+        if delta_method: 
+            print('delta-method')
+            ci_low=[]
+            ci_high=[]
+            if self.gamma_constant: 
+                grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.H[-1]], [self.beta, self.h], reach) # size 2 x reach
+            else : 
+                grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.H[-1]], [self.beta,self.gamma_i,self.gamma_h,   self.h], reach) # size 3 x reach
+            cov=self.cov
+            vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
+            assert(len(vars)==reach, str(len(vars)) + 'different from ' + str(reach))
+            for i in range(len(vars)): 
+                down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_low.append(down)
+                up = scipy.stats.norm.ppf(1-(alpha/2), loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_high.append(up)
+            self.ci_low=ci_low
+            self.ci_high=ci_high
+        return prediction, [ci_low, ci_high]
+        
+
+
+
+
+def run_sirh_m(x0, a, b , gamma_i, gamma_h,h, mobility , dt):
+    t=len(mobility)
+    x=x0
+    S=[x[0]]
+    I=[x[1]]
+    R=[x[2]]
+    H=[x[3]] # hospitalized 
+    n_iter=int(t/dt)
+    N=sum(x0)
+    for i in range(n_iter):
+        todays_mobility=mobility[int(i*dt)]
+        beta=a*todays_mobility+b
+        x=x+dt*derive_sirh(x, beta, N, gamma_i, gamma_h, h)
+        S.append(x[0])
+        I.append(x[1])
+        R.append(x[2])
+        H.append(x[3])
+    s_final=[]
+    i_final=[]
+    r_final=[]
+    h_final=[]
+    time=np.linspace(0, t, int(t/dt) )
+    for i in range(len(time)-1):
+        if abs(time[i]-int(time[i]))<dt: 
+            s_final.append(S[i])
+            i_final.append(I[i])
+            r_final.append(R[i])
+            h_final.append(D[i])
+    return s_final, i_final, r_final, h_final
+
+def sirh_for_optim_m( x, a, b ,h, mobility): # returns first the number of deaths and then the number of total infected
+    
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    h_0=0
+    x0=np.array([s_0, i_0, r_0, h_0])
+    dt=0.001
+
+    S, I, R, H = run_sirh_m(x0, a, b , 0.2,0.3, h, mobility ,   dt)
+    zer=np.array([0])
+    h_arr=np.array(H)
+    I_arr=np.array(I)
+    return np.concatenate((h_arr, I_arr))
+
+
+
+
+def sirh_for_optim_normalized(x, a, b, h, mobility, n_hospitalized, n_infected, shift1= 0, shift2 = 0 , taking_I_into_account=True): # returns firts the number of deaths and then the number of total infected
+    I_and_H=sirh_for_optim_m(x, a, b, h, mobility)
+    I=I_and_H[len(I_and_D)//2:]
+    H=I_and_H[:len(I_and_H)//2]
+    if taking_I_into_account: 
+        return np.concatenate((shift(H, shift1)/np.max(n_hospitalized), shift(I, shift2)/np.max(n_infected)))
+    else:
+        return H
+
+
+
+##################"
+##############
+#####################
+#############""
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+######################
+def grad_theta_h_theta_m(x0, theta, mob_predicted ): 
+    reach=len(mob_predicted) 
+    grad=np.zeros((len(theta), reach))
+    for i in range(len(grad)): 
+        theta_plus=theta.copy()
+        theta_plus[i]+=0.0001
+        mob_extended=np.concatenate((mob_predicted, np.array([mob_predicted[-1]])))
+        _, _, _, deads_grad = run_sir_m([x0[0], x0[1], x0[2], x0[3]], theta_plus[0], theta_plus[1], 0.2,theta_plus[2] , mob_extended, 0.001)
+        _, _, _, deads= run_sir_m([x0[0], x0[1], x0[2], x0[3]], theta[0], theta[1], 0.2, theta[2], mob_extended, 0.001)
+        d_arr_grad= np.array(differenciate(np.array(deads_grad)))
+        d_arr=np.array(differenciate(np.array(deads)))
+        grad[i]=(d_arr_grad-d_arr)/0.0001
+    return grad
+
+class Multi_SIRD_model(Multi_Dimensional_Model): 
+    s_0=1000000 -1
+    i_0=1
+    r_0=0
+    d_0=0
+    dt=0.001
+    def choose_model(self, taking_I_into_account, shifts, variation_of_shift1):
+        if taking_I_into_account: 
+            print('Taking I into account')
+        else : 
+            print('Not taking I into account')
+        if shifts: 
+            print('shifting')
+        else: 
+            print('not shifting')
+        if variation_of_shift1: 
+            print('variation of shift1')
+            self.name='SIRD multi 1'
+            self.range1=range(15)
+            self.range2=range(1)
+        else:
+            print('variation of shift2')
+            self.name='SIRD multi 2'
+            self.range1=range(1)
+            self.range2=range(-15, 0)
+            
+        self.taking_I_into_account=taking_I_into_account
+        self.shifts=shifts
+        self.variation_of_shift1=variation_of_shift1
+
+    def train(self, train_dates, data):
+        self.data=data
+        self.train_dates=train_dates
+        # curve = lambda x, a, b, d, n :  sir_for_optim_normalized(x, a, b, d, shift(data[2], n), data[0], data[1], taking_I_into_account) 
+        # curve = lambda x, a, b, d, n : (n-int(n))*  sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)), data[0], data[1], taking_I_into_account) + (1-(n-int(n))) * sir_for_optim_normalized(x, a, b, d, shift(data[2], int(n)+1), data[0], data[1], taking_I_into_account)
+        if self.taking_I_into_account: 
+            obj=np.concatenate((np.array(data[0])/max(np.array(data[0])), np.array(data[1])/max(np.array(data[1]))))
+            coef=2
+        else: 
+            obj=np.array(data[0]/max(np.array(data[0])))
+            coef=1
+        if self.shifts: 
+            if not self.taking_I_into_account:
+                print("It doesn't make sense to take the shifts into account if we do not take I into account")
+            # p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, -np.inf, -np.inf], [np.inf,np.inf, np.inf, np.inf, np.inf]))
+            method1=False
+            if method1: 
+                print('direct optimization')
+                x=np.array([i for i in range(coef*len(train_dates))])
+                curve2 = lambda params :     ((1- (params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + ((params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3])+1, shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + (1-(params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
+                                            + ((params[4] - int(params[4]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[2], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4])+1, taking_I_into_account=self.taking_I_into_account)- obj )**2))
+                res=minimize(curve2, [1, 1, 5.523e-04, 5, 10],  bounds = [(-np.inf, np.inf), (-np.inf, np.inf), (0, np.inf), (-np.inf, np.inf), (-np.inf, np.inf)])
+                p=res.x
+                self.a=p[0]
+                self.b=p[1]
+                self.d=p[2]
+                self.shift1=p[3]
+                self.shift2=p[4]
+                self.cov=res.hess_inv            
+            else: 
+                print(' grid search on the shifts')
+                dico_losses=dict()
+                best_result_so_far=np.inf
+                best_p=None
+                best_cov=None
+                best_shift1=None
+                best_shift2=None
+                for shift1 in self.range1: 
+                    for shift2 in self.range2:
+                        print(shift1, shift2)
+                        curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
+                        try: 
+                            p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+                            local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
+                            dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
+                        except (RuntimeError, ValueError): 
+                            print('oups')
+                            local_result=np.inf
+                            dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
+                        if local_result<best_result_so_far:
+                            print('new best result !!')
+                            print('a = ', p[0])
+                            print(' b = ', p[1])
+                            print('d = ', p[2] )
+                            print(' shift1 = ', shift1)
+                            print('shift2 = ', shift2)
+                            print('and the local result is..... ', local_result)
+                            print()
+                            print()
+                            best_result_so_far=local_result
+                            best_p=p
+                            best_cov=cov
+                            best_shift1=shift1
+                            best_shift2=shift2
+                self.shift1=best_shift1
+                self.shift2=best_shift2
+                self.p=best_p
+                self.a=self.p[0]
+                self.b=self.p[1]
+                self.d=self.p[2]
+                self.cov=best_cov
+                self.all_losses=dico_losses
+        else:
+            curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
+            p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+            self.a=p[0]
+            self.b=p[1]
+            self.d=p[2]
+            self.cov=cov
+        self.gamma=0.2
+        self.trained= True
+    def predict(self, reach,  alpha, method='covariance'):
+        mob_predicted=np.array([self.data[2][-1] for i in range(reach)])
+        reach=len(mob_predicted)
+        s_0=1000000 -1
+        i_0=1
+        r_0=0
+        d_0=0
+        S,I,R,D=run_sir_m([s_0, i_0, r_0, d_0], self.a, self.b,0.2,  self.d ,self.data[2], 0.001)
+        self.S=S
+        self.I=I
+        self.R=R
+        self.D=D
+        assert self.trained, 'The model has not been trained yet'
+        deads_and_n_infected=sir_for_optim_m(None, self.a, self.b,self.d, np.concatenate((np.array(self.data[2]), mob_predicted)))
+        deads=deads_and_n_infected[:len(np.array(self.data[2]))+len(mob_predicted)]
+        if self.shift1==0: 
+            self.prediction =  deads[-reach:] # shifting of shift1 for the prediction
+        else : 
+            self.prediction =  deads[-reach-self.shift1:-self.shift1] # shifting of shift1 for the prediction
+
+        prediction=self.prediction
+        print(-reach+self.shift1)
+        print(self.shift1)
+        print('the prediction: ')
+        print(prediction)
+        if method == 'covariance': 
+            perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
+        self.perr=perr
+        delta_method=True
+        if delta_method: 
+            ci_low=[]
+            ci_high=[]
+            mob_extended=np.concatenate( ((np.array([mob_predicted[0]]), mob_predicted)))
+            grad=grad_theta_h_theta_m([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.a, self.b , self.d], mob_predicted) # size 3 x reach
+            cov=self.cov
+            vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
+           
+            assert(len(vars)==reach), str(len(vars) + 'different from ' + str(reach))
+            for i in range(len(vars)): 
+                down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_low.append(down)
+                up = scipy.stats.norm.ppf(1-(alpha/2), loc=self.prediction[i], scale=np.sqrt(vars[i]))
+                ci_high.append(up)
+            self.ci_low=ci_low
+            self.ci_high=ci_high
+        else: 
+            print('sampling parameters')
+        return prediction, [ci_low, ci_high]
+
+
+
