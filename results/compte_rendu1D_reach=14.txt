@@ -1,33 +1,40 @@
-For the point: [30]
-The best model is SIRD
-   For the point: [40]
-The best model is Arima
-   For the point: [50]
-The best model is Arima
-   For the point: [60]
-The best model is Arima
-   For the point: [70]
-The best model is Moving Average
-   For the point: [80]
-The best model is Moving Average
-   For the point: [90]
-The best model is Moving Average
-   For the point: [100]
-The best model is Moving Average
-   For the point: [30]
-The best model is SIRD
-   For the point: [40]
-The best model is Arima
-   For the point: [50]
-The best model is Arima
-   For the point: [60]
-The best model is Arima
-   For the point: [70]
-The best model is Moving Average
-   For the point: [80]
-The best model is Moving Average
-   For the point: [90]
-The best model is Moving Average
-   For the point: [100]
-The best model is Moving Average
-   
+ For the point [5] the best model is :Moving Average with a performance of 0.0
+ For the point [10] the best model is :SIRD with a performance of 6.999993895898506
+ For the point [15] the best model is :Exponential Regression with a performance of 206.9970974710677
+ For the point [20] the best model is :SIRD with a performance of 569.0657980938391
+ For the point [25] the best model is :SIRD with a performance of 335.770554769324
+ For the point [30] the best model is :SIRD with a performance of 46.98101411459515
+ For the point [35] the best model is :Arima with a performance of 55.024273537827305
+ For the point [40] the best model is :Arima with a performance of 43.70746393092696
+ For the point [45] the best model is :Arima with a performance of 37.86112611768495
+ For the point [50] the best model is :Arima with a performance of 42.912852115685354
+ For the point [55] the best model is :Arima with a performance of 50.25016283189386
+ For the point [60] the best model is :Arima with a performance of 34.77620056423357
+ For the point [65] the best model is :Moving Average with a performance of 6.353201751169321
+ For the point [70] the best model is :Moving Average with a performance of 14.195590914216753
+ For the point [75] the best model is :Moving Average with a performance of 4.808995650450856
+ For the point [80] the best model is :Moving Average with a performance of 14.874964758665067
+ For the point [85] the best model is :Moving Average with a performance of 3.534589756184982
+ For the point [90] the best model is :Moving Average with a performance of 11.465481934036966
+ For the point [95] the best model is :Moving Average with a performance of 2.580710103249717
+ For the point [100] the best model is :Moving Average with a performance of 26.36140994095234
+ For the point [5] the best model is :Moving Average with a performance of 0.0
+ For the point [10] the best model is :SIRD with a performance of 6.999993895898506
+ For the point [15] the best model is :Exponential Regression with a performance of 206.9970974710677
+ For the point [20] the best model is :SIRD with a performance of 569.0657980938391
+ For the point [25] the best model is :SIRD with a performance of 335.770554769324
+ For the point [30] the best model is :SIRD with a performance of 46.98101411459515
+ For the point [35] the best model is :Arima with a performance of 55.024273537827305
+ For the point [40] the best model is :Arima with a performance of 43.70746393092696
+ For the point [45] the best model is :Arima with a performance of 37.86112611768495
+ For the point [50] the best model is :Arima with a performance of 42.912852115685354
+ For the point [55] the best model is :Arima with a performance of 50.25016283189386
+ For the point [60] the best model is :Arima with a performance of 34.77620056423357
+ For the point [65] the best model is :Moving Average with a performance of 6.353201751169321
+ For the point [70] the best model is :Moving Average with a performance of 14.195590914216753
+ For the point [75] the best model is :Moving Average with a performance of 4.808995650450856
+ For the point [80] the best model is :Moving Average with a performance of 14.874964758665067
+ For the point [85] the best model is :Moving Average with a performance of 3.534589756184982
+ For the point [90] the best model is :Moving Average with a performance of 11.465481934036966
+ For the point [95] the best model is :Moving Average with a performance of 2.580710103249717
+ For the point [100] the best model is :Moving Average with a performance of 26.36140994095234

@@ -1,17 +1,59 @@
-For the point: [30]
-The best model is Arima
-   For the point: [40]
-The best model is Arima
-   For the point: [50]
-The best model is Arima
-   For the point: [60]
-The best model is Arima
-   For the point: [70]
-The best model is Moving Average
-   For the point: [80]
-The best model is Moving Average
-   For the point: [90]
-The best model is Moving Average
-   For the point: [100]
-The best model is Moving Average
-   For the point: [30]
+ For the point [5] the best model is :Moving Average with a performance of 0.0
+ For the point [10] the best model is :Moving Average with a performance of 0.0
+ For the point [15] the best model is :SIRD with a performance of 4.999995535046486
+ For the point [20] the best model is :SIRD with a performance of 64.38633387181761
+ For the point [25] the best model is :SIRD with a performance of 183.44831346855457
+ For the point [30] the best model is :Arima with a performance of 17.128068743346493
+ For the point [35] the best model is :Arima with a performance of 55.60241156908844
+ For the point [40] the best model is :Arima with a performance of 53.50742722757251
+ For the point [45] the best model is :Arima with a performance of 28.59587963704362
+ For the point [50] the best model is :Arima with a performance of 23.79816053727336
+ For the point [55] the best model is :Arima with a performance of 27.88767685332166
+ For the point [60] the best model is :Arima with a performance of 37.94440607875382
+ For the point [65] the best model is :Moving Average with a performance of 8.181762438456502
+ For the point [70] the best model is :Moving Average with a performance of 4.273861855990367
+ For the point [75] the best model is :Moving Average with a performance of 9.093437130504022
+ For the point [80] the best model is :Moving Average with a performance of 3.288043716177111
+ For the point [85] the best model is :Moving Average with a performance of 2.418874572973765
+ For the point [90] the best model is :Moving Average with a performance of 17.938758384646285
+ For the point [95] the best model is :Moving Average with a performance of 2.968675687900027
+ For the point [100] the best model is :Moving Average with a performance of 21.607813650411202 For the point [5] the best model is :Moving Average with a performance of 0.0
+ For the point [10] the best model is :Moving Average with a performance of 0.0
+ For the point [15] the best model is :SIRD with a performance of 4.999995535046486
+ For the point [20] the best model is :SIRD with a performance of 64.38633387181761
+ For the point [25] the best model is :SIRD with a performance of 183.44831346855457
+ For the point [30] the best model is :Arima with a performance of 17.128068743346493
+ For the point [35] the best model is :Arima with a performance of 55.60241156908844
+ For the point [40] the best model is :Arima with a performance of 53.50742722757251
+ For the point [45] the best model is :Arima with a performance of 28.59587963704362
+ For the point [50] the best model is :Arima with a performance of 23.79816053727336
+ For the point [55] the best model is :Arima with a performance of 27.88767685332166
+ For the point [60] the best model is :Arima with a performance of 37.94440607875382
+ For the point [65] the best model is :Moving Average with a performance of 8.181762438456502
+ For the point [70] the best model is :Moving Average with a performance of 4.273861855990367
+ For the point [75] the best model is :Moving Average with a performance of 9.093437130504022
+ For the point [80] the best model is :Moving Average with a performance of 3.288043716177111
+ For the point [85] the best model is :Moving Average with a performance of 2.418874572973765
+ For the point [90] the best model is :Moving Average with a performance of 17.938758384646285
+ For the point [95] the best model is :Moving Average with a performance of 2.968675687900027
+ For the point [100] the best model is :Moving Average with a performance of 21.607813650411202
+ For the point [5] the best model is :Moving Average with a performance of 0.0
+ For the point [10] the best model is :Moving Average with a performance of 0.0
+ For the point [15] the best model is :SIRD with a performance of 4.999995535046486
+ For the point [20] the best model is :SIRD with a performance of 64.38633387181761
+ For the point [25] the best model is :SIRD with a performance of 183.44831346855457
+ For the point [30] the best model is :Arima with a performance of 17.128068743346493
+ For the point [35] the best model is :Arima with a performance of 55.60241156908844
+ For the point [40] the best model is :Arima with a performance of 53.50742722757251
+ For the point [45] the best model is :Arima with a performance of 28.59587963704362
+ For the point [50] the best model is :Arima with a performance of 23.79816053727336
+ For the point [55] the best model is :Arima with a performance of 27.88767685332166
+ For the point [60] the best model is :Arima with a performance of 37.94440607875382
+ For the point [65] the best model is :Moving Average with a performance of 8.181762438456502
+ For the point [70] the best model is :Moving Average with a performance of 4.273861855990367
+ For the point [75] the best model is :Moving Average with a performance of 9.093437130504022
+ For the point [80] the best model is :Moving Average with a performance of 3.288043716177111
+ For the point [85] the best model is :Moving Average with a performance of 2.418874572973765
+ For the point [90] the best model is :Moving Average with a performance of 17.938758384646285
+ For the point [95] the best model is :Moving Average with a performance of 2.968675687900027
+ For the point [100] the best model is :Moving Average with a performance of 21.607813650411202
