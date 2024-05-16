@@ -53,7 +53,6 @@ class Multi_Dimensional_Model:
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
         ci_high=intervals[1]
         plt.plot([i for i in range(len(self.data[0]))], self.data[0], label='real data')
-        print('real data', self.data[0])
         plt.plot([i for i in range(len(self.data[0]), len(self.data[0]) + reach)] , prediction, label='forecast ')
         plt.fill_between([i for i in range(len(self.data[0]), len(self.data[0]) + reach )], ci_low, ci_high, color='black', alpha=.3, label='confidence interval at ' + str(round((1-alpha)*100)) + '%')
         plt.legend()

@@ -477,10 +477,6 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             self.prediction =  deads[-reach-self.shift1:-self.shift1] # shifting of shift1 for the prediction
 
         prediction=self.prediction
-        print(-reach+self.shift1)
-        print(self.shift1)
-        print('the prediction: ')
-        print(prediction)
         if method == 'covariance': 
             perr = np.sqrt(np.diag(self.cov)) # Idea from: https://github.com/philipgerlee/Predicting-regional-COVID-19-hospital-admissions-in-Sweden-using-mobility-data.
         self.perr=perr
