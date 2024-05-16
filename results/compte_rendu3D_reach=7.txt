@@ -1,60 +1,20 @@
  For the point [5] the best model is :Moving Average multi with a performance of 0.0
  For the point [10] the best model is :Moving Average multi with a performance of 0.0
  For the point [15] the best model is :Moving Average multi with a performance of 5.0
- For the point [20] the best model is :VAR with a performance of 86.25440077675562
- For the point [25] the best model is :SIRD multi 1 with a performance of 158.90618822978092
- For the point [30] the best model is :Moving Average multi with a performance of 490.94287270319217
- For the point [35] the best model is :Moving Average multi with a performance of 83.4521173575428
- For the point [40] the best model is :SIRD multi 2 with a performance of 143.84563146092398
- For the point [45] the best model is :SIRD multi 2 with a performance of 145.8919936103774
- For the point [50] the best model is :VAR with a performance of 61.66065283682663
- For the point [55] the best model is :VAR with a performance of 30.941061342299882
- For the point [60] the best model is :VAR with a performance of 27.631921991233195
- For the point [65] the best model is :Moving Average multi with a performance of 7.7539219356439295
- For the point [70] the best model is :Moving Average multi with a performance of 3.73479454362906
- For the point [75] the best model is :Moving Average multi with a performance of 9.073256253606031
- For the point [80] the best model is :Moving Average multi with a performance of 2.7424007745852688
- For the point [85] the best model is :Moving Average multi with a performance of 2.1621380223467104
- For the point [90] the best model is :VAR with a performance of 17.248005512800738
- For the point [95] the best model is :Moving Average multi with a performance of 2.8633261247756696
- For the point [100] the best model is :Exp. Reg. Multi with a performance of 11.582457016737056
- For the point [5] the best model is :Moving Average multi with a performance of 0.0
- For the point [10] the best model is :Moving Average multi with a performance of 0.0
- For the point [15] the best model is :Moving Average multi with a performance of 5.0
- For the point [20] the best model is :VAR with a performance of 86.25440077675562
- For the point [25] the best model is :SIRD multi 1 with a performance of 158.90618822978092
- For the point [30] the best model is :Moving Average multi with a performance of 490.94287270319217
- For the point [35] the best model is :Moving Average multi with a performance of 83.4521173575428
- For the point [40] the best model is :SIRD multi 2 with a performance of 143.84563146092398
- For the point [45] the best model is :SIRD multi 2 with a performance of 145.8919936103774
- For the point [50] the best model is :VAR with a performance of 61.66065283682663
- For the point [55] the best model is :VAR with a performance of 30.941061342299882
- For the point [60] the best model is :VAR with a performance of 27.631921991233195
- For the point [65] the best model is :Moving Average multi with a performance of 7.7539219356439295
- For the point [70] the best model is :Moving Average multi with a performance of 3.73479454362906
- For the point [75] the best model is :Moving Average multi with a performance of 9.073256253606031
- For the point [80] the best model is :Moving Average multi with a performance of 2.7424007745852688
- For the point [85] the best model is :Moving Average multi with a performance of 2.1621380223467104
- For the point [90] the best model is :VAR with a performance of 17.248005512800738
- For the point [95] the best model is :Moving Average multi with a performance of 2.8633261247756696
- For the point [100] the best model is :Exp. Reg. Multi with a performance of 11.582457016737056
- For the point [5] the best model is :Moving Average multi with a performance of 0.0
- For the point [10] the best model is :Moving Average multi with a performance of 0.0
- For the point [15] the best model is :Moving Average multi with a performance of 5.0
- For the point [20] the best model is :VAR with a performance of 86.25440077675562
- For the point [25] the best model is :SIRD multi 1 with a performance of 158.90618822978092
- For the point [30] the best model is :Moving Average multi with a performance of 490.94287270319217
- For the point [35] the best model is :Moving Average multi with a performance of 83.4521173575428
- For the point [40] the best model is :SIRD multi 2 with a performance of 143.84563146092398
- For the point [45] the best model is :SIRD multi 2 with a performance of 145.8919936103774
- For the point [50] the best model is :VAR with a performance of 61.66065283682663
- For the point [55] the best model is :VAR with a performance of 30.941061342299882
- For the point [60] the best model is :VAR with a performance of 27.631921991233195
- For the point [65] the best model is :Moving Average multi with a performance of 7.7539219356439295
- For the point [70] the best model is :Moving Average multi with a performance of 3.73479454362906
- For the point [75] the best model is :Moving Average multi with a performance of 9.073256253606031
- For the point [80] the best model is :Moving Average multi with a performance of 2.7424007745852688
- For the point [85] the best model is :Moving Average multi with a performance of 2.1621380223467104
- For the point [90] the best model is :VAR with a performance of 17.248005512800738
- For the point [95] the best model is :Moving Average multi with a performance of 2.8633261247756696
- For the point [100] the best model is :Exp. Reg. Multi with a performance of 11.582457016737056
+ For the point [20] the best model is :VAR with a performance of 86.43188313293105
+ For the point [25] the best model is :SIRD multi 1 with a performance of 194.8942938598177
+ For the point [30] the best model is :Moving Average multi with a performance of 556.1428571428571
+ For the point [35] the best model is :Moving Average multi with a performance of 158.57142857142856
+ For the point [40] the best model is :SIRD multi 2 with a performance of 158.98706439425132
+ For the point [45] the best model is :SIRD multi 2 with a performance of 154.74155842570872
+ For the point [50] the best model is :VAR with a performance of 112.47828588339871
+ For the point [55] the best model is :VAR with a performance of 53.828191277125
+ For the point [60] the best model is :VAR with a performance of 44.5125183152459
+ For the point [65] the best model is :VAR with a performance of 2.9994884740273022
+ For the point [70] the best model is :Moving Average multi with a performance of 8.0
+ For the point [75] the best model is :VAR with a performance of 3.595357219144603
+ For the point [80] the best model is :Moving Average multi with a performance of 2.857142857142861
+ For the point [85] the best model is :VAR with a performance of 1.1439385380160445
+ For the point [90] the best model is :VAR with a performance of 0.4264712815575251
+ For the point [95] the best model is :Moving Average multi with a performance of 4.714285714285722
+ For the point [100] the best model is :Exp. Reg. Multi with a performance of 14.800431148947041
