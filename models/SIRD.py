@@ -2,7 +2,7 @@ from Model import Model, Multi_Dimensional_Model
 from scipy.optimize import curve_fit, minimize
 import numpy as np
 from scipy.optimize import differential_evolution
-
+from useful_functions import differenciate
 import pandas as pd
 import sys
 sys.path.append('./../')
@@ -63,11 +63,6 @@ def run_sir(x0, beta, gamma,d,  t, dt):
     return s_final, i_final, r_final, d_final
     
 
-
-
-def differenciate(x): 
-    dx=[x[i+1]-x[i] for i in range(len(x)-1)]
-    return dx
 
 def sir_for_optim(x, beta, gamma, d):
     # x is a list of dates (0 - 122)

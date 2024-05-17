@@ -7,7 +7,6 @@ import pandas as pd
 import sys
 sys.path.append('./../')
 import scipy.stats
-from useful_functions import shift
 
 
 
@@ -282,12 +281,12 @@ def sirh_for_optim_m( x, a, b ,h, mobility, gamma_i=0.2, gamma_h=0.2): # returns
 
 
 
-def sirh_for_optim_normalized(x, a, b, h, mobility, n_hospitalized, n_infected, shift1= 0, shift2 = 0 , taking_I_into_account=True, gamma_i=0.2, gamma_h=0.2): # returns firts the number of deaths and then the number of total infected
+def sirh_for_optim_normalized(x, a, b, h, mobility, n_hospitalized, n_infected,  taking_I_into_account=True, gamma_i=0.2, gamma_h=0.2): # returns firts the number of deaths and then the number of total infected
     I_and_H=sirh_for_optim_m(x, a, b, h, mobility, gamma_i, gamma_h)
     I=I_and_H[len(I_and_H)//2:]
     H=I_and_H[:len(I_and_H)//2]
     if taking_I_into_account: 
-        return np.concatenate((shift(H, shift1)/np.max(n_hospitalized), shift(I, shift2)/np.max(n_infected)))
+        return np.concatenate((H/np.max(n_hospitalized), I/np.max(n_infected)))
     else:
         return H
 
@@ -330,31 +329,13 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
     r_0=0
     h_0=0
     dt=0.001
-    def choose_model(self, taking_I_into_account, shifts, variation_of_shift1):
+    def choose_model(self, taking_I_into_account):
         if taking_I_into_account: 
             print('Taking I into account')
         else : 
             print('Not taking I into account')
-        if shifts: 
-            print('shifting')
-        else: 
-            print('not shifting')
-        if variation_of_shift1: 
-            print('variation of shift1')
-            self.name='SIRD multi 1'
-            self.range1=range(15)
-            self.range2=range(1)
-        else:
-            print('variation of shift2')
-            self.name='SIRD multi 2'
-            self.range1=range(1)
-            self.range2=range(-15,-14)
-        print('ATTENTION SEULEMENT UN SEUL SHIFT 2 ACCESSIBLE, A CHANGER ')
             
         self.taking_I_into_account=taking_I_into_account
-        self.shifts=shifts
-        self.variation_of_shift1=variation_of_shift1
-
     def train(self,  data):
         self.data=data
         self.train_dates=[i for i in range(len(data[0]))]
@@ -364,74 +345,28 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
         else: 
             obj=np.array(data[0]/max(np.array(data[0])))
             coef=1
-        if self.shifts: 
-            if not self.taking_I_into_account:
-                print("It doesn't make sense to take the shifts into account if we do not take I into account") 
-            else: 
-                print(' grid search on the shifts')
-                dico_losses=dict()
-                best_result_so_far=np.inf
-                best_p=None
-                best_cov=None
-                best_shift1=None
-                best_shift2=None
-                for shift1 in self.range1: 
-                    for shift2 in self.range2:
-                        print(shift1, shift2)
-                        curve1 = lambda x, a, b, h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
-                        try: 
-                            p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(self.train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
-                            local_result=np.sum((curve1(np.array([i for i in range(coef*len(self.train_dates))]), p[0], p[1], p[2])-obj)**2)
-                            dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
-                        except (RuntimeError, ValueError): 
-                            print('oups')
-                            local_result=np.inf
-                            dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
-                        if local_result<best_result_so_far:
-                            print('new best result !!')
-                            print('a = ', p[0])
-                            print(' b = ', p[1])
-                            print('h = ', p[2] )
-                            print(' shift1 = ', shift1)
-                            print('shift2 = ', shift2)
-                            print('and the local result is..... ', local_result)
-                            print()
-                            print()
-                            best_result_so_far=local_result
-                            best_p=p
-                            best_cov=cov
-                            best_shift1=shift1
-                            best_shift2=shift2
-                self.shift1=best_shift1
-                self.shift2=best_shift2
-                self.p=best_p
-                self.a=self.p[0]
-                self.b=self.p[1]
-                self.h=self.p[2]
-                self.cov=best_cov
-                self.all_losses=dico_losses
-        else:
-            gamma_constants=False
-            if gamma_constants: 
-                self.gamma_constants=True
-                curve1 = lambda x, a, b, h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account)
-                p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(self.train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
-                self.a=p[0]
-                self.b=p[1]
-                self.h=p[2]
-                self.cov=cov
-                self.gamma_i=0.2
-                self.gamma_h=0.2
-            else : 
-                self.gamma_constants=False
-                curve2=lambda x, a, b, h, gamma_i, gamma_h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1], shift1=0, shift2= 0, taking_I_into_account=self.taking_I_into_account, gamma_i=gamma_i, gamma_h=gamma_h)
-                p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(self.train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 0.2, 0.2],  bounds=([-np.inf, -np.inf, 0, 0, 0], [np.inf,np.inf, np.inf, np.inf, np.inf]))
-                self.a=p[0]
-                self.b=p[1]
-                self.h=p[2]
-                self.gamma_i=p[3]
-                self.gamma_h=p[4]
-                self.cov=cov
+        
+        gamma_constants=False
+        if gamma_constants: 
+            self.gamma_constants=True
+            curve1 = lambda x, a, b, h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1], taking_I_into_account=self.taking_I_into_account)
+            p,cov= curve_fit(curve1,np.array([i for i in range(coef*len(self.train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
+            self.a=p[0]
+            self.b=p[1]
+            self.h=p[2]
+            self.cov=cov
+            self.gamma_i=0.2
+            self.gamma_h=0.2
+        else : 
+            self.gamma_constants=False
+            curve2=lambda x, a, b, h, gamma_i, gamma_h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1],  taking_I_into_account=self.taking_I_into_account, gamma_i=gamma_i, gamma_h=gamma_h)
+            p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(self.train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 0.2, 0.2],  bounds=([-np.inf, -np.inf, 0, 0, 0], [np.inf,np.inf, np.inf, np.inf, np.inf]))
+            self.a=p[0]
+            self.b=p[1]
+            self.h=p[2]
+            self.gamma_i=p[3]
+            self.gamma_h=p[4]
+            self.cov=cov
 
         
         self.trained= True
@@ -452,11 +387,6 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
         # hospitalized_and_n_infected=sirh_for_optim_m(None, self.a, self.b,self.h, np.concatenate((np.array(self.data[2]), mob_predicted)))
         # hospitalized=hospitalized_and_n_infected[:len(np.array(self.data[2]))+len(mob_predicted)]
         S,I,R,H=run_sirh_m([self.S[-1], self.data[1][-1],self.N-self.data[0][-1]-self.S[-1]-self.data[1][-1],  self.data[0][-1]], self.a, self.b,self.gamma_i, self.gamma_h,   self.h ,mob_predicted, 0.001)
-        if self.shifts: 
-            if self.shift1==0: 
-                self.prediction =  hospitalized[-reach:] # shifting of shift1 for the prediction
-            else : 
-                self.prediction =  hospitalized[-reach-self.shift1:-self.shift1] # shifting of shift1 for the prediction
         self.prediction=H
         prediction=self.prediction
        
