@@ -19,7 +19,6 @@ class MovingAverage(Model):
     def train(self, train_dates, data):
         self.data=data
         self.name = 'Moving Average'
-
         self.train_dates=train_dates
         self.value=np.mean(data[-7:])
         self.trained=True
