@@ -1,6 +1,7 @@
 import sys
 sys.path.append('./models/')
 from Arima import ARIMA_Model, VAR_m
+from exponential_regression import ExponentialRegression, MultiDimensionalExponentialRegression
 from SIRH  import *
 from moving_average import MovingAverage, MovingAverageMulti
 import pandas as pd
@@ -8,26 +9,17 @@ import numpy as np
 import matplotlib.pyplot as plt
 from evaluate_model import evaluate_model, evaluate_model_multi, evaluate_model_multi_RMSE, evaluate_model_RMSE
 import json
-
-df = pd.read_csv('deaths_and_infections.csv')
-
-# remove a columns from a df: 
-df.drop(columns=['Unnamed: 0'], inplace=True)
-new_deaths=np.array(df['new_deaths'])
-n_infected=np.array(df['n_infected'])
-death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
-dates_of_pandemic=np.arange(len(new_deaths))
-
-
+df=pd.read_csv('hopitalized_and_infectious.csv')
+df.drop(['Unnamed: 0'], axis=1, inplace=True)
+n_hospitalized=np.array(df['hospitalized'])
+n_infectious=np.array(df['n_infectious'])
 
 
 # importing mobility from the csv file
-df_mobility=pd.read_csv('mobility.csv')
+df_mobility=pd.read_csv('mobility_bis.csv')
 df_mobility.drop(columns=['Unnamed: 0'], inplace=True)
 mobility=np.array(df_mobility['mobility'])
 
-
-df = pd.read_csv('deaths_and_infections.csv')
 relier_les_points=[]
 for i in range(len(mobility)): 
     if i + 7 < len(mobility): 
@@ -41,11 +33,10 @@ for i in range(len(mobility)):
     else:
         relier_les_points.append(mobility[i])
 mobility_smoothed=np.array(relier_les_points)
-data3D=np.array([new_deaths, n_infected, mobility_smoothed])
+data3D=np.array([n_hospitalized, n_infectious, mobility_smoothed])
 
 
-models1D=['Arima', 'Exponential Regression', 'Moving Average', 'SIRD']
-models3D=['Moving Average multi', 'SIRD multi 1', 'SIRD multi 2', 'VAR', 'Exp. Reg. Multi']
+
 
 
 for reach in [7, 14]: 
@@ -54,12 +45,18 @@ for reach in [7, 14]:
     myexp=ExponentialRegression()
     myexpmulti=MultiDimensionalExponentialRegression()
     mymoving=MovingAverage()
-    mysird=SIRD_model_2()
-    mysird.choose_model(True, True)
-    mysirdmulti1=Multi_SIRD_model()
-    mysirdmulti1.choose_model(True, True, True)
-    mysirdmulti2=Multi_SIRD_model()
-    mysirdmulti2.choose_model(True, True, False)
+    mysirh1=SIRH_model_2()
+    mysirh1.choose_model(True, True, True)
+    mysirh2=SIRH_model_2()
+    mysirh2.choose_model(True, False, True)
+    mysirh3=SIRH_model_2()
+    mysirh3.choose_model(False, True, True)
+    mysirh4=SIRH_model_2()
+    mysirh4.choose_model(False, False, True)
+    mysirhmulti1=Multi_SIRH_model()
+    mysirhmulti1.choose_model(True, True)
+    mysirhmulti2=Multi_SIRH_model()
+    mysirhmulti2.choose_model(True, False)
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
@@ -72,21 +69,34 @@ for reach in [7, 14]:
         for index_points in indexs_points:
             ############### 1D
             try: 
-                perf_arima=evaluate_model_RMSE(model=myarima, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_arima=evaluate_model(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perf_arima = np.inf
             try: 
-                perf_exp=evaluate_model_RMSE(model=myexp, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_exp=evaluate_model(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_exp=np.inf
             try: 
-                perf_moving=evaluate_model_RMSE(model=mymoving, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
+                perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
             except: 
                 perf_moving = np.inf
             try : 
-                perf_sird=evaluate_model_RMSE(model=mysird, data=new_deaths, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except :
-                perf_sird=np.inf
+                perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh1 = np.inf
+            try :
+                perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh2 = np.inf
+            try:
+                perf_sirh3=evaluate_model(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh3 = np.inf
+            try:
+                perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh4 = np.inf
+                
             
             
             
@@ -98,14 +108,6 @@ for reach in [7, 14]:
             except : 
                 perfmovingmulti=np.inf
             try : 
-                perf_sirdmulti1=evaluate_model_multi_RMSE(model=mysirdmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except : 
-                perf_sirdmulti1 = np.inf
-            try : 
-                perf_sirdmulti2=evaluate_model_multi_RMSE(model=mysirdmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except: 
-                perf_sirdmulti2 = np.inf
-            try : 
                 perfvar=evaluate_model_multi_RMSE(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perfvar=np.inf
@@ -113,14 +115,25 @@ for reach in [7, 14]:
                 perfexpmulti=evaluate_model_multi_RMSE(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perfexpmulti = np.inf
-            
-            
-            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sird]
-            dicoresults3D[str(index_points)]=[perfmovingmulti, perf_sirdmulti1, perf_sirdmulti2, perfvar, perfexpmulti]
+            try : 
+                perf_sirhmulti1=evaluate_model_multi_RMSE(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirhmulti1 = np.inf
+            try :
+                perf_sirhmulti2=evaluate_model_multi_RMSE(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirhmulti2 = np.inf
             
 
-        with open('./results/comparing_models3D_RMSE_reach='+str(reach)+'.json', 'w') as f:
+
+            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4]
+            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
+
+            
+            
+
+        with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
-        with open('./results/comparing_models1D_RMSE_reach='+str(reach)+'.json', 'w') as f:
+        with open('./results/comparing_models1D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
                 json.dump(dicoresults1D, f)
        

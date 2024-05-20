@@ -147,10 +147,10 @@ class SIRH_model_2(Model):
         self.gamma_h_constant=gamma_h_constant
         self.reset_state=reset_state
         self.N=s_0+i_0+r_0+h_0
-    def train(self,  data):
+    def train( self, train_dates,  data):
         self.name='SIRH'
         self.data=data
-        self.train_dates=[i for i in range(len(data))]
+        self.train_dates=train_dates
         if self.gamma_i_constant and self.gamma_h_constant: 
             print('gamma_i and gamma_h constants')
             p,cov= curve_fit(sirh_for_optim_2, [i for i in range(len(data))],data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
@@ -329,14 +329,15 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
     r_0=0
     h_0=0
     dt=0.001
-    def choose_model(self, taking_I_into_account):
+    def choose_model(self, taking_I_into_account, gamma_constants):
+        self.gamma_constants=gamma_constants
         if taking_I_into_account: 
             print('Taking I into account')
         else : 
             print('Not taking I into account')
             
         self.taking_I_into_account=taking_I_into_account
-    def train(self,  data):
+    def train(train_dates, self,  data):
         self.data=data
         self.train_dates=[i for i in range(len(data[0]))]
         if self.taking_I_into_account: 
@@ -346,7 +347,7 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
             obj=np.array(data[0]/max(np.array(data[0])))
             coef=1
         
-        gamma_constants=False
+        gamma_constants=self.gamma_constants
         if gamma_constants: 
             self.gamma_constants=True
             curve1 = lambda x, a, b, h :   sirh_for_optim_normalized(x, a, b, h, self.data[2], data[0], data[1], taking_I_into_account=self.taking_I_into_account)
