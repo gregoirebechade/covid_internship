@@ -82,8 +82,9 @@ for reach in [7, 14]:
                 perf_moving = np.inf
             try : 
                 perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
+            except Exception as e:
                 perf_sirh1 = np.inf
+                raise e
             try :
                 perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
