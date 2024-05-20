@@ -55,7 +55,7 @@ def run_sir(x0, beta, gamma,d,  t, dt):
     d_final=[]
     time=np.linspace(0, t, int(t/dt) )
     for i in range(len(time)-1):
-        if abs(time[i]-int(time[i]))<dt: 
+        if (time[i]-int(time[i]))<dt: 
             s_final.append(S[i])
             i_final.append(I[i])
             r_final.append(R[i])

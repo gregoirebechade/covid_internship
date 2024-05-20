@@ -19,13 +19,15 @@ class SIRD_h(Model):
         zer=np.array([0])
         new_hospitalized=differenciate(data)
         new_data=np.concatenate((zer, new_hospitalized))
+        self.new_data=new_data
+        self.data=data
         assert len(new_data)==len(data)
         self.model.train(train_dates, new_data)
         self.trained=True
     
     def predict(self, reach, alpha): 
         prediction, intervals = self.model.predict(reach, alpha)
-        prediction_summed=np.cumsum(prediction)
+        prediction_summed=np.cumsum(prediction)+self.data[-1]
         int_0=np.cumsum(intervals[0])
         int_1=np.cumsum(intervals[1])
 
