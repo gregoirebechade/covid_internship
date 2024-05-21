@@ -43,3 +43,17 @@ def plot_predictions(models: list, data: np.array, dates_of_pandemic: np.array, 
                 else: 
                     ax.plot(np.arange(point, point+reach), pred, c=colours[i])
     ax.legend()
+
+
+
+
+def predict_model(model, data_train,y_train,  reach): 
+    prediction_reach_days_ahead=[]
+    a=np.concatenate((data_train[-1], np.array([y_train[-1]])))[1:]
+    predict=model.predict(a.reshape(1, -1))
+    prediction_reach_days_ahead.append(predict)
+    for i in range(1, reach):
+        a=np.concatenate((a[1:], predict))
+        predict=model.predict(a.reshape(1, -1))
+        prediction_reach_days_ahead.append(predict)
+    return np.array(prediction_reach_days_ahead)

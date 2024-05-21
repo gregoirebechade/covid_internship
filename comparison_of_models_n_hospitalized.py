@@ -4,6 +4,7 @@ from Arima import ARIMA_Model, VAR_m
 from exponential_regression import ExponentialRegression, MultiDimensionalExponentialRegression
 from SIRH  import *
 from LinearRegression import *
+from BayesianRegression import *
 from moving_average import MovingAverage, MovingAverageMulti
 import pandas as pd
 import numpy as np
@@ -55,6 +56,7 @@ for reach in [7, 14]:
     mysirh4=SIRH_model_2()
     mysirh4.choose_model(False, False, True)
     mylinear=LinearRegressionModel()
+    mybayes=BayesianRegressionModel()
     mysirhmulti1=Multi_SIRH_model()
     mysirhmulti1.choose_model(True, True)
     mysirhmulti2=Multi_SIRH_model()
@@ -62,6 +64,7 @@ for reach in [7, 14]:
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     mylinearmulti=MultiDimensionalLinearRegression()
+    mybayesmulti=MultiDimensionalBayesianRegression()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
     indexs_points=[[20*i] for i in range(1, 15) ]
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
@@ -85,9 +88,8 @@ for reach in [7, 14]:
                 perf_moving = np.inf
             try : 
                 perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except Exception as e:
+            except :
                 perf_sirh1 = np.inf
-                raise e
             try :
                 perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
@@ -104,6 +106,10 @@ for reach in [7, 14]:
                 perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_linear = np.inf
+            try : 
+                perf_bayes=evaluate_model(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_bayes = np.inf
 
                 
             
@@ -113,34 +119,39 @@ for reach in [7, 14]:
             ### 3D
 
             try : 
-                perfmovingmulti=evaluate_model_multi_RMSE(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perfmovingmulti=np.inf
             try : 
-                perfvar=evaluate_model_multi_RMSE(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except : 
                 perfvar=np.inf
             try : 
-                perfexpmulti=evaluate_model_multi_RMSE(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perfexpmulti=evaluate_model_multi(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
                 perfexpmulti = np.inf
             try : 
-                perf_sirhmulti1=evaluate_model_multi_RMSE(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_sirhmulti1=evaluate_model_multi(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_sirhmulti1 = np.inf
             try :
-                perf_sirhmulti2=evaluate_model_multi_RMSE(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perf_sirhmulti2=evaluate_model_multi(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_sirhmulti2 = np.inf
             try : 
-                perflinemulti=evaluate_model_multi_RMSE(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                perflinemulti=evaluate_model_multi(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perflinemulti = np.inf
+            try : 
+                perf_bayesmulti=evaluate_model_multi(model=mybayesmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_bayesmulti = np.inf
+
             
 
 
-            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear]
-            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti]
+            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
+            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti, perf_bayesmulti]
 
             
             
