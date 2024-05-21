@@ -18,7 +18,6 @@ dates_of_pandemic=np.arange(len(new_deaths))
 
 def exponential_func(x, a, b, c):
     return a*np.exp(b*(x))+c
-# IC with the formula in paper 3: 
 
 def h(theta, x_i):
     return theta[0]*np.exp(theta[1]*(x_i))+theta[2]
@@ -94,7 +93,7 @@ class ExponentialRegression(Model):
         self.data=data
         train_dates=np.array(train_dates)
         self.train_dates=train_dates
-        min=len(data)-30
+        min=len(data)-15
         max=len(data)-1
         interval=[i for i in range(min,max)]
         self.interval=interval

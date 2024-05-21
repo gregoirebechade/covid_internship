@@ -16,7 +16,7 @@ class Model:
     def predict(self, reach, alphas):
         pass # to be implemented in the child class 
 
-    def plot(self, reach, alpha, title=None): 
+    def plot(self, reach, alpha, title=None, xlabel=None, ylabel=None): 
         assert self.trained, 'The model has not been trained yet'
         prediction, intervals = self.predict(reach, alpha)
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
@@ -28,6 +28,9 @@ class Model:
         plt.axvline(len(self.data), linestyle='--')
         plt.xlim(0,len(self.data)+reach)
         plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+
         plt.show()
 
 
@@ -47,7 +50,7 @@ class Multi_Dimensional_Model:
     def predict(self, reach, alphas):
         pass # to be implemented in the child class 
 
-    def plot(self, reach, alpha, title=None): 
+    def plot(self, reach, alpha, title=None, xlabel=None, ylabel=None): 
         assert self.trained, 'The model has not been trained yet'
         prediction, intervals = self.predict(reach, alpha)
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
@@ -59,4 +62,7 @@ class Multi_Dimensional_Model:
         plt.axvline(len(self.data[0]), linestyle='--')
         plt.xlim(0,len(self.data[0])+reach)
         plt.title(title)
+        plt.xlabel(xlabel)
+        plt.ylabel(ylabel)
+        
         plt.show()
