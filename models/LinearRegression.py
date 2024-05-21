@@ -1,5 +1,5 @@
 import numpy as np 
-from Model import Model
+from Model import Model, Multi_Dimensional_Model
 from sklearn.linear_model import LinearRegression
 import scipy.stats
 
@@ -70,4 +70,13 @@ class LinearRegressionModel(Model):
 
 
         
-           
+class MultiDimensionalLinearRegression(Multi_Dimensional_Model): 
+
+    def train(self, dates_of_pandemic_train, datatrain): 
+        self.model=LinearRegressionModel()
+        self.model.train(dates_of_pandemic_train, datatrain[0])
+        self.trained=True
+        self.data=datatrain
+    def predict(self, reach, alpha): 
+        prediction, intervals=self.model.predict(reach, alpha)
+        return prediction, intervals

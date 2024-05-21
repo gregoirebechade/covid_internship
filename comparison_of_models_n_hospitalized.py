@@ -3,6 +3,7 @@ sys.path.append('./models/')
 from Arima import ARIMA_Model, VAR_m
 from exponential_regression import ExponentialRegression, MultiDimensionalExponentialRegression
 from SIRH  import *
+from LinearRegression import *
 from moving_average import MovingAverage, MovingAverageMulti
 import pandas as pd
 import numpy as np
@@ -53,14 +54,16 @@ for reach in [7, 14]:
     mysirh3.choose_model(False, True, True)
     mysirh4=SIRH_model_2()
     mysirh4.choose_model(False, False, True)
+    mylinear=LinearRegressionModel()
     mysirhmulti1=Multi_SIRH_model()
     mysirhmulti1.choose_model(True, True)
     mysirhmulti2=Multi_SIRH_model()
     mysirhmulti2.choose_model(True, False)
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
+    mylinearmulti=MultiDimensionalLinearRegression()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[25], [50], [75], [100], [125], [150], [175], [200], [250], [275]]
+    indexs_points=[[20*i] for i in range(1, 15) ]
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
     dicoresults1D=dict()
     dicoresults3D=dict()
@@ -97,6 +100,11 @@ for reach in [7, 14]:
                 perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_sirh4 = np.inf
+            try : 
+                perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_linear = np.inf
+
                 
             
             
@@ -124,11 +132,15 @@ for reach in [7, 14]:
                 perf_sirhmulti2=evaluate_model_multi_RMSE(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_sirhmulti2 = np.inf
+            try : 
+                perflinemulti=evaluate_model_multi_RMSE(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perflinemulti = np.inf
             
 
 
-            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4]
-            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
+            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear]
+            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti]
 
             
             
