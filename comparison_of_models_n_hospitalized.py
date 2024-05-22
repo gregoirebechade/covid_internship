@@ -104,12 +104,14 @@ for reach in [7, 14]:
                 perf_sirh4 = np.inf
             try : 
                 perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
+            except Exception as e :
                 perf_linear = np.inf
+                raise e 
             try : 
                 perf_bayes=evaluate_model(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
+            except Exception as e :
                 perf_bayes = np.inf
+                raise e
 
                 
             
@@ -140,12 +142,14 @@ for reach in [7, 14]:
                 perf_sirhmulti2 = np.inf
             try : 
                 perflinemulti=evaluate_model_multi(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
+            except Exception as e:
                 perflinemulti = np.inf
+                raise e
             try : 
                 perf_bayesmulti=evaluate_model_multi(model=mybayesmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
+            except Exception as e:
                 perf_bayesmulti = np.inf
+                raise e 
 
             
 
