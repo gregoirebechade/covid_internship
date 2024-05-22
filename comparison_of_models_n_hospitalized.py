@@ -173,10 +173,12 @@ for reach in [7, 14]:
             
 
 
-            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
-            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti, perf_bayesmulti]
+            # dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
+            # dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti, perf_bayesmulti]
 
-            
+            dicoresults1D[str(index_points)]=[ perf_linear, perf_bayes]
+            dicoresults3D[str(index_points)]=[perflinemulti, perf_bayesmulti]
+
             
 
         with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
