@@ -91,41 +91,41 @@ for reach in [7, 14]:
             
 
 
-            try: 
-                perf_arima=evaluate_model(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except: 
-                perf_arima = np.inf
-                print('an error occured on arima')
-            try: 
-                perf_exp=evaluate_model(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_exp=np.inf
-                print('an error occured on exp')
-            try: 
-                perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
-            except: 
-                perf_moving = np.inf
-                print('an error occured on moving')
-            try : 
-                perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except :
-                perf_sirh1 = np.inf
-                print('an error occured on sirh1')
-            try :
-                perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_sirh2 = np.inf
-                print('an error occured on sirh2')
-            try:
-                perf_sirh3=evaluate_model(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_sirh3 = np.inf
-                print('an error occured on sirh3')
-            try:
-                perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_sirh4 = np.inf
-                print('an error occured on sirh4')
+            # try: 
+            #     perf_arima=evaluate_model(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except: 
+            #     perf_arima = np.inf
+            #     print('an error occured on arima')
+            # try: 
+            #     perf_exp=evaluate_model(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_exp=np.inf
+            #     print('an error occured on exp')
+            # try: 
+            #     perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
+            # except: 
+            #     perf_moving = np.inf
+            #     print('an error occured on moving')
+            # try : 
+            #     perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except :
+            #     perf_sirh1 = np.inf
+            #     print('an error occured on sirh1')
+            # try :
+            #     perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_sirh2 = np.inf
+            #     print('an error occured on sirh2')
+            # try:
+            #     perf_sirh3=evaluate_model(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_sirh3 = np.inf
+            #     print('an error occured on sirh3')
+            # try:
+            #     perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_sirh4 = np.inf
+            #     print('an error occured on sirh4')
             
 
                 
@@ -133,33 +133,33 @@ for reach in [7, 14]:
             
             
 
-            ### 3D
+            # ### 3D
 
-            try : 
-                perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except : 
-                perfmovingmulti=np.inf
-                print('an error occured on movingmulti')
-            try : 
-                perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except : 
-                perfvar=np.inf
-                print('an error occured on var')
-            try : 
-                perfexpmulti=evaluate_model_multi(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except: 
-                perfexpmulti = np.inf
-                print('an error occured on exp multi')
-            try : 
-                perf_sirhmulti1=evaluate_model_multi(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_sirhmulti1 = np.inf
-                print('an error occured on sirhmulti1')
-            try :
-                perf_sirhmulti2=evaluate_model_multi(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except:
-                perf_sirhmulti2 = np.inf
-                print('an error occured on sirhmulti2')
+            # try : 
+            #     perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except : 
+            #     perfmovingmulti=np.inf
+            #     print('an error occured on movingmulti')
+            # try : 
+            #     perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except : 
+            #     perfvar=np.inf
+            #     print('an error occured on var')
+            # try : 
+            #     perfexpmulti=evaluate_model_multi(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except: 
+            #     perfexpmulti = np.inf
+            #     print('an error occured on exp multi')
+            # try : 
+            #     perf_sirhmulti1=evaluate_model_multi(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_sirhmulti1 = np.inf
+            #     print('an error occured on sirhmulti1')
+            # try :
+            #     perf_sirhmulti2=evaluate_model_multi(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except:
+            #     perf_sirhmulti2 = np.inf
+            #     print('an error occured on sirhmulti2')
             try : 
                 perflinemulti=evaluate_model_multi(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except Exception as e:
@@ -182,5 +182,5 @@ for reach in [7, 14]:
         with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
         with open('./results/comparing_models1D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
-                json.dump(dicoresults1D, f)
+            json.dump(dicoresults1D, f)
        
