@@ -135,11 +135,11 @@ for reach in [7, 14]:
 
             # ### 3D
 
-            # try : 
-            #     perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            # except : 
-            #     perfmovingmulti=np.inf
-            #     print('an error occured on movingmulti')
+            try : 
+                perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except : 
+                perfmovingmulti=np.inf
+                print('an error occured on movingmulti')
             # try : 
             #     perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             # except : 
@@ -170,10 +170,13 @@ for reach in [7, 14]:
             except Exception as e:
                 perf_bayesmulti = np.inf
                 print('an error occured on bayesmulti')
+
+
             print('perf_linear', perf_linear)
             print('perf_bayes', perf_bayes)
             print('perflinemulti', perflinemulti)
             print('perf_bayesmulti', perf_bayesmulti)
+            print('perfmovingmulti', perfmovingmulti)
             
 
 
