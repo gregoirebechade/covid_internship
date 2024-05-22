@@ -174,7 +174,7 @@ class SIRD_model_2(Model):
         self.train_dates=train_dates
         gamma_constant=self.gamma_constant
         if gamma_constant: 
-            print('gamma constant')
+            # print('gamma constant')
             p,cov= curve_fit(sir_for_optim_2, self.train_dates,data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
             self.beta=p[0]
             self.d=p[1]
@@ -182,7 +182,7 @@ class SIRD_model_2(Model):
             self.cov=cov
             self.trained= True
         else : 
-            print('gamma not constant ')
+            # print('gamma not constant ')
             p,cov= curve_fit(sir_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 , 5.523e-04],  bounds=([0,0,0], [10,5,5]))
             self.beta=p[0]
             self.gamma=p[1]
@@ -205,7 +205,7 @@ class SIRD_model_2(Model):
         self.perr=perr
         delta_method=self.delta_method
         if delta_method: 
-            print('delta-method')
+            # print('delta-method')
             ci_low=[]
             ci_high=[]
             if self.gamma_constant: 
@@ -214,7 +214,7 @@ class SIRD_model_2(Model):
                 grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.D[-1]], [self.beta,self.gamma,  self.d], reach) # size 3 x reach
             cov=self.cov
             vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
-            print(vars)
+            # print(vars)
             assert(len(vars)==reach, str(len(vars)) + 'different from ' + str(reach))
             for i in range(len(vars)): 
                 down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))
@@ -224,7 +224,7 @@ class SIRD_model_2(Model):
             self.ci_low=ci_low
             self.ci_high=ci_high
         else: 
-            print('sampling parameters')
+            # print('sampling parameters')
             intervals=[np.array(prediction)]
             beta_sampled=[]
             gamma_sampled=[]
@@ -345,21 +345,21 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
     d_0=0
     dt=0.001
     def choose_model(self, taking_I_into_account, shifts, variation_of_shift1):
-        if taking_I_into_account: 
-            print('Taking I into account')
-        else : 
-            print('Not taking I into account')
-        if shifts: 
-            print('shifting')
-        else: 
-            print('not shifting')
+        # if taking_I_into_account: 
+        #     # print('Taking I into account')
+        # else : 
+        #     # print('Not taking I into account')
+        # if shifts: 
+        #     print('shifting')
+        # else: 
+        #     print('not shifting')
         if variation_of_shift1: 
-            print('variation of shift1')
+            # print('variation of shift1')
             self.name='SIRD multi 1'
             self.range1=range(15)
             self.range2=range(1)
         else:
-            print('variation of shift2')
+            # print('variation of shift2')
             self.name='SIRD multi 2'
             self.range1=range(1)
             self.range2=range(-15, 0)
@@ -380,12 +380,12 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
             obj=np.array(data[0]/max(np.array(data[0])))
             coef=1
         if self.shifts: 
-            if not self.taking_I_into_account:
-                print("It doesn't make sense to take the shifts into account if we do not take I into account")
+            # if not self.taking_I_into_account:
+                # print("It doesn't make sense to take the shifts into account if we do not take I into account")
             # p,cov= curve_fit(curve2,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04, 5, 10],  bounds=([-np.inf, -np.inf, 0, -np.inf, -np.inf], [np.inf,np.inf, np.inf, np.inf, np.inf]))
             method1=False
             if method1: 
-                print('direct optimization')
+                # print('direct optimization')
                 x=np.array([i for i in range(coef*len(train_dates))])
                 curve2 = lambda params :     ((1- (params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3]), shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
                                             + ((params[3] - int(params[3]))) *np.sum(( sir_for_optim_normalized(x, params[0], params[1], params[2], self.data[1], self.data[0], self.data[1], shift1=int(params[3])+1, shift2= int(params[4]), taking_I_into_account=self.taking_I_into_account) - obj )**2)
@@ -400,7 +400,7 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 self.shift2=p[4]
                 self.cov=res.hess_inv            
             else: 
-                print(' grid search on the shifts')
+                # print(' grid search on the shifts')
                 dico_losses=dict()
                 best_result_so_far=np.inf
                 best_p=None
@@ -409,26 +409,26 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 best_shift2=None
                 for shift1 in self.range1: 
                     for shift2 in self.range2:
-                        print(shift1, shift2)
+                        # print(shift1, shift2)
                         curve1 = lambda x, a, b, d :   sir_for_optim_normalized(x, a, b, d, self.data[2], data[0], data[1], shift1=shift1, shift2= shift2, taking_I_into_account=self.taking_I_into_account)
                         try: 
                             p, cov= curve_fit(curve1,np.array([i for i in range(coef*len(train_dates))]),obj, p0=[ 1, 1 , 5.523e-04],  bounds=([-np.inf, -np.inf, 0], [np.inf,np.inf, np.inf]))
                             local_result=np.sum((curve1(np.array([i for i in range(coef*len(train_dates))]), p[0], p[1], p[2])-obj)**2)
                             dico_losses[str(shift1) + ' ' + str(shift2)]=local_result
                         except (RuntimeError, ValueError): 
-                            print('oups')
+                            # print('oups')
                             local_result=np.inf
                             dico_losses[str(shift1) + ' ' + str(shift2)]=np.inf
                         if local_result<best_result_so_far:
-                            print('new best result !!')
-                            print('a = ', p[0])
-                            print(' b = ', p[1])
-                            print('d = ', p[2] )
-                            print(' shift1 = ', shift1)
-                            print('shift2 = ', shift2)
-                            print('and the local result is..... ', local_result)
-                            print()
-                            print()
+                            # print('new best result !!')
+                            # print('a = ', p[0])
+                            # print(' b = ', p[1])
+                            # print('d = ', p[2] )
+                            # print(' shift1 = ', shift1)
+                            # print('shift2 = ', shift2)
+                            # print('and the local result is..... ', local_result)
+                            # print()
+                            # print()
                             best_result_so_far=local_result
                             best_p=p
                             best_cov=cov
@@ -492,8 +492,8 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
                 ci_high.append(up)
             self.ci_low=ci_low
             self.ci_high=ci_high
-        else: 
-            print('sampling parameters')
+        # else: 
+            # print('sampling parameters')
         return prediction, [ci_low, ci_high]
 
 

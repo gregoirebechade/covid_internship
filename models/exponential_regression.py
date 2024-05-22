@@ -113,12 +113,12 @@ class ExponentialRegression(Model):
         self.prediction=prediction
 
         if method == 'covariance': # we implemented four methods to compute the confidence intervals
-            print('covariance method')
+            # print('covariance method')
             perr = np.sqrt(np.diag(self.cov))
             self.perr=perr
             
         elif method == 'estimate_sigma': 
-            print('estimate sigma')
+            # print('estimate sigma')
             sigma2=estimate_sigma2(self.data[self.interval], exponential_func(self.train_dates[self.interval], *self.p), 4)
             A=compute_A(self.p, self.train_dates[self.interval])
             try : 
@@ -130,7 +130,7 @@ class ExponentialRegression(Model):
             self.cov=cov
             self.perr=perr
         elif method == 'hessian':
-            print('hessian')
+            # print('hessian')
             hessian=hessian_obj_function(self.data[self.interval], self.p, self.train_dates[self.interval])
             self.hess=hessian
             try: 
@@ -142,7 +142,7 @@ class ExponentialRegression(Model):
             self.cov=cov
             self.perr=perr
         elif method == 'delta': 
-            print('delta')
+            # print('delta')
             sigma2=estimate_sigma2(self.data[self.interval], exponential_func(self.train_dates[self.interval], *self.p), 3) * np.identity(len(self.data))
             grad=grad_f_for_delta_method(self.train_dates, self.data, self.interval)
             perr = np.sqrt(np.diag(np.matmul(np.matmul(grad.transpose(), sigma2) , grad)))
@@ -222,8 +222,8 @@ def shift(x: np.array, n:float):
     return np.concatenate((np.array([ x[0] for i in range(int(n))]), x))[:len(x)] # we assume that the n first values are the same as the first value of the array
 
 def intermediate(x: np.array, a, b, c, d, e, shift1, shift2, n_infected_normalized, mobility): 
-    print('shift1', shift1)
-    print('shift2', shift2)
+    # print('shift1', shift1)
+    # print('shift2', shift2)
     res=[]
     for elt in x: 
         uno=((shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e) + (1-(shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)+1], mobility[int(elt-shift2)]], a, b, c, d, e)
@@ -262,21 +262,21 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
             shift2min = None
             for shift1 in range( 15): 
                 for shift2 in range(15): 
-                    print(shift1, shift2)
+                    # print(shift1, shift2)
                     interval1=[i - shift1 for i in interval]
                     interval2= [ i-shift2 for i in interval]
                     try : 
                         p, cov =curve_fit(exponential_function_m, (train_dates[interval], n_infected_normalized[interval1], data[2][interval2]),data[0][interval],  p0=[ 1,1, 1, 1,1], maxfev = 10000)
                         loss=np.sum((np.array([exponential_function_m([train_dates[interval][i],n_infected_normalized[interval1][i],data[2][interval2][i] ], p[0], p[1], p[2], p[3], p[4])  for i in range(len(interval))]) - np.array(data[0][interval]))**2)
                         if loss < lossmin: 
-                            print('new min found !!')
-                            print('the loss is : ', loss)
+                            # print('new min found !!')
+                            # print('the loss is : ', loss)
                             lossmin = loss
                             pmin = p
                             covmin = cov
                             shift1min = shift1
                             shift2min = shift2
-                            print()
+                            # print()
                     except RuntimeError: 
                         print('oups')
             self.p = pmin

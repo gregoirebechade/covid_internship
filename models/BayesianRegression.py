@@ -40,8 +40,8 @@ class BayesianRegressionModel(Model):
             y.append(data[i])
         data_ml=np.array(data_ml)
         self.mydata=data_ml
-        print('data_ml', data_ml)
-        print('y', y)
+        # print('data_ml', data_ml)
+        # print('y', y)
         self.results=br.fit(data_ml, y)
         self.model=br
         self.data=data

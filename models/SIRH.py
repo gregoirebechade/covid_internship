@@ -152,7 +152,7 @@ class SIRH_model_2(Model):
         self.data=data
         self.train_dates=train_dates
         if self.gamma_i_constant and self.gamma_h_constant: 
-            print('gamma_i and gamma_h constants')
+            # print('gamma_i and gamma_h constants')
             p,cov= curve_fit(sirh_for_optim_2, [i for i in range(len(data))],data, p0=[ 5.477e-01  , 5.523e-04],  bounds=([0,0], [np.inf,np.inf]))
             self.beta=p[0]
             self.h=p[1]
@@ -161,7 +161,7 @@ class SIRH_model_2(Model):
             self.cov=cov
             self.trained= True
         elif not self.gamma_i_constant and not self.gamma_h_constant: 
-            print('gamma_i not constant and gamma_h not constant ')
+            # print('gamma_i not constant and gamma_h not constant ')
             p,cov= curve_fit(sirh_for_optim, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 ,2.555e-02,  5.523e-04],  bounds=([0,0,0, 0], [10,10, 10, 10]))
             self.beta=p[0]
             self.gamma_i=p[1]
@@ -170,7 +170,7 @@ class SIRH_model_2(Model):
             self.cov=cov
             self.trained= True
         elif self.gamma_i_constant and not self.gamma_h_constant: 
-            print('on fixe gamma_i mais pas gamma_h')
+            # print('on fixe gamma_i mais pas gamma_h')
             p,cov= curve_fit(sirh_for_optim_3, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 ,  5.523e-04],  bounds=([0,0, 0], [10,10, 10]))
             self.beta=p[0]
             self.gamma_i=0.2
@@ -179,7 +179,7 @@ class SIRH_model_2(Model):
             self.cov=cov
             self.trained= True
         else: 
-            print('on fixe gamma_h mais pas gamma_i')
+            # print('on fixe gamma_h mais pas gamma_i')
             p,cov= curve_fit(sirh_for_optim_4, self.train_dates,data, p0=[ 5.477e-01 , 2.555e-02 ,  5.523e-04],  bounds=([0,0, 0], [10,10, 10]))
             self.beta=p[0]
             self.gamma_i=p[1]
@@ -206,7 +206,7 @@ class SIRH_model_2(Model):
         self.prediction =  hospitalized
         prediction=self.prediction
         if True: 
-            print('delta-method')
+            # print('delta-method')
             ci_low=[]
             ci_high=[]
             if self.gamma_i_constant and self.gamma_h_constant: 
@@ -331,10 +331,10 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
     dt=0.001
     def choose_model(self, taking_I_into_account, gamma_constants):
         self.gamma_constants=gamma_constants
-        if taking_I_into_account: 
-            print('Taking I into account')
-        else : 
-            print('Not taking I into account')
+        # if taking_I_into_account: 
+        #     print('Taking I into account')
+        # else : 
+        #     print('Not taking I into account')
             
         self.taking_I_into_account=taking_I_into_account
     def train(train_dates, self,  data):
@@ -411,8 +411,8 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
                 ci_high.append(up)
             self.ci_low=ci_low
             self.ci_high=ci_high
-        else: 
-            print('sampling parameters')
+        # else: 
+        #     print('sampling parameters')
         return prediction, [ci_low, ci_high]
 
 

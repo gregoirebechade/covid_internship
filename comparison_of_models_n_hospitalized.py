@@ -42,6 +42,7 @@ data3D=np.array([n_hospitalized, n_infectious, mobility_smoothed])
 
 
 for reach in [7, 14]: 
+    print('reach', reach)
 
     myarima=ARIMA_Model()
     myexp=ExponentialRegression()
@@ -74,6 +75,7 @@ for reach in [7, 14]:
     if True: 
         for index_points in indexs_points:
             ############### 1D
+            print('index points', index_points)
 
 
             try : 

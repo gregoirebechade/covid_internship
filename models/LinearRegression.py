@@ -25,7 +25,7 @@ class LinearRegressionModel(Model):
     def train(self, train_dates, data): 
         n_days=30
         if n_days > len(train_dates)/2: 
-            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative sigma2
+            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative
         
         lr=LinearRegression()
         data_for_ml=[]
