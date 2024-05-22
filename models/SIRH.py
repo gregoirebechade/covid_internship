@@ -337,7 +337,7 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
         #     print('Not taking I into account')
             
         self.taking_I_into_account=taking_I_into_account
-    def train(train_dates, self,  data):
+    def train( self,train_dates,   data):
         self.data=data
         self.train_dates=[i for i in range(len(data[0]))]
         if self.taking_I_into_account: 
