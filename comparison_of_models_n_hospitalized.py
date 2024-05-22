@@ -101,11 +101,11 @@ for reach in [7, 14]:
             # except:
             #     perf_exp=np.inf
             #     print('an error occured on exp')
-            # try: 
-            #     perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
-            # except: 
-            #     perf_moving = np.inf
-            #     print('an error occured on moving')
+            try: 
+                perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
+            except: 
+                perf_moving = np.inf
+                print('an error occured on moving')
             # try : 
             #     perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             # except :
@@ -133,13 +133,13 @@ for reach in [7, 14]:
             
             
 
-            # ### 3D
+            # # ### 3D
 
-            try : 
-                perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except : 
-                perfmovingmulti=np.inf
-                print('an error occured on movingmulti')
+            # try : 
+            #     perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            # except : 
+            #     perfmovingmulti=np.inf
+            #     print('an error occured on movingmulti')
             # try : 
             #     perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             # except : 
@@ -172,21 +172,20 @@ for reach in [7, 14]:
                 print('an error occured on bayesmulti')
 
 
+            
             print('perf_linear', perf_linear)
             print('perf_bayes', perf_bayes)
+            print('perf_moving', perf_moving)
             print('perflinemulti', perflinemulti)
             print('perf_bayesmulti', perf_bayesmulti)
-            print('perfmovingmulti', perfmovingmulti)
-            
 
 
             # dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
             # dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti, perf_bayesmulti]
-
-            dicoresults1D[str(index_points)]=[ perf_linear, perf_bayes]
+            dicoresults1D[str(index_points)]=[perf_moving, perf_linear, perf_bayes]
             dicoresults3D[str(index_points)]=[perflinemulti, perf_bayesmulti]
+                          
 
-            
 
         with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)

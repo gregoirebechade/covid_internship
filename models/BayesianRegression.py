@@ -70,7 +70,7 @@ class BayesianRegressionModel(Model):
             self.varps.append(varp)
             x=np.concatenate((x[1:], prediction[i].reshape(1, 1)))
         self.grads=np.array(self.grads)
-        return prediction, np.array([ci_inf, ci_up]).reshape(2, reach)
+        return prediction.reshape(7,), list(np.array([ci_inf, ci_up]).reshape(2, reach))
 
 
 
