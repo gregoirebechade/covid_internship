@@ -67,7 +67,7 @@ for reach in [7, 14]:
     mylinearmulti=MultiDimensionalLinearRegression()
     mybayesmulti=MultiDimensionalBayesianRegression()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[20*i] for i in range(1, 15) ]
+    indexs_points=[[20*i] for i in range(1, 5) ]
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
     dicoresults1D=dict()
     dicoresults3D=dict()
@@ -170,6 +170,10 @@ for reach in [7, 14]:
             except Exception as e:
                 perf_bayesmulti = np.inf
                 print('an error occured on bayesmulti')
+            print('perf_linear', perf_linear)
+            print('perf_bayes', perf_bayes)
+            print('perflinemulti', perflinemulti)
+            print('perf_bayesmulti', perf_bayesmulti)
             
 
 
