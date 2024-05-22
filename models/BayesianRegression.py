@@ -27,19 +27,24 @@ def prediction_br_model(theta, x ):
 class BayesianRegressionModel(Model):
     
 
-    def train(self, dates_of_pandemic_train, datatrain): 
-        n_days=min(len(dates_of_pandemic_train), 30)
+    def train(self, train_dates, data): 
+        n_days=30
+        if n_days > len(train_dates)/2: 
+            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative sigma2
+        
         br=BayesianRidge()
-        data=[]
+        data_ml=[]
         y=[]
-        for i in range(n_days, len(datatrain)): 
-            data.append(datatrain[i-n_days:i])
-            y.append(datatrain[i])
-        data=np.array(data)
-        self.mydata=data
-        self.results=br.fit(data, y)
+        for i in range(n_days, len(data)): 
+            data_ml.append(data[i-n_days:i])
+            y.append(data[i])
+        data_ml=np.array(data_ml)
+        self.mydata=data_ml
+        print('data_ml', data_ml)
+        print('y', y)
+        self.results=br.fit(data_ml, y)
         self.model=br
-        self.data=datatrain
+        self.data=data
         self.trained=True
         self.y=y
     
@@ -72,11 +77,11 @@ class BayesianRegressionModel(Model):
         
 class MultiDimensionalBayesianRegression(Multi_Dimensional_Model): 
 
-    def train(self, dates_of_pandemic_train, datatrain): 
+    def train(self, train_dates, data): 
         self.model=BayesianRegressionModel()
-        self.model.train(dates_of_pandemic_train, datatrain[0])
+        self.model.train(train_dates, data[0])
         self.trained=True
-        self.data=datatrain
+        self.data=data
     def predict(self, reach, alpha): 
         prediction, intervals=self.model.predict(reach, alpha)
         return prediction, intervals

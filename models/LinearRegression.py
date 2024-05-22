@@ -22,22 +22,26 @@ def compute_covariance_matrix(linear_regression, data, y):
 class LinearRegressionModel(Model):
     
 
-    def train(self, dates_of_pandemic_train, datatrain): 
-        n_days=min(len(dates_of_pandemic_train), 30)
+    def train(self, train_dates, data): 
+        n_days=30
+        if n_days > len(train_dates)/2: 
+            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative sigma2
+        
         lr=LinearRegression()
-        data=[]
+        data_for_ml=[]
         y=[]
-        for i in range(n_days, len(datatrain)): 
-            data.append(datatrain[i-n_days:i])
-            y.append(datatrain[i])
-        data=np.array(data)
-        self.mydata=data
-        self.results=lr.fit(data, y)
+        for i in range(n_days, len(data)): 
+            data_for_ml.append(data[i-n_days:i])
+            y.append(data[i])
+        data_for_ml=np.array(data_for_ml)
+        self.mydata=data_for_ml
+        self.results=lr.fit(data_for_ml, y)
         self.model=lr
-        self.data=datatrain
+        self.data=data
         self.trained=True
         self.y=y
-    
+
+
 
     def predict(self, reach, alpha): 
         prediction = predict_model(self.model, self.mydata, self.y, reach)
@@ -61,11 +65,11 @@ class LinearRegressionModel(Model):
         
 class MultiDimensionalLinearRegression(Multi_Dimensional_Model): 
 
-    def train(self, dates_of_pandemic_train, datatrain): 
+    def train(self, train_dates, data): 
         self.model=LinearRegressionModel()
-        self.model.train(dates_of_pandemic_train, datatrain[0])
+        self.model.train(train_dates, data[0])
         self.trained=True
-        self.data=datatrain
+        self.data=data
     def predict(self, reach, alpha): 
         prediction, intervals=self.model.predict(reach, alpha)
         return prediction, intervals

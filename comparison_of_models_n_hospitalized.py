@@ -74,6 +74,21 @@ for reach in [7, 14]:
     if True: 
         for index_points in indexs_points:
             ############### 1D
+
+
+            try : 
+                perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except Exception as e :
+                perf_linear = np.inf
+                raise e 
+            try : 
+                perf_bayes=evaluate_model(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except Exception as e :
+                perf_bayes = np.inf
+                raise e
+            
+
+
             try: 
                 perf_arima=evaluate_model(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except: 
@@ -102,16 +117,7 @@ for reach in [7, 14]:
                 perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
             except:
                 perf_sirh4 = np.inf
-            try : 
-                perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except Exception as e :
-                perf_linear = np.inf
-                raise e 
-            try : 
-                perf_bayes=evaluate_model(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except Exception as e :
-                perf_bayes = np.inf
-                raise e
+            
 
                 
             
