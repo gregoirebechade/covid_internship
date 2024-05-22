@@ -58,7 +58,7 @@ class LinearRegressionModel(Model):
             ci_inf.append(scipy.stats.norm.ppf(alpha/2, loc=prediction[i], scale=np.sqrt(varp))[0])
             ci_up.append(scipy.stats.norm.ppf(1-alpha/2, loc=prediction[i], scale=np.sqrt(varp))[0])
             x=np.concatenate((x[1:], prediction[i].reshape(1, 1)))
-        return prediction.reshape(7, ), list(np.array([ci_inf, ci_up]).reshape(2, reach))
+        return prediction.reshape(reach, ), list(np.array([ci_inf, ci_up]).reshape(2, reach))
 
 
 
@@ -72,4 +72,4 @@ class MultiDimensionalLinearRegression(Multi_Dimensional_Model):
         self.data=data
     def predict(self, reach, alpha): 
         prediction, intervals=self.model.predict(reach, alpha)
-        return prediction.reshape(7,), intervals
+        return prediction.reshape(reach,), intervals
