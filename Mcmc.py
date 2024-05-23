@@ -115,7 +115,7 @@ params_init=[0, 5, 6, 10]
 params=params_init
 loss_init=loss(params_init) 
 dicocount=dict()
-dicocount[str(params_init)]=1
+dicocount[str(params_init)]=0
 dicoloss=dict()
 dicoloss[str(params_init)]=loss_init
 
@@ -123,7 +123,7 @@ with open('./results/suivi.txt', 'a') as f :
     f.write('Initial parameters : '+str(params_init)+'\n')
     f.write('Initial loss : '+str(loss_init)+'\n')
     f.write('   \n')
-for n in range(10): 
+for n in range(1000): 
     dicocount[str(params)]+=1
     
     index=np.random.randint( 4)
