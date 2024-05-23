@@ -4,8 +4,9 @@ sys.path.append('./models/')
 from useful_functions import differenciate
 import covasim as cv
 import json
+import time 
 
-
+t0=time.time()
 
 def diff_between_2_arrays(array1, array2): 
     derive1=np.array(differenciate(array1))
@@ -144,7 +145,7 @@ if True :
         f.write('Initial parameters : '+str(params_init)+'\n')
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
-    for n in range(3): 
+    for n in range(200): 
         dicocount[str(params)]+=1
         
         index=np.random.randint( 4)
@@ -209,4 +210,3 @@ if True :
         json.dump(dicoloss, f)
     with open('./results/dicocount_mcmc.json', 'w') as f :
         json.dump(dicocount, f)
-
