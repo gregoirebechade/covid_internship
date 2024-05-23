@@ -141,7 +141,7 @@ if True :
     dicoloss=dict()
     dicoloss[str(params_init)]=loss_init
 
-    with open('./results/suivi.txt', 'a') as f : 
+    with open('./results/suivi_2.txt', 'a') as f : 
         f.write('Initial parameters : '+str(params_init)+'\n')
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
@@ -153,7 +153,7 @@ if True :
         new_params=params.copy()
         new_params[index]=new_param
         new_params.sort() # important to avoid counting the same set in different keys
-        with open('./results/suivi.txt', 'a') as f : 
+        with open('./results/suivi_2.txt', 'a') as f : 
             f.write('Step number : '+str(n)+'\n')
             f.write(' new param selected : '+str(new_param)+'\n')
             f.write('It will replace ' + str(params[index]) + '\n')
@@ -169,7 +169,7 @@ if True :
             loss_new=loss(new_params)
             dicoloss[str(new_params)]=loss_new
             dicocount[str(new_params)]=0
-        with open('./results/suivi.txt', 'a') as f :
+        with open('./results/suivi_2.txt', 'a') as f :
             f.write('Previous loss : '+str(loss_previous)+'\n')
             f.write('New loss : '+str(loss_new)+'\n')
             f.write('   \n')
@@ -177,19 +177,19 @@ if True :
         if loss_new > loss_previous: # attention, we want to increase dissemblance !!
             params=new_params
             changed=True
-            with open('./results/suivi.txt', 'a') as f :
+            with open('./results/suivi_2.txt', 'a') as f :
                 f.write('The new loss is bigger \n')
 
         else : 
             p=np.random.rand()
-            with open('./results/suivi.txt', 'a') as f :
+            with open('./results/suivi_2.txt', 'a') as f :
                 f.write( 'the ratio is ' + str(loss_new/loss_previous)+'\n' )
                 f.write('p is : '+str(p)+'\n')
             if p<loss_new/loss_previous: 
                 params=new_params
                 changed=True
             else : 
-                with open('./results/suivi.txt', 'a') as f :
+                with open('./results/suivi_2.txt', 'a') as f :
                     f.write('The new set is rejected  \n')
                     f.write('\n')
                     f.write('\n')
@@ -197,7 +197,7 @@ if True :
         
 
         if changed:
-            with open('./results/suivi.txt', 'a') as f :
+            with open('./results/suivi_2.txt', 'a') as f :
                 f.write('The new set is accepted \n')
                 f.write('The new set is : '+str(params)+'\n')
                 f.write('   \n')
@@ -206,7 +206,7 @@ if True :
                 f.write('\n')
         
     # save dicos : 
-    with open('./results/dicoloss_mcmc.json', 'w') as f : 
+    with open('./results/dicoloss_mcmc_2.json', 'w') as f : 
         json.dump(dicoloss, f)
-    with open('./results/dicocount_mcmc.json', 'w') as f :
+    with open('./results/dicocount_mcmc_2.json', 'w') as f :
         json.dump(dicocount, f)
