@@ -145,7 +145,7 @@ if True :
         f.write('Initial parameters : '+str(params_init)+'\n')
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
-    for n in range(200): 
+    for n in range(2000): 
         dicocount[str(params)]+=1
         
         index=np.random.randint( 4)
