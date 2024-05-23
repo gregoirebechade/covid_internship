@@ -72,7 +72,9 @@ for reach in [7, 14]:
     dicoresults1D=dict()
     dicoresults3D=dict()
 
-    if True: 
+
+    WIS = False
+    if WIS: 
         for index_points in indexs_points:
             ############### 1D
             print('index points', index_points)
@@ -160,16 +162,123 @@ for reach in [7, 14]:
             except:
                 perf_sirhmulti2 = np.inf
                 print('an error occured on sirhmulti2')
+            
+            print('perf_linear', perf_linear)
+            print('perf_bayes', perf_bayes)
+            print('perf_moving', perf_moving)
+            print('perf_sirh1', perf_sirh1)
+            print('perf_sirh2', perf_sirh2)
+            print('perf_sirh3', perf_sirh3)
+            print('perf_sirh4', perf_sirh4)
+            print('perf_arima', perf_arima)
+            print('perf_exp', perf_exp)
+            print('perfmovingmulti', perfmovingmulti)
+            print('perfvar', perfvar)
+            print('perfexpmulti', perfexpmulti)
+            print('perf_sirhmulti1', perf_sirhmulti1)
+            print('perf_sirhmulti2', perf_sirhmulti2)
+
+
+            dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
+            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
+
+
+        with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
+            json.dump(dicoresults3D, f)
+        with open('./results/comparing_models1D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
+            json.dump(dicoresults1D, f)
+       
+
+    RMSE = True
+    if RMSE: 
+        for index_points in indexs_points:
+            ############### 1D
+            print('index points', index_points)
+
+
             try : 
-                perflinemulti=evaluate_model_multi(model=mylinearmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except Exception as e:
-                perflinemulti = np.inf
-                print('an error occured on linearmulti')
+                perf_linear=evaluate_model_RMSE(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except Exception as e :
+                perf_linear = np.inf
+                print('an error occured on linear')
             try : 
-                perf_bayesmulti=evaluate_model_multi(model=mybayesmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-            except Exception as e:
-                perf_bayesmulti = np.inf
-                print('an error occured on bayesmulti')
+                perf_bayes=evaluate_model_RMSE(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except Exception as e :
+                perf_bayes = np.inf
+                print('an error occured on bayes')
+            
+
+
+            try: 
+                perf_arima=evaluate_model_RMSE(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except: 
+                perf_arima = np.inf
+                print('an error occured on arima')
+            try: 
+                perf_exp=evaluate_model_RMSE(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_exp=np.inf
+                print('an error occured on exp')
+            try: 
+                perf_moving=evaluate_model_RMSE(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
+            except: 
+                perf_moving = np.inf
+                print('an error occured on moving')
+            try : 
+                perf_sirh1=evaluate_model_RMSE(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except :
+                perf_sirh1 = np.inf
+                print('an error occured on sirh1')
+            try :
+                perf_sirh2=evaluate_model_RMSE(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh2 = np.inf
+                print('an error occured on sirh2')
+            try:
+                perf_sirh3=evaluate_model_RMSE(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh3 = np.inf
+                print('an error occured on sirh3')
+            try:
+                perf_sirh4=evaluate_model_RMSE(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirh4 = np.inf
+                print('an error occured on sirh4')
+            
+
+                
+            
+            
+            
+
+            # # ### 3D
+
+            try : 
+                perfmovingmulti=evaluate_model_multi_RMSE(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except : 
+                perfmovingmulti=np.inf
+                print('an error occured on movingmulti')
+            try : 
+                perfvar=evaluate_model_multi_RMSE(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except : 
+                perfvar=np.inf
+                print('an error occured on var')
+            try : 
+                perfexpmulti=evaluate_model_multi_RMSE(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except: 
+                perfexpmulti = np.inf
+                print('an error occured on exp multi')
+            try : 
+                perf_sirhmulti1=evaluate_model_multi_RMSE(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirhmulti1 = np.inf
+                print('an error occured on sirhmulti1')
+            try :
+                perf_sirhmulti2=evaluate_model_multi_RMSE(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+            except:
+                perf_sirhmulti2 = np.inf
+                print('an error occured on sirhmulti2')
+            
 
 
             
@@ -187,16 +296,14 @@ for reach in [7, 14]:
             print('perfexpmulti', perfexpmulti)
             print('perf_sirhmulti1', perf_sirhmulti1)
             print('perf_sirhmulti2', perf_sirhmulti2)
-            print('perflinemulti', perflinemulti)
-            print('perf_bayesmulti', perf_bayesmulti)
 
 
             dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
-            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 , perflinemulti, perf_bayesmulti]
+            dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
 
 
-        with open('./results/comparing_models3D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
+        with open('./results/comparing_models3D_RMSE_hospitalized_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults3D, f)
-        with open('./results/comparing_models1D_WIS_hospitalized_reach='+str(reach)+'.json', 'w') as f:
+        with open('./results/comparing_models1D_WRMSE_hospitalized_reach='+str(reach)+'.json', 'w') as f:
             json.dump(dicoresults1D, f)
        
