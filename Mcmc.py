@@ -146,9 +146,13 @@ if True :
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
     for n in range(500): 
-        if n >=1 : 
-            dicocount=json.load('./results/dicocount_mcmc_2.json')
-            dicoloss=json.load('./results/dicoloss_mcmc_2.json')
+
+        if n > 1 : 
+            with open ('./results/dicocount_mcmc_2.json') as f :
+                dicocount=json.load(f)
+            with open ('./results/dicoloss_mcmc_2.json') as f :
+                dicoloss=json.load(f)
+            
         dicocount[str(params)]+=1
         
         index=np.random.randint( 4)
