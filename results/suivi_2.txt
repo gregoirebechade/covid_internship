@@ -1,17 +1,1282 @@
-Initial parameters : [0, 5, 6, 10]
-Initial loss : 68850.90687852912
+Initial parameters : [0, 5, 10, 12]
+Initial loss : 62353.75702502689
    
 Step number : 0
  new param selected : 3
-It will replace 10
-the new set is : [0, 3, 5, 6]
+It will replace 12
+the new set is : [0, 3, 5, 10]
  we never met this set before 
-Previous loss : 68850.90687852912
-New loss : 29768.725120089555
+Previous loss : 62353.75702502689
+New loss : 56830.04207821869
    
-the ratio is 0.43236504019633787
+the ratio is 0.9114132778784901
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [0, 3, 5, 10]
+   
+
+
+
+Step number : 1
+ new param selected : 12
+It will replace 0
+the new set is : [3, 5, 10, 12]
+ we never met this set before 
+Previous loss : 56830.04207821869
+New loss : 36743.39723729739
+   
+the ratio is 0.6465488304007444
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 5, 10, 12]
+   
+
+
+
+Step number : 2
+ new param selected : 11
+It will replace 3
+the new set is : [5, 10, 11, 12]
+ we never met this set before 
+Previous loss : 36743.39723729739
+New loss : 36713.76619687437
+   
+the ratio is 0.9991935682965934
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [5, 10, 11, 12]
+   
+
+
+
+Step number : 3
+ new param selected : 9
+It will replace 5
+the new set is : [9, 10, 11, 12]
+ we never met this set before 
+Previous loss : 36713.76619687437
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 4
+ new param selected : 2
+It will replace 12
+the new set is : [2, 9, 10, 11]
+ we never met this set before 
+Previous loss : 50082.721474998165
+New loss : 47153.778630221386
+   
+the ratio is 0.941517897619862
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [2, 9, 10, 11]
+   
+
+
+
+Step number : 5
+ new param selected : 12
+It will replace 2
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 6
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we never met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 7
+ new param selected : 2
+It will replace 12
+the new set is : [2, 5, 9, 10]
+ we never met this set before 
+Previous loss : 61050.048774128634
+New loss : 63702.39060215365
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [2, 5, 9, 10]
+   
+
+
+
+Step number : 8
+ new param selected : 3
+It will replace 10
+the new set is : [2, 3, 5, 9]
+ we never met this set before 
+Previous loss : 63702.39060215365
+New loss : 22365.298802266585
+   
+the ratio is 0.3510904157733518
 p is : 0.49590058285853555
 The new set is rejected  
 
 
 
+Step number : 9
+ new param selected : 12
+It will replace 2
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 63702.39060215365
+New loss : 61050.048774128634
+   
+the ratio is 0.9583635432994982
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 10
+ new param selected : 6
+It will replace 10
+the new set is : [5, 6, 9, 12]
+ we never met this set before 
+Previous loss : 61050.048774128634
+New loss : 25969.637413928693
+   
+the ratio is 0.42538274637601803
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 11
+ new param selected : 11
+It will replace 5
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 50082.721474998165
+   
+the ratio is 0.8203551427172958
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 12
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 13
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we never met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 14
+ new param selected : 2
+It will replace 10
+the new set is : [2, 5, 6, 9]
+ we never met this set before 
+Previous loss : 77591.87429379195
+New loss : 26821.446621833045
+   
+the ratio is 0.3456733951325494
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 15
+ new param selected : 12
+It will replace 5
+the new set is : [6, 9, 10, 12]
+ we never met this set before 
+Previous loss : 77591.87429379195
+New loss : 65974.62883798902
+   
+the ratio is 0.8502775508191015
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [6, 9, 10, 12]
+   
+
+
+
+Step number : 16
+ new param selected : 11
+It will replace 6
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 65974.62883798902
+New loss : 50082.721474998165
+   
+the ratio is 0.7591209281068347
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 17
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 18
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 19
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we never met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 20
+ new param selected : 12
+It will replace 3
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 61050.048774128634
+   
+the ratio is 0.9680674371135499
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 21
+ new param selected : 6
+It will replace 10
+the new set is : [5, 6, 9, 12]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 25969.637413928693
+   
+the ratio is 0.42538274637601803
+p is : 0.6085861236404964
+The new set is rejected  
+
+
+
+Step number : 22
+ new param selected : 6
+It will replace 5
+the new set is : [6, 9, 10, 12]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 65974.62883798902
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [6, 9, 10, 12]
+   
+
+
+
+Step number : 23
+ new param selected : 3
+It will replace 9
+the new set is : [3, 6, 10, 12]
+ we never met this set before 
+Previous loss : 65974.62883798902
+New loss : 31143.63264865022
+   
+the ratio is 0.47205468522040894
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 24
+ new param selected : 11
+It will replace 6
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 65974.62883798902
+New loss : 50082.721474998165
+   
+the ratio is 0.7591209281068347
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 25
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 26
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 27
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 28
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we never met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 29
+ new param selected : 12
+It will replace 3
+the new set is : [8, 9, 10, 12]
+ we never met this set before 
+Previous loss : 51224.67711179244
+New loss : 49087.13091385201
+   
+the ratio is 0.9582711630709655
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [8, 9, 10, 12]
+   
+
+
+
+Step number : 30
+ new param selected : 11
+It will replace 8
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 49087.13091385201
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 31
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 32
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 33
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 34
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.032106966023819794
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 35
+ new param selected : 12
+It will replace 8
+the new set is : [3, 9, 10, 12]
+ we never met this set before 
+Previous loss : 51224.67711179244
+New loss : 48091.76506185384
+   
+the ratio is 0.9388397892074292
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 9, 10, 12]
+   
+
+
+
+Step number : 36
+ new param selected : 11
+It will replace 3
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 48091.76506185384
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 37
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 38
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 39
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 40
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.032106966023819794
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 41
+ new param selected : 12
+It will replace 8
+the new set is : [3, 9, 10, 12]
+ we already met this set before 
+Previous loss : 51224.67711179244
+New loss : 48091.76506185384
+   
+the ratio is 0.9388397892074292
+p is : 0.6833660044195496
+The new set is accepted 
+The new set is : [3, 9, 10, 12]
+   
+
+
+
+Step number : 42
+ new param selected : 11
+It will replace 12
+the new set is : [3, 9, 10, 11]
+ we never met this set before 
+Previous loss : 48091.76506185384
+New loss : 47556.995801940786
+   
+the ratio is 0.9888802322138676
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 9, 10, 11]
+   
+
+
+
+Step number : 43
+ new param selected : 12
+It will replace 3
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 47556.995801940786
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 44
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 45
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 46
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 47
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.032106966023819794
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 48
+ new param selected : 12
+It will replace 8
+the new set is : [3, 9, 10, 12]
+ we already met this set before 
+Previous loss : 51224.67711179244
+New loss : 48091.76506185384
+   
+the ratio is 0.9388397892074292
+p is : 0.6833660044195496
+The new set is accepted 
+The new set is : [3, 9, 10, 12]
+   
+
+
+
+Step number : 49
+ new param selected : 11
+It will replace 12
+the new set is : [3, 9, 10, 11]
+ we already met this set before 
+Previous loss : 48091.76506185384
+New loss : 47556.995801940786
+   
+the ratio is 0.9888802322138676
+p is : 0.6005801607693851
+The new set is accepted 
+The new set is : [3, 9, 10, 11]
+   
+
+
+
+Step number : 50
+ new param selected : 2
+It will replace 3
+the new set is : [2, 9, 10, 11]
+ we already met this set before 
+Previous loss : 47556.995801940786
+New loss : 47153.778630221386
+   
+the ratio is 0.9915213910189226
+p is : 0.7328463123592515
+The new set is accepted 
+The new set is : [2, 9, 10, 11]
+   
+
+
+
+Step number : 51
+ new param selected : 6
+It will replace 10
+the new set is : [2, 6, 9, 11]
+ we never met this set before 
+Previous loss : 47153.778630221386
+New loss : 21867.13466194086
+   
+the ratio is 0.46374087712932444
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 52
+ new param selected : 12
+It will replace 2
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 53
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 54
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 55
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 56
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.032106966023819794
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 57
+ new param selected : 12
+It will replace 8
+the new set is : [3, 9, 10, 12]
+ we already met this set before 
+Previous loss : 51224.67711179244
+New loss : 48091.76506185384
+   
+the ratio is 0.9388397892074292
+p is : 0.6833660044195496
+The new set is accepted 
+The new set is : [3, 9, 10, 12]
+   
+
+
+
+Step number : 58
+ new param selected : 11
+It will replace 12
+the new set is : [3, 9, 10, 11]
+ we already met this set before 
+Previous loss : 48091.76506185384
+New loss : 47556.995801940786
+   
+the ratio is 0.9888802322138676
+p is : 0.6005801607693851
+The new set is accepted 
+The new set is : [3, 9, 10, 11]
+   
+
+
+
+Step number : 59
+ new param selected : 2
+It will replace 3
+the new set is : [2, 9, 10, 11]
+ we already met this set before 
+Previous loss : 47556.995801940786
+New loss : 47153.778630221386
+   
+the ratio is 0.9915213910189226
+p is : 0.7328463123592515
+The new set is accepted 
+The new set is : [2, 9, 10, 11]
+   
+
+
+
+Step number : 60
+ new param selected : 6
+It will replace 10
+the new set is : [2, 6, 9, 11]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 21867.13466194086
+   
+the ratio is 0.46374087712932444
+p is : 0.46425101040281835
+The new set is rejected  
+
+
+
+Step number : 61
+ new param selected : 8
+It will replace 10
+the new set is : [2, 8, 9, 11]
+ we never met this set before 
+Previous loss : 47153.778630221386
+New loss : 16885.35036686089
+   
+the ratio is 0.3580911404635318
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 62
+ new param selected : 12
+It will replace 2
+the new set is : [9, 10, 11, 12]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 50082.721474998165
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [9, 10, 11, 12]
+   
+
+
+
+Step number : 63
+ new param selected : 5
+It will replace 11
+the new set is : [5, 9, 10, 12]
+ we already met this set before 
+Previous loss : 50082.721474998165
+New loss : 61050.048774128634
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 9, 10, 12]
+   
+
+
+
+Step number : 64
+ new param selected : 6
+It will replace 12
+the new set is : [5, 6, 9, 10]
+ we already met this set before 
+Previous loss : 61050.048774128634
+New loss : 77591.87429379195
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [5, 6, 9, 10]
+   
+
+
+
+Step number : 65
+ new param selected : 3
+It will replace 6
+the new set is : [3, 5, 9, 10]
+ we already met this set before 
+Previous loss : 77591.87429379195
+New loss : 63063.8387715625
+   
+the ratio is 0.812763441346695
+p is : 0.6205111604505289
+The new set is accepted 
+The new set is : [3, 5, 9, 10]
+   
+
+
+
+Step number : 66
+ new param selected : 8
+It will replace 5
+the new set is : [3, 8, 9, 10]
+ we already met this set before 
+Previous loss : 63063.8387715625
+New loss : 51224.67711179244
+   
+the ratio is 0.812267031465444
+p is : 0.032106966023819794
+The new set is accepted 
+The new set is : [3, 8, 9, 10]
+   
+
+
+
+Step number : 67
+ new param selected : 12
+It will replace 8
+the new set is : [3, 9, 10, 12]
+ we already met this set before 
+Previous loss : 51224.67711179244
+New loss : 48091.76506185384
+   
+the ratio is 0.9388397892074292
+p is : 0.6833660044195496
+The new set is accepted 
+The new set is : [3, 9, 10, 12]
+   
+
+
+
+Step number : 68
+ new param selected : 11
+It will replace 12
+the new set is : [3, 9, 10, 11]
+ we already met this set before 
+Previous loss : 48091.76506185384
+New loss : 47556.995801940786
+   
+the ratio is 0.9888802322138676
+p is : 0.6005801607693851
+The new set is accepted 
+The new set is : [3, 9, 10, 11]
+   
+
+
+
+Step number : 69
+ new param selected : 2
+It will replace 3
+the new set is : [2, 9, 10, 11]
+ we already met this set before 
+Previous loss : 47556.995801940786
+New loss : 47153.778630221386
+   
+the ratio is 0.9915213910189226
+p is : 0.7328463123592515
+The new set is accepted 
+The new set is : [2, 9, 10, 11]
+   
+
+
+
+Step number : 70
+ new param selected : 6
+It will replace 10
+the new set is : [2, 6, 9, 11]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 21867.13466194086
+   
+the ratio is 0.46374087712932444
+p is : 0.46425101040281835
+The new set is rejected  
+
+
+
+Step number : 71
+ new param selected : 8
+It will replace 10
+the new set is : [2, 8, 9, 11]
+ we already met this set before 
+Previous loss : 47153.778630221386
+New loss : 16885.35036686089
+   
+the ratio is 0.3580911404635318
+p is : 0.6501331246108528
+The new set is rejected  
+
+
+
+Step number : 72
+ new param selected : 12
+It will replace 11
+the new set is : [2, 9, 10, 12]
+ we never met this set before 
+Previous loss : 47153.778630221386
+New loss : 48139.707520576405
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [2, 9, 10, 12]
+   
+
+
+
+Step number : 73
+ new param selected : 3
+It will replace 12
+the new set is : [2, 3, 9, 10]
+ we never met this set before 
+Previous loss : 48139.707520576405
+New loss : 48491.56886797172
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [2, 3, 9, 10]
+   
+
+
+
+Step number : 74
+ new param selected : 4
+It will replace 10
+the new set is : [2, 3, 4, 9]
+ we never met this set before 
+Previous loss : 48491.56886797172
+New loss : 28888.43405760602
+   
+the ratio is 0.595741377975638
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [2, 3, 4, 9]
+   
+
+
+
+Step number : 75
+ new param selected : 12
+It will replace 2
+the new set is : [3, 4, 9, 12]
+ we never met this set before 
+Previous loss : 28888.43405760602
+New loss : 26865.761703776123
+   
+the ratio is 0.9299833161674145
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [3, 4, 9, 12]
+   
+
+
+
+Step number : 76
+ new param selected : 11
+It will replace 3
+the new set is : [4, 9, 11, 12]
+ we never met this set before 
+Previous loss : 26865.761703776123
+New loss : 30077.34542541022
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [4, 9, 11, 12]
+   
+
+
+
+Step number : 77
+ new param selected : 2
+It will replace 12
+the new set is : [2, 4, 9, 11]
+ we never met this set before 
+Previous loss : 30077.34542541022
+New loss : 28602.66874254391
+   
+the ratio is 0.9509705174439875
+p is : 0.49590058285853555
+The new set is accepted 
+The new set is : [2, 4, 9, 11]
+   
+
+
+
+Step number : 78
+ new param selected : 12
+It will replace 2
+the new set is : [4, 9, 11, 12]
+ we already met this set before 
+Previous loss : 28602.66874254391
+New loss : 30077.34542541022
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [4, 9, 11, 12]
+   
+
+
+
+Step number : 79
+ new param selected : 6
+It will replace 11
+the new set is : [4, 6, 9, 12]
+ we never met this set before 
+Previous loss : 30077.34542541022
+New loss : 35966.41986536303
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [4, 6, 9, 12]
+   
+
+
+
+Step number : 80
+ new param selected : 2
+It will replace 12
+the new set is : [2, 4, 6, 9]
+ we never met this set before 
+Previous loss : 35966.41986536303
+New loss : 36470.06592410107
+   
+The new loss is bigger 
+The new set is accepted 
+The new set is : [2, 4, 6, 9]
+   
+
+
+
+Step number : 81
+ new param selected : 3
+It will replace 9
+the new set is : [2, 3, 4, 6]
+ we never met this set before 
+Previous loss : 36470.06592410107
+New loss : 15140.494036083626
+   
+the ratio is 0.41514852393173496
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
+Step number : 82
+ new param selected : 12
+It will replace 2
+the new set is : [4, 6, 9, 12]
+ we already met this set before 
+Previous loss : 36470.06592410107
+New loss : 35966.41986536303
+   
+the ratio is 0.9861901522254938
+p is : 0.2013230338852653
+The new set is accepted 
+The new set is : [4, 6, 9, 12]
+   
+
+
+
+Step number : 83
+ new param selected : 7
+It will replace 9
+the new set is : [4, 6, 7, 12]
+ we never met this set before 

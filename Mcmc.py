@@ -133,7 +133,7 @@ def loss(params): # params are the numero of the parameters to change
 if True : 
 
 
-    params_init=[0, 5, 6, 10]
+    params_init=[0, 5, 10, 12]
     params=params_init
     loss_init=loss(params_init) 
     dicocount=dict()
