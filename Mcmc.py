@@ -145,7 +145,10 @@ if True :
         f.write('Initial parameters : '+str(params_init)+'\n')
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
-    for n in range(2000): 
+    for n in range(500): 
+        if n >=1 : 
+            dicocount=json.load('./results/dicocount_mcmc_2.json')
+            dicoloss=json.load('./results/dicoloss_mcmc_2.json')
         dicocount[str(params)]+=1
         
         index=np.random.randint( 4)
@@ -205,8 +208,8 @@ if True :
                 f.write('\n')
                 f.write('\n')
         
-    # save dicos : 
-    with open('./results/dicoloss_mcmc_2.json', 'w') as f : 
-        json.dump(dicoloss, f)
-    with open('./results/dicocount_mcmc_2.json', 'w') as f :
-        json.dump(dicocount, f)
+        # save dicos : 
+        with open('./results/dicoloss_mcmc_2.json', 'w') as f : 
+            json.dump(dicoloss, f)
+        with open('./results/dicocount_mcmc_2.json', 'w') as f :
+            json.dump(dicocount, f)

@@ -1,0 +1,17 @@
+Initial parameters : [0, 5, 6, 10]
+Initial loss : 68850.90687852912
+   
+Step number : 0
+ new param selected : 3
+It will replace 10
+the new set is : [0, 3, 5, 6]
+ we never met this set before 
+Previous loss : 68850.90687852912
+New loss : 29768.725120089555
+   
+the ratio is 0.43236504019633787
+p is : 0.49590058285853555
+The new set is rejected  
+
+
+
