@@ -4,6 +4,7 @@ sys.path.append('./models/')
 from useful_functions import differenciate
 import covasim as cv
 import json
+import sys
 import time 
 
 t0=time.time()
@@ -128,30 +129,53 @@ def loss(params): # params are the numero of the parameters to change
             loss+=diff_between_2_arrays(pandemics[i], pandemics[j])
     return loss
 
+path_suivi='./results/suivi_3.txt'
+path_dicoloss='./results/dicoloss_mcmc_3.json'
+path_dicocount='./results/dicocount_mcmc_3.json'
 
 
-if True : 
 
 
-    params_init=[0, 5, 10, 12]
+
+if __name__ == '__main__': 
+    arg = sys.argv[1]
+    if arg == 'begin': 
+        params_init=[0, 5, 10, 12]
+        dicocount=dict()
+        dicoloss=dict()
+    elif arg == 'continue':
+        with open('./results/last_params.txt', 'r') as f : 
+            params_init = eval(f.read())
+        with open (path_dicocount) as f :
+            dicocount=json.load(f)
+        with open (path_dicoloss) as f :
+            dicoloss=json.load(f)
+
+    else :
+        print('WHERE PARAMETER ')
+        exit()
+        
+
+
+
     params=params_init
-    loss_init=loss(params_init) 
-    dicocount=dict()
-    dicocount[str(params_init)]=0
-    dicoloss=dict()
-    dicoloss[str(params_init)]=loss_init
+    if str(params_init) not in dicoloss.keys(): 
+        loss_init=loss(params_init)
+        dicoloss[str(params_init)]=loss_init
+        dicocount[str(params_init)]=0
+    else : 
+        loss_init=dicoloss[str(params_init)]
+        dicocount[str(params_init)]+=1
 
-    with open('./results/suivi_2.txt', 'a') as f : 
+    with open(path_suivi, 'a') as f : 
         f.write('Initial parameters : '+str(params_init)+'\n')
         f.write('Initial loss : '+str(loss_init)+'\n')
         f.write('   \n')
-    for n in range(500): 
 
-        if n > 1 : 
-            with open ('./results/dicocount_mcmc_2.json') as f :
-                dicocount=json.load(f)
-            with open ('./results/dicoloss_mcmc_2.json') as f :
-                dicoloss=json.load(f)
+
+    for n in range(3): 
+
+       
             
         dicocount[str(params)]+=1
         
@@ -160,7 +184,7 @@ if True :
         new_params=params.copy()
         new_params[index]=new_param
         new_params.sort() # important to avoid counting the same set in different keys
-        with open('./results/suivi_2.txt', 'a') as f : 
+        with open(path_suivi, 'a') as f : 
             f.write('Step number : '+str(n)+'\n')
             f.write(' new param selected : '+str(new_param)+'\n')
             f.write('It will replace ' + str(params[index]) + '\n')
@@ -176,7 +200,7 @@ if True :
             loss_new=loss(new_params)
             dicoloss[str(new_params)]=loss_new
             dicocount[str(new_params)]=0
-        with open('./results/suivi_2.txt', 'a') as f :
+        with open(path_suivi, 'a') as f :
             f.write('Previous loss : '+str(loss_previous)+'\n')
             f.write('New loss : '+str(loss_new)+'\n')
             f.write('   \n')
@@ -184,19 +208,19 @@ if True :
         if loss_new > loss_previous: # attention, we want to increase dissemblance !!
             params=new_params
             changed=True
-            with open('./results/suivi_2.txt', 'a') as f :
+            with open(path_suivi, 'a') as f :
                 f.write('The new loss is bigger \n')
 
         else : 
             p=np.random.rand()
-            with open('./results/suivi_2.txt', 'a') as f :
+            with open(path_suivi, 'a') as f :
                 f.write( 'the ratio is ' + str(loss_new/loss_previous)+'\n' )
                 f.write('p is : '+str(p)+'\n')
             if p<loss_new/loss_previous: 
                 params=new_params
                 changed=True
             else : 
-                with open('./results/suivi_2.txt', 'a') as f :
+                with open(path_suivi, 'a') as f :
                     f.write('The new set is rejected  \n')
                     f.write('\n')
                     f.write('\n')
@@ -204,7 +228,7 @@ if True :
         
 
         if changed:
-            with open('./results/suivi_2.txt', 'a') as f :
+            with open(path_suivi, 'a') as f :
                 f.write('The new set is accepted \n')
                 f.write('The new set is : '+str(params)+'\n')
                 f.write('   \n')
@@ -213,7 +237,11 @@ if True :
                 f.write('\n')
         
         # save dicos : 
-        with open('./results/dicoloss_mcmc_2.json', 'w') as f : 
+        with open(path_dicoloss, 'w') as f : 
             json.dump(dicoloss, f)
-        with open('./results/dicocount_mcmc_2.json', 'w') as f :
+        with open(path_dicocount, 'w') as f :
             json.dump(dicocount, f)
+
+    # saving last parameters : 
+    with open('./results/last_params.txt', 'w') as f : 
+        f.write(str(params))

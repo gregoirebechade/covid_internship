@@ -1,0 +1,2 @@
+python Mcmc.py begin 
+python Mcmc.py continue 
