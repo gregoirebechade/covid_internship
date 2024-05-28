@@ -111,7 +111,7 @@ for i in range(len(mobilities))  :
     interventions = mobilities[i]
     combinaisons=all_combinaison([2, 4, 9, 10])
 
-    pandemics=[create_pandemic(create_params_bis(combinaisons[j], interventions)) for j in range(len(combinaisons))]
+    pandemics=[create_pandemic(create_params_bis(combinaisons[j]), interventions) for j in range(len(combinaisons))]
     mondf=pd.DataFrame(pandemics)
     mondf.to_csv('pandemics_'+str(i)+'.csv')
 
