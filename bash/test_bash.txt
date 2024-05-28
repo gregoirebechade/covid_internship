@@ -1,2 +1,2 @@
 python test1.py 
-tmux new-session -d -s session1 "python test.py"
+tmux new-session -d -s session1 "python test1.py"
