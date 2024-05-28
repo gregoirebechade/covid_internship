@@ -61,11 +61,11 @@ coef_mobility=[1+floatmobility[i] for i in range(len(floatmobility))]
 coef_mobility_by_week=np.array([coef_mobility[i//7] for i in range(len(all_days))])
 mob1=[1 for i in range(len(coef_mobility_by_week))]
 mob2=[1+0.5*np.sin(2*np.pi*i/len(coef_mobility_by_week)) for i in range(len(coef_mobility_by_week))]
-mob3=[1 for i in range(25)] + [ 0.4 for i in range(70)] + [ 1.2 for i in range(50)] + [1 for i in range(50)] + [ 0.4 for i in range(40)] + [ 1.2 for i in range(71)]
+mob3=[1 for i in range(50)] + [ 0.4 for i in range(70)] + [ 1.2 for i in range(50)] + [1 for i in range(50)] + [ 0.4 for i in range(40)] + [ 1.2 for i in range(46)]
 mobilities = [coef_mobility_by_week, mob1, mob2, mob3]
 
 
-
+assert len(mob1)==len(mob2)==len(mob3)==len(coef_mobility_by_week)==306
 
 def create_params_bis(combinaison): 
     coefs = [ 1 for _ in range(14)]
@@ -111,8 +111,14 @@ def create_pandemic(dico, interventions):
 for i in range(len(mobilities))  : 
     interventions = mobilities[i]
     combinaisons=all_combinaison([2, 4, 9, 10])
-
-    pandemics=[create_pandemic(create_params_bis(combinaisons[j]), interventions) for j in range(len(combinaisons))]
-    mondf=pd.DataFrame(pandemics)
-    mondf.to_csv('pandemics_'+str(i)+'.csv')
-
+    for j in range(len(combinaisons)):
+            print(i, j)
+            print(combinaisons[j])
+            combinaison = combinaisons[j]
+            params=create_params_bis(combinaison)
+            interventions_sim=cv.change_beta(days=all_days, changes=interventions, do_plot=False)
+            mysim = cv.Sim(params, interventions=interventions_sim)
+            mysim.run()
+            df=pd.DataFrame([np.array(mysim.results['n_severe']), np.array(mysim.results['n_infectious']), np.array(interventions)])
+            df.index=['n_hospitalized', 'n_infectious', 'mobility']
+            df.to_csv('./all_pandemics/pandemic_'+str(i)+'_'+str(j)+'.csv')
