@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-class Model: 
+class Model: # base class for all the models
     def __init__(self) :
         self.trained=False
         self.type='1D'
@@ -16,7 +16,7 @@ class Model:
     def predict(self, reach, alphas):
         pass # to be implemented in the child class 
 
-    def plot(self, reach, alpha, title=None, xlabel=None, ylabel=None): 
+    def plot(self, reach, alpha, title=None, xlabel=None, ylabel=None): # to plot the predictions of the model
         assert self.trained, 'The model has not been trained yet'
         prediction, intervals = self.predict(reach, alpha)
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
