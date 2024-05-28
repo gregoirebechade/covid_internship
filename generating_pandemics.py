@@ -103,9 +103,8 @@ def create_params_bis(combinaison):
 
 
 def create_pandemic(dico, interventions):
-    interventions_sim=cv.change_beta(days=all_days, changes=    interventions_sim=cv.change_beta(days=all_days, changes=interventions, do_plot=False)
-, do_plot=False)
-    mysimul = cv.Sim(dico, interventions=interventions)
+    interventions_sim=cv.change_beta(days=all_days, changes=interventions, do_plot=False)
+    mysimul = cv.Sim(dico, interventions=interventions_sim)
     mysimul.run()
     return np.array(mysimul.results['n_severe'])
 
