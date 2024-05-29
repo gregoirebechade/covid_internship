@@ -65,7 +65,7 @@ if __name__ =='__main__':
         dicoresults3D=dict()
 
 
-        WIS = False
+        WIS = True
         if WIS: 
             for index_points in indexs_points:
                 ############### 1D

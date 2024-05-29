@@ -119,6 +119,6 @@ for i in range(len(mobilities))  :
             interventions_sim=cv.change_beta(days=all_days, changes=interventions, do_plot=False)
             mysim = cv.Sim(params, interventions=interventions_sim)
             mysim.run()
-            df=pd.DataFrame([np.array(mysim.results['n_severe']), np.array(mysim.results['n_infectious']), np.array(interventions)])
-            df.index=['n_hospitalized', 'n_infectious', 'mobility']
+            df=pd.DataFrame([np.array(mysim.results['n_severe']), np.array(mysim.results['n_infectious']), np.array(interventions), np.array(mysim.compute_r_eff())])
+            df.index=['n_hospitalized', 'n_infectious', 'mobility', 'R_eff']
             df.to_csv('./all_pandemics/pandemic_'+str(i)+'_'+str(j)+'.csv')
