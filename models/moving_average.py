@@ -4,16 +4,7 @@ import pandas as pd
 from scipy.optimize import curve_fit
 from Model import Model, Multi_Dimensional_Model
 
-
-df = pd.read_csv('deaths_and_infections.csv')
-
-# remove a columns from a df: 
-df.drop(columns=['Unnamed: 0'], inplace=True)
-new_deaths=np.array(df['new_deaths'])
-death_cumul=np.array([sum(new_deaths[:i]) for i in range(len(new_deaths))])
-dates_of_pandemic=np.arange(len(new_deaths))
-
-
+# baselines models to be compared with the others 
 
 class MovingAverage(Model): 
     def train(self, train_dates, data):

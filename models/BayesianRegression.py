@@ -4,9 +4,9 @@ import scipy.stats
 from useful_functions import predict_model
 from sklearn.linear_model import BayesianRidge
 
-def grad_theta_h_theta(h, theta, x): 
+def grad_theta_h_theta(h, theta, x): # function to compute the gradient of h (which represent the prediction function) with respect to tehta, the parameters of the model
     grad=np.zeros(len(theta))
-    for i in range(len(theta)): 
+    for i in range(len(theta)): # this is numerical gradient
         theta_plus=theta.copy()
         theta_plus[i]=theta[i]+0.0001
         grad[i]=(h(theta_plus, x)-h(theta, x))/0.0001
@@ -30,7 +30,7 @@ class BayesianRegressionModel(Model):
     def train(self, train_dates, data): 
         n_days=30
         if n_days >= len(train_dates)/2: 
-            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative sigma2
+            n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions than the number of points to avoid negative sigma2
         
         br=BayesianRidge()
         data_ml=[]
@@ -40,8 +40,6 @@ class BayesianRegressionModel(Model):
             y.append(data[i])
         data_ml=np.array(data_ml)
         self.mydata=data_ml
-        # print('data_ml', data_ml)
-        # print('y', y)
         self.results=br.fit(data_ml, y)
         self.model=br
         self.data=data
@@ -72,16 +70,3 @@ class BayesianRegressionModel(Model):
         self.grads=np.array(self.grads)
         return prediction.reshape(reach,), list(np.array([ci_inf, ci_up]).reshape(2, reach))
 
-
-
-        
-class MultiDimensionalBayesianRegression(Multi_Dimensional_Model): 
-
-    def train(self, train_dates, data): 
-        self.model=BayesianRegressionModel()
-        self.model.train(train_dates, data[0])
-        self.trained=True
-        self.data=data
-    def predict(self, reach, alpha): 
-        prediction, intervals=self.model.predict(reach, alpha)
-        return prediction, intervals

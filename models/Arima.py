@@ -46,7 +46,6 @@ class ARIMA_Model(Model):
         assert self.trained, 'The model has not been trained yet'
         predifore=self.fitted.get_forecast(reach).predicted_mean # this is an array of size reach
         assert type(predifore) == np.ndarray, 'The prediction should be a numpy array'
-        # confidence_intervals=[self.fitted.get_forecast(reach).conf_int(alpha=alp) for alp in alphas]
         interval = self.fitted.get_forecast(reach).conf_int(alpha=alpha)
         ci_low=[max(elt[0],0) for elt in interval]
         ci_high=[elt[1] for elt in interval]
@@ -78,8 +77,8 @@ class VAR_m(Multi_Dimensional_Model):
         high=ints[2].transpose()[0]  
         low[np.where(low == None)] = np.nan 
         high[np.where(high == None)] = np.nan
-        if np.isnan(low).any(): 
+        if np.isnan(low).any(): # we adapt the ci in the case of nan values
             low=[0 for i in range(len(low))]
-        if np.isnan(high).any():
+        if np.isnan(high).any(): # we adapt the ci in the case of nan values
             high=[abs(1000*max(pred)) for i in range(len(high))]  
         return pred, [list(low), list(high)]

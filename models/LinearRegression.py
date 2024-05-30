@@ -63,13 +63,3 @@ class LinearRegressionModel(Model):
 
 
         
-class MultiDimensionalLinearRegression(Multi_Dimensional_Model): 
-
-    def train(self, train_dates, data): 
-        self.model=LinearRegressionModel()
-        self.model.train(train_dates, data[0])
-        self.trained=True
-        self.data=data
-    def predict(self, reach, alpha): 
-        prediction, intervals=self.model.predict(reach, alpha)
-        return prediction.reshape(reach,), intervals

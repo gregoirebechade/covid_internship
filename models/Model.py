@@ -64,5 +64,4 @@ class Multi_Dimensional_Model:
         plt.title(title)
         plt.xlabel(xlabel)
         plt.ylabel(ylabel)
-        
         plt.show()

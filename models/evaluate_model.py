@@ -51,7 +51,6 @@ def WIS(prediction: float, intervals : list, point_of_evaluation : float, alphas
 def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
     loss=0
     for index in evaluation_point_indexs:
-        # print(index) 
         model.train(train_dates = [i for i in range(index)], data = data[:index] )
         intervals=[]
         for alpha in alphas:
@@ -69,7 +68,6 @@ def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_
 def evaluate_model_multi(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
     loss=0
     for index in evaluation_point_indexs:
-        # print(index)
         data_train=data.transpose()[:index].transpose()
         model.train(train_dates = [i for i in range(index)], data = data_train )
         intervals=[]
@@ -87,7 +85,6 @@ def evaluate_model_multi(model: Model, data: np.array, alphas: list, evaluation_
 def evaluate_model_RMSE(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
     loss=0
     for index in evaluation_point_indexs:
-        # print(index) 
         model.train(train_dates = [i for i in range(index)], data = data[:index] )
         intervals=[]
         for alpha in alphas:
@@ -106,7 +103,6 @@ def evaluate_model_RMSE(model: Model, data: np.array, alphas: list, evaluation_p
 def evaluate_model_multi_RMSE(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
     loss=0
     for index in evaluation_point_indexs:
-        # print(index)
         data_train=data.transpose()[:index].transpose()
         model.train(train_dates = [i for i in range(index)], data = data_train )
         intervals=[]
