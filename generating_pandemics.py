@@ -77,7 +77,7 @@ def create_params_bis(combinaison):
     params_custom = dict(
     pop_size=1000000,
     start_day='2020-03-01',
-    end_day='2021-03-01',
+    end_day   = '2021-01-01', 
     pop_type='hybrid',
     beta=0.015,
     location='Sweden',
