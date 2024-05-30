@@ -13,10 +13,6 @@ from evaluate_model import evaluate_model, evaluate_model_multi, evaluate_model_
 import json
 
 
-# all_pandemics=pd.read_csv('all_pandemics.csv')
-# all_pandemics.drop(columns=['Unnamed: 0'], inplace=True)
-# all_pandemics=np.array(all_pandemics)
-
 if __name__ =='__main__': 
     args = sys.argv # the arguments give the pandemic on which evaluate the models 
     i=int(args[1])
