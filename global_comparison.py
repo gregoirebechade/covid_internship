@@ -13,9 +13,9 @@ from evaluate_model import evaluate_model, evaluate_model_multi, evaluate_model_
 import json
 
 
-all_pandemics=pd.read_csv('all_pandemics.csv')
-all_pandemics.drop(columns=['Unnamed: 0'], inplace=True)
-all_pandemics=np.array(all_pandemics)
+# all_pandemics=pd.read_csv('all_pandemics.csv')
+# all_pandemics.drop(columns=['Unnamed: 0'], inplace=True)
+# all_pandemics=np.array(all_pandemics)
 
 if __name__ =='__main__': 
     args = sys.argv # the arguments give the pandemic on which evaluate the models 
@@ -24,12 +24,13 @@ if __name__ =='__main__':
     path_to_file='all_pandemics/pandemic_'+str(i)+'_'+str(j)+'.csv'
     df=pd.read_csv(path_to_file)
     
-    df.index=['n_hospitalized', 'n_infectious', 'mobility']
+    df.index=['n_hospitalized', 'n_infectious', 'mobility', 'R_eff']
     df.drop(columns=['Unnamed: 0'], inplace=True)
     
     n_hospitalized=np.array(df.loc['n_hospitalized'])
     n_infectious=np.array(df.loc['n_infectious'])
     mobility=np.array(df.loc['mobility'])
+    r_eff=np.array(df.loc['R_eff'])
     data3D=np.array([n_hospitalized, n_infectious, mobility])
 
 
