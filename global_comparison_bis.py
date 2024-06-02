@@ -64,28 +64,28 @@ if __name__ =='__main__':
 
     dico_wis_1D_reach_7=dict()
     for point in indexs_points: 
-        dico_wis_1D_reach_7[point]=[]
+        dico_wis_1D_reach_7[str(point)]=[]
     dico_wis_1D_reach_14=dict()
     for point in indexs_points:
-        dico_wis_1D_reach_14[point]=[]
+        dico_wis_1D_reach_14[str(point)]=[]
     dico_rmse_1D_reach_7=dict()
     for point in indexs_points:
-        dico_rmse_1D_reach_7[point]=[]
+        dico_rmse_1D_reach_7[str(point)]=[]
     dico_rmse_1D_reach_14=dict()
     for point in indexs_points:
-        dico_rmse_1D_reach_14[point]=[]
+        dico_rmse_1D_reach_14[str(point)]=[]
     dico_wis_3D_reach_7=dict()
     for point in indexs_points:
-        dico_wis_3D_reach_7[point]=[]
+        dico_wis_3D_reach_7[str(point)]=[]
     dico_wis_3D_reach_14=dict()
     for point in indexs_points:
-        dico_wis_3D_reach_14[point]=[]
+        dico_wis_3D_reach_14[str(point)]=[]
     dico_rmse_3D_reach_7=dict()
     for point in indexs_points:
-        dico_rmse_3D_reach_7[point]=[]
+        dico_rmse_3D_reach_7[str(point)]=[]
     dico_rmse_3D_reach_14=dict()
     for point in indexs_points:
-        dico_rmse_3D_reach_14[point]=[]
+        dico_rmse_3D_reach_14[str(point)]=[]
 
 
     
@@ -113,11 +113,11 @@ if __name__ =='__main__':
                 RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
 
                 if reach ==7 : 
-                    dico_wis_1D_reach_7[point].append(wis)
-                    dico_rmse_1D_reach_7[point].append(RMSE)
+                    dico_wis_1D_reach_7[str(point)].append(wis)
+                    dico_rmse_1D_reach_7[str(point)].append(RMSE)
                 else:
-                    dico_wis_1D_reach_14[point].append(wis)
-                    dico_rmse_1D_reach_14[point].append(RMSE)
+                    dico_wis_1D_reach_14[str(point)].append(wis)
+                    dico_rmse_1D_reach_14[str(point)].append(RMSE)
         
 
         for model in models3D:
@@ -135,11 +135,11 @@ if __name__ =='__main__':
                     RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
     
                     if reach ==7 : 
-                        dico_wis_3D_reach_7[point].append(wis)
-                        dico_rmse_3D_reach_7[point].append(RMSE)
+                        dico_wis_3D_reach_7[str(point)].append(wis)
+                        dico_rmse_3D_reach_7[str(point)].append(RMSE)
                     else:
-                        dico_wis_3D_reach_14[point].append(wis)
-                        dico_rmse_3D_reach_14[point].append(RMSE)
+                        dico_wis_3D_reach_14[str(point)].append(wis)
+                        dico_rmse_3D_reach_14[str(point)].append(RMSE)
     # write results : 
 
     reach=7
