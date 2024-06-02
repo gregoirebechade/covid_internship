@@ -121,18 +121,36 @@ if __name__ =='__main__':
         
 
         for model in models3D:
-                
-                model.train(train_dates = [i for i in range(point[0])], data = data3D[:,:point[0]])
+                try: 
+                    model.train(train_dates = [i for i in range(point[0])], data = data3D[:,:point[0]])
+                except:
+                    if reach ==7 : 
+                        dico_wis_3D_reach_7[str(point)].append(np.inf)
+                        dico_rmse_3D_reach_7[str(point)].append(np.inf)
+                    else:
+                        dico_wis_3D_reach_14[str(point)].append(np.inf)
+                        dico_rmse_3D_reach_14[str(point)].append(np.inf)
                 for reach in [7, 14]:
                     intervals=[]
                     for alpha in alphas:
-                        prediction, interval = model.predict(reach, alpha)
-                        interval_low=interval[0][-1]
-                        interval_high=interval[1][-1]
+                        try: 
+                            prediction, interval = model.predict(reach, alpha)
+                            interval_low=interval[0][-1]
+                            interval_high=interval[1][-1]
+                            prediction=prediction[-1]
+
+                        except : 
+                            int_low=0
+                            int_high=0
+                            prediction=np.inf
                         intervals.append((interval_low, interval_high)) 
-                    prediction=prediction[-1]
-                    wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
-                    RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                           
+                    if prediction == np.inf:
+                        wis=np.inf
+                        RMSE=np.inf
+                    else : 
+                        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                        RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
     
                     if reach ==7 : 
                         dico_wis_3D_reach_7[str(point)].append(wis)
