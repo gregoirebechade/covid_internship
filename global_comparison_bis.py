@@ -191,28 +191,28 @@ if __name__ =='__main__':
 
     reach=7
     with open('./results/global_evaluation_bis/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_rmse_3D_reach_7)
+            json.dump(dico_rmse_3D_reach_7, f)
     
     with open('./results/global_evaluation_bis/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_wis_3D_reach_7)
+            json.dump(dico_wis_3D_reach_7, f)
 
     with open('./results/global_evaluation_bis/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_rmse_1D_reach_7)
+            json.dump(dico_rmse_1D_reach_7, f)
 
     with open('./results/global_evaluation_bis/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_wis_1D_reach_7)
+            json.dump(dico_wis_1D_reach_7, f)
     
 
     reach=14
 
     with open('./results/global_evaluation_bis/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_rmse_3D_reach_14)
+            json.dump(dico_rmse_3D_reach_14, f)
     
     with open('./results/global_evaluation_bis/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_wis_3D_reach_14)
+            json.dump(dico_wis_3D_reach_14, f)
 
     with open('./results/global_evaluation_bis/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_rmse_1D_reach_14)
+            json.dump(dico_rmse_1D_reach_14, f)
 
     with open('./results/global_evaluation_bis/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-            json.dump(dico_wis_1D_reach_14)
+            json.dump(dico_wis_1D_reach_14, f)
