@@ -52,7 +52,7 @@ if __name__ =='__main__':
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[20*i] for i in range(4, 8) ]
+    indexs_points=[[20*i] for i in range(4, 5) ]
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
 
     # models1Dnames=['ARIMA', 'Exponential', 'Moving Average', 'SIRH1', 'SIRH2', 'SIRH3', 'SIRH4', 'Linear Regression', 'Bayesian Regression']
@@ -126,10 +126,14 @@ if __name__ =='__main__':
                     wis=np.inf
                     RMSE=np.inf
                 else :
-                     
-                    wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
-                    RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
-
+                    try : 
+                        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                    except : 
+                        wis=np.inf
+                    try : 
+                        RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                    except : 
+                        RMSE=np.inf
                 if reach ==7 : 
                     dico_wis_1D_reach_7[str(point)].append(wis)
                     dico_rmse_1D_reach_7[str(point)].append(RMSE)
@@ -167,8 +171,15 @@ if __name__ =='__main__':
                         wis=np.inf
                         RMSE=np.inf
                     else : 
-                        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
-                        RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                        try : 
+                            wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                        except : 
+                            wis=np.inf
+                        try :
+                             
+                            RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                        except :
+                            RMSE=np.inf
     
                     if reach ==7 : 
                         dico_wis_3D_reach_7[str(point)].append(wis)
