@@ -239,5 +239,5 @@ if __name__ =='__main__':
     # with open('./results/global_evaluation_bis/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
     #         json.dump(dico_wis_1D_reach_14, f)
 
-    df_results_7.to_csv('./results/prediction_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
-    df_results_14.to_csv('./results/prediction_of_the_models/predictions_14_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
+    df_results_7.to_csv('./results/predictions_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
+    df_results_14.to_csv('./results/predictions_of_the_models/predictions_14_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
