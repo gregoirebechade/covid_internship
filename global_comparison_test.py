@@ -52,7 +52,8 @@ if __name__ =='__main__':
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[20*i] for i in range(1, 15) ]
+    indexs_points=[[20*i] for i in range(4, 6) ] ############## ATTENTION TO CHANGE 
+    print('WARNING? TO CHANGE THE INDEXS POINTS')
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
 
     models1Dnames=['ARIMA', 'Exponential', 'Moving Average', 'SIRH1', 'SIRH2', 'SIRH3', 'SIRH4', 'Linear Regression', 'Bayesian Regression']
