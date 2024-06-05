@@ -52,7 +52,7 @@ if __name__ =='__main__':
     myvar=VAR_m()
     mymovingmulti=MovingAverageMulti()
     alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-    indexs_points=[[20*i] for i in range(1, 15) ]
+    indexs_points=[[20*i] for i in range(1, 15) ] 
     weights=np.concatenate((np.array([0.5]), alphas * 0.5))
 
     models1Dnames=['ARIMA', 'Exponential', 'Moving Average', 'SIRH1', 'SIRH2', 'SIRH3', 'SIRH4', 'Linear Regression', 'Bayesian Regression']
@@ -90,15 +90,11 @@ if __name__ =='__main__':
 
 
 
-    real_values_7=[]
-    real_values_14=[]
-    df_results_7=pd.DataFrame()
-    df_results_14=pd.DataFrame()
+    df_results_7=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
+    df_results_14=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
 
     for point in indexs_points: 
 
-        real_values_7.append(n_hospitalized[point[0]+7-1])
-        real_values_14.append(n_hospitalized[point[0]+14-1])
         
         prediction_7=[]
         prediction_14=[]
@@ -208,11 +204,9 @@ if __name__ =='__main__':
                     else:
                         dico_wis_3D_reach_14[str(point)].append(wis)
                         dico_rmse_3D_reach_14[str(point)].append(RMSE)
-        df_results_7.loc[str(point[0])] = prediction_7
-        df_results_14.loc[str(point[0])] = prediction_14
+        df_results_7.loc[str(point[0])] = prediction_7 + [n_hospitalized[point[0]+7-1]]
+        df_results_14.loc[str(point[0])] = prediction_14 + [n_hospitalized[point[0]+14-1]]
     
-    df_results_14.columns=   models1Dnames + models3Dnames 
-    df_results_7.columns=   models1Dnames + models3Dnames 
 
     # write results : 
 
@@ -244,5 +238,5 @@ if __name__ =='__main__':
     with open('./results/global_evaluation_bis/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_wis_1D_reach_14, f)
 
-    df_results_7.to_csv('./results/prediction_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
-    df_results_14.to_csv('./results/prediction_of_the_models/predictions_14_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
+    df_results_7.to_csv('./results/predictions_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
+    df_results_14.to_csv('./results/predictions_of_the_models/predictions_14_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
