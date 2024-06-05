@@ -42,6 +42,7 @@ if __name__ =='__main__':
     mysirh3=SIRH_model_2()
     mysirh3.choose_model(False, True, True)
     mysirh4=SIRH_model_2()
+
     mysirh4.choose_model(False, False, True)
     mylinear=LinearRegressionModel()
     mybayes=BayesianRegressionModel()
