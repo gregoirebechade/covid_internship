@@ -91,15 +91,11 @@ if __name__ =='__main__':
 
 
 
-    real_values_7=[]
-    real_values_14=[]
-    df_results_7=pd.DataFrame(columns=models1Dnames + models3Dnames )
-    df_results_14=pd.DataFrame(columns=models1Dnames + models3Dnames )
+    df_results_7=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
+    df_results_14=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
 
     for point in indexs_points: 
 
-        real_values_7.append(n_hospitalized[point[0]+7-1])
-        real_values_14.append(n_hospitalized[point[0]+14-1])
         
         prediction_7=[]
         prediction_14=[]
@@ -209,8 +205,8 @@ if __name__ =='__main__':
                     else:
                         dico_wis_3D_reach_14[str(point)].append(wis)
                         dico_rmse_3D_reach_14[str(point)].append(RMSE)
-        df_results_7.loc[str(point[0])] = prediction_7
-        df_results_14.loc[str(point[0])] = prediction_14
+        df_results_7.loc[str(point[0])] = prediction_7 + [n_hospitalized[point[0]+7-1]]
+        df_results_14.loc[str(point[0])] = prediction_14 + [n_hospitalized[point[0]+14-1]]
     
 
     # write results : 
