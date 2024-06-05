@@ -93,8 +93,8 @@ if __name__ =='__main__':
 
     real_values_7=[]
     real_values_14=[]
-    df_results_7=pd.DataFrame()
-    df_results_14=pd.DataFrame()
+    df_results_7=pd.DataFrame(columns=models1Dnames + models3Dnames )
+    df_results_14=pd.DataFrame(columns=models1Dnames + models3Dnames )
 
     for point in indexs_points: 
 
@@ -212,8 +212,6 @@ if __name__ =='__main__':
         df_results_7.loc[str(point[0])] = prediction_7
         df_results_14.loc[str(point[0])] = prediction_14
     
-    df_results_14.columns=   models1Dnames + models3Dnames 
-    df_results_7.columns=   models1Dnames + models3Dnames 
 
     # write results : 
 
