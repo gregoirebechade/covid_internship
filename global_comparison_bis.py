@@ -111,6 +111,8 @@ if __name__ =='__main__':
                 dico_rmse_1D_reach_7[str(point)].append(np.inf)
                 dico_wis_1D_reach_14[str(point)].append(np.inf)
                 dico_rmse_1D_reach_14[str(point)].append(np.inf)
+                prediction_7.append(np.inf)
+                prediction_14.append(np.inf)
                 error_on_training=True
             if not error_on_training :   
                 for reach in [7, 14]:
@@ -164,6 +166,8 @@ if __name__ =='__main__':
                     dico_rmse_3D_reach_7[str(point)].append(np.inf)
                     dico_wis_3D_reach_14[str(point)].append(np.inf)
                     dico_rmse_3D_reach_14[str(point)].append(np.inf)
+                    prediction_7.append(np.inf)
+                    prediction_14.append(np.inf)
                     error_on_training=True
                 if not error_on_training :
                     for reach in [7, 14]:
