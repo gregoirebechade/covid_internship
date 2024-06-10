@@ -9,15 +9,15 @@ from moving_average import MovingAverage, MovingAverageMulti
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from evaluate_model import evaluate_model, evaluate_model_multi, evaluate_model_multi_RMSE, evaluate_model_RMSE
+from evaluate_model import WIS
 import json
 
 
 if __name__ =='__main__': 
     args = sys.argv # the arguments give the pandemic on which evaluate the models 
-    i=int(args[1])
-    j=int(args[2])
-    path_to_file='all_pandemics/pandemic_'+str(i)+'_'+str(j)+'.csv'
+    mob_of_the_pandemic=int(args[1])
+    number_of_the_pandemic=int(args[2])
+    path_to_file='all_pandemics/pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv'
     df=pd.read_csv(path_to_file)
     
     df.index=['n_hospitalized', 'n_infectious', 'mobility', 'R_eff']
@@ -31,266 +31,213 @@ if __name__ =='__main__':
 
 
 
+    myarima=ARIMA_Model()
+    myexp=ExponentialRegression()
+    myexpmulti=MultiDimensionalExponentialRegression()
+    mymoving=MovingAverage()
+    mysirh1=SIRH_model_2()
+    mysirh1.choose_model(True, True, True)
+    mysirh2=SIRH_model_2()
+    mysirh2.choose_model(True, False, True)
+    mysirh3=SIRH_model_2()
+    mysirh3.choose_model(False, True, True)
+    mysirh4=SIRH_model_2()
 
-    for reach in [7, 14]: 
-        print('reach', reach)
+    mysirh4.choose_model(False, False, True)
+    mylinear=LinearRegressionModel()
+    mybayes=BayesianRegressionModel()
+    mysirhmulti1=Multi_SIRH_model()
+    mysirhmulti1.choose_model(True, True)
+    mysirhmulti2=Multi_SIRH_model()
+    mysirhmulti2.choose_model(True, False)
+    myvar=VAR_m()
+    mymovingmulti=MovingAverageMulti()
+    alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
+    indexs_points=[[20*i] for i in range(1, 15) ] 
+    weights=np.concatenate((np.array([0.5]), alphas * 0.5))
 
-        myarima=ARIMA_Model()
-        myexp=ExponentialRegression()
-        myexpmulti=MultiDimensionalExponentialRegression()
-        mymoving=MovingAverage()
-        mysirh1=SIRH_model_2()
-        mysirh1.choose_model(True, True, True)
-        mysirh2=SIRH_model_2()
-        mysirh2.choose_model(True, False, True)
-        mysirh3=SIRH_model_2()
-        mysirh3.choose_model(False, True, True)
-        mysirh4=SIRH_model_2()
-        mysirh4.choose_model(False, False, True)
-        mylinear=LinearRegressionModel()
-        mybayes=BayesianRegressionModel()
-        mysirhmulti1=Multi_SIRH_model()
-        mysirhmulti1.choose_model(True, True)
-        mysirhmulti2=Multi_SIRH_model()
-        mysirhmulti2.choose_model(True, False)
-        myvar=VAR_m()
-        mymovingmulti=MovingAverageMulti()
-        alphas=np.array([0.02, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9])
-        indexs_points=[[20*i] for i in range(1, 15) ]
-        weights=np.concatenate((np.array([0.5]), alphas * 0.5))
-        dicoresults1D=dict()
-        dicoresults3D=dict()
+    models1Dnames=['ARIMA', 'Exponential', 'Moving Average', 'SIRH1', 'SIRH2', 'SIRH3', 'SIRH4', 'Linear Regression', 'Bayesian Regression']
+    models3Dnames=[ 'VAR', 'Exponential Multi', 'Moving Average Multi', 'SIRH Multi1', 'SIRH Multi2']
 
-
-        WIS = True
-        if WIS: 
-            for index_points in indexs_points:
-                ############### 1D
-                print('index points', index_points)
+    models1D=[myarima, myexp, mymoving, mysirh1, mysirh2, mysirh3, mysirh4, mylinear, mybayes]
+    models3D=[myvar, myexpmulti, mymovingmulti, mysirhmulti1, mysirhmulti2]
 
 
-                try : 
-                    perf_linear=evaluate_model(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except Exception as e :
-                    perf_linear = np.inf
-                    print('an error occured on linear')
-                try : 
-                    perf_bayes=evaluate_model(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except Exception as e :
-                    perf_bayes = np.inf
-                    print('an error occured on bayes')
+    dico_wis_1D_reach_7=dict()
+    for point in indexs_points: 
+        dico_wis_1D_reach_7[str(point)]=[]
+    dico_wis_1D_reach_14=dict()
+    for point in indexs_points:
+        dico_wis_1D_reach_14[str(point)]=[]
+    dico_rmse_1D_reach_7=dict()
+    for point in indexs_points:
+        dico_rmse_1D_reach_7[str(point)]=[]
+    dico_rmse_1D_reach_14=dict()
+    for point in indexs_points:
+        dico_rmse_1D_reach_14[str(point)]=[]
+    dico_wis_3D_reach_7=dict()
+    for point in indexs_points:
+        dico_wis_3D_reach_7[str(point)]=[]
+    dico_wis_3D_reach_14=dict()
+    for point in indexs_points:
+        dico_wis_3D_reach_14[str(point)]=[]
+    dico_rmse_3D_reach_7=dict()
+    for point in indexs_points:
+        dico_rmse_3D_reach_7[str(point)]=[]
+    dico_rmse_3D_reach_14=dict()
+    for point in indexs_points:
+        dico_rmse_3D_reach_14[str(point)]=[]
+
+
+
+
+    df_results_7=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
+    df_results_14=pd.DataFrame(columns=models1Dnames + models3Dnames + ['Real values'])
+
+    for point in indexs_points: 
+
+        
+        prediction_7=[]
+        prediction_14=[]
+
+
+        for model in models1D:
+            try : 
+                model.train(train_dates = [i for i in range(point[0])], data = n_hospitalized[:point[0]])
+            except:
+                if reach ==7 : 
+                    dico_wis_1D_reach_7[str(point)].append(np.inf)
+                    dico_rmse_1D_reach_7[str(point)].append(np.inf)
+                else:
+                    dico_wis_1D_reach_14[str(point)].append(np.inf)
+                    dico_rmse_1D_reach_14[str(point)].append(np.inf)
+            for reach in [7, 14]:
+                intervals=[]
+                for alpha in alphas:
+                    try : 
+                        prediction, interval = model.predict(reach, alpha)
+                        interval_low=interval[0][-1]
+                        interval_high=interval[1][-1]
+                         
+                        prediction=prediction[-1]
+                    except : 
+                        interval_low=0
+                        interval_high=0
+                        prediction=np.inf
+                    intervals.append((interval_low, interval_high))
+
+                if reach ==7 : 
+                    prediction_7.append(prediction)
+
+                else:
+                    prediction_14.append(prediction)
                 
 
-
-                try: 
-                    perf_arima=evaluate_model(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except: 
-                    perf_arima = np.inf
-                    print('an error occured on arima')
-                try: 
-                    perf_exp=evaluate_model(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_exp=np.inf
-                    print('an error occured on exp')
-                try: 
-                    perf_moving=evaluate_model(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
-                except: 
-                    perf_moving = np.inf
-                    print('an error occured on moving')
-                try : 
-                    perf_sirh1=evaluate_model(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except :
-                    perf_sirh1 = np.inf
-                    print('an error occured on sirh1')
-                try :
-                    perf_sirh2=evaluate_model(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh2 = np.inf
-                    print('an error occured on sirh2')
-                try:
-                    perf_sirh3=evaluate_model(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh3 = np.inf
-                    print('an error occured on sirh3')
-                try:
-                    perf_sirh4=evaluate_model(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh4 = np.inf
-                    print('an error occured on sirh4')
-                
-
-                # # ### 3D
-
-                try : 
-                    perfmovingmulti=evaluate_model_multi(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except : 
-                    perfmovingmulti=np.inf
-                    print('an error occured on movingmulti')
-                try : 
-                    perfvar=evaluate_model_multi(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except : 
-                    perfvar=np.inf
-                    print('an error occured on var')
-                try : 
-                    perfexpmulti=evaluate_model_multi(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except: 
-                    perfexpmulti = np.inf
-                    print('an error occured on exp multi')
-                try : 
-                    perf_sirhmulti1=evaluate_model_multi(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirhmulti1 = np.inf
-                    print('an error occured on sirhmulti1')
-                try :
-                    perf_sirhmulti2=evaluate_model_multi(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirhmulti2 = np.inf
-                    print('an error occured on sirhmulti2')
-                
-                print('perf_linear', perf_linear)
-                print('perf_bayes', perf_bayes)
-                print('perf_moving', perf_moving)
-                print('perf_sirh1', perf_sirh1)
-                print('perf_sirh2', perf_sirh2)
-                print('perf_sirh3', perf_sirh3)
-                print('perf_sirh4', perf_sirh4)
-                print('perf_arima', perf_arima)
-                print('perf_exp', perf_exp)
-                print('perfmovingmulti', perfmovingmulti)
-                print('perfvar', perfvar)
-                print('perfexpmulti', perfexpmulti)
-                print('perf_sirhmulti1', perf_sirhmulti1)
-                print('perf_sirhmulti2', perf_sirhmulti2)
-
-
-                dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
-                dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
-
-
-            with open('./results/global_evaluation/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(i)+'_'+str(j)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-                json.dump(dicoresults3D, f)
-            with open('./results/global_evaluation/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(i)+'_'+str(j)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-                json.dump(dicoresults1D, f)
+                if prediction ==np.inf: 
+                    wis=np.inf
+                    RMSE=np.inf
+                else :
+                    try : 
+                        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                    except : 
+                        wis=np.inf
+                    try : 
+                        RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                    except : 
+                        RMSE=np.inf
+                if reach ==7 : 
+                    dico_wis_1D_reach_7[str(point)].append(wis)
+                    dico_rmse_1D_reach_7[str(point)].append(RMSE)
+                else:
+                    dico_wis_1D_reach_14[str(point)].append(wis)
+                    dico_rmse_1D_reach_14[str(point)].append(RMSE)
         
 
-        RMSE = True
-        if RMSE: 
-            for index_points in indexs_points:
-                ############### 1D
-                print('index points', index_points)
-
-
-                try : 
-                    perf_linear=evaluate_model_RMSE(model=mylinear, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except Exception as e :
-                    perf_linear = np.inf
-                    print('an error occured on linear')
-                try : 
-                    perf_bayes=evaluate_model_RMSE(model=mybayes, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except Exception as e :
-                    perf_bayes = np.inf
-                    print('an error occured on bayes')
-                
-
-
+        for model in models3D:
                 try: 
-                    perf_arima=evaluate_model_RMSE(model=myarima, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except: 
-                    perf_arima = np.inf
-                    print('an error occured on arima')
-                try: 
-                    perf_exp=evaluate_model_RMSE(model=myexp, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
+                    model.train(train_dates = [i for i in range(point[0])], data = data3D[:,:point[0]])
                 except:
-                    perf_exp=np.inf
-                    print('an error occured on exp')
-                try: 
-                    perf_moving=evaluate_model_RMSE(model=mymoving, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights) 
-                except: 
-                    perf_moving = np.inf
-                    print('an error occured on moving')
-                try : 
-                    perf_sirh1=evaluate_model_RMSE(model=mysirh1, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except :
-                    perf_sirh1 = np.inf
-                    print('an error occured on sirh1')
-                try :
-                    perf_sirh2=evaluate_model_RMSE(model=mysirh2, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh2 = np.inf
-                    print('an error occured on sirh2')
-                try:
-                    perf_sirh3=evaluate_model_RMSE(model=mysirh3, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh3 = np.inf
-                    print('an error occured on sirh3')
-                try:
-                    perf_sirh4=evaluate_model_RMSE(model=mysirh4, data=n_hospitalized, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirh4 = np.inf
-                    print('an error occured on sirh4')
-                
+                    if reach ==7 : 
+                        dico_wis_3D_reach_7[str(point)].append(np.inf)
+                        dico_rmse_3D_reach_7[str(point)].append(np.inf)
+                    else:
+                        dico_wis_3D_reach_14[str(point)].append(np.inf)
+                        dico_rmse_3D_reach_14[str(point)].append(np.inf)
+                for reach in [7, 14]:
+                    intervals=[]
+                    for alpha in alphas:
+                        try: 
+                            prediction, interval = model.predict(reach, alpha)
+                            interval_low=interval[0][-1]
+                            interval_high=interval[1][-1]
+                            prediction=prediction[-1]
 
+                        except : 
+                            interval_low=0
+                            interval_high=0
+                            prediction=np.inf
+                        intervals.append((interval_low, interval_high)) 
+
+                    if reach ==7 :
+                        prediction_7.append(prediction)
                     
-                
-                
-                
+                    else:
+                        prediction_14.append(prediction)
+                    
+                           
+                    if prediction == np.inf:
+                        wis=np.inf
+                        RMSE=np.inf
+                    else : 
+                        try : 
+                            wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                        except : 
+                            wis=np.inf
+                        try :
+                             
+                            RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                        except :
+                            RMSE=np.inf
+    
+                    if reach ==7 : 
+                        dico_wis_3D_reach_7[str(point)].append(wis)
+                        dico_rmse_3D_reach_7[str(point)].append(RMSE)
+                    else:
+                        dico_wis_3D_reach_14[str(point)].append(wis)
+                        dico_rmse_3D_reach_14[str(point)].append(RMSE)
+        df_results_7.loc[str(point[0])] = prediction_7 + [n_hospitalized[point[0]+7-1]]
+        df_results_14.loc[str(point[0])] = prediction_14 + [n_hospitalized[point[0]+14-1]]
+    
 
-                # # ### 3D
+    # # write results : 
 
-                try : 
-                    perfmovingmulti=evaluate_model_multi_RMSE(model=mymovingmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except : 
-                    perfmovingmulti=np.inf
-                    print('an error occured on movingmulti')
-                try : 
-                    perfvar=evaluate_model_multi_RMSE(model=myvar, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except : 
-                    perfvar=np.inf
-                    print('an error occured on var')
-                try : 
-                    perfexpmulti=evaluate_model_multi_RMSE(model=myexpmulti, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except: 
-                    perfexpmulti = np.inf
-                    print('an error occured on exp multi')
-                try : 
-                    perf_sirhmulti1=evaluate_model_multi_RMSE(model=mysirhmulti1, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirhmulti1 = np.inf
-                    print('an error occured on sirhmulti1')
-                try :
-                    perf_sirhmulti2=evaluate_model_multi_RMSE(model=mysirhmulti2, data=data3D, alphas=alphas, evaluation_point_indexs=index_points, reach=reach, weights=weights)
-                except:
-                    perf_sirhmulti2 = np.inf
-                    print('an error occured on sirhmulti2')
-                
+    # reach=7
+    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_rmse_3D_reach_7, f)
+    
+    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_wis_3D_reach_7, f)
 
+    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_rmse_1D_reach_7, f)
 
-                
-                print('perf_linear', perf_linear)
-                print('perf_bayes', perf_bayes)
-                print('perf_moving', perf_moving)
-                print('perf_sirh1', perf_sirh1)
-                print('perf_sirh2', perf_sirh2)
-                print('perf_sirh3', perf_sirh3)
-                print('perf_sirh4', perf_sirh4)
-                print('perf_arima', perf_arima)
-                print('perf_exp', perf_exp)
-                print('perfmovingmulti', perfmovingmulti)
-                print('perfvar', perfvar)
-                print('perfexpmulti', perfexpmulti)
-                print('perf_sirhmulti1', perf_sirhmulti1)
-                print('perf_sirhmulti2', perf_sirhmulti2)
+    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_wis_1D_reach_7, f)
+    
 
+    reach=14
 
-                dicoresults1D[str(index_points)]=[perf_arima,perf_exp,  perf_moving, perf_sirh1, perf_sirh2, perf_sirh3, perf_sirh4, perf_linear, perf_bayes]
-                dicoresults3D[str(index_points)]=[perfvar, perfexpmulti, perfmovingmulti, perf_sirhmulti1, perf_sirhmulti2 ]
+    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_rmse_3D_reach_14, f)
+    
+    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_wis_3D_reach_14, f)
 
+    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_rmse_1D_reach_14, f)
 
-            with open('./results/global_evaluation/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(i)+'_'+str(j)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-                    json.dump(dicoresults3D, f)
-            with open('./results/global_evaluation/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(i)+'_'+str(j)+'_and_reach_='+str(reach)+'.json', 'w') as f:
-                json.dump(dicoresults1D, f)
-                
+    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+            json.dump(dico_wis_1D_reach_14, f)
 
-
-            
+    df_results_7.to_csv('./results/predictions_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
+    df_results_14.to_csv('./results/predictions_of_the_models/predictions_14_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
