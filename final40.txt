@@ -1,0 +1,6 @@
+python global_comparison_bis.py 0 40
+python global_comparison_bis.py 1 13
+python global_comparison_bis.py 1 67
+python global_comparison_bis.py 2 40
+python global_comparison_bis.py 3 13
+python global_comparison_bis.py 3 67
