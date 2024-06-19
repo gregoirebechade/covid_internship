@@ -159,3 +159,53 @@ def dissemblance_3(pandemic1, pandemic2, pandemic3, pandemic4):
 def dissemblance_4(pandemic1, pandemic2, pandemic3, pandemic4): 
     return diff_between_2_arrays_2(pandemic1, pandemic2)+diff_between_2_arrays_2(pandemic1, pandemic3)+diff_between_2_arrays_2(pandemic1, pandemic4)+diff_between_2_arrays_2(pandemic2, pandemic3)+diff_between_2_arrays_2(pandemic2, pandemic4)+diff_between_2_arrays_2(pandemic3, pandemic4)
 
+def df_to_dict(df): 
+    df.drop(['Unnamed: 0'], axis=1, inplace=True)
+    dict={}
+    for column in df.columns : 
+        dict[column]=list(df[column])
+    return dict
+
+
+
+def concat_dico(dico1, dico2): 
+    dico={}
+    for key in dico1.keys(): 
+        dico[key]=dico1[key]+dico2[key]
+    return dico
+
+
+def get_classement(maliste): 
+    return [sorted(maliste).index(i) for i in (maliste)]
+
+
+
+
+
+def classify(point, pandemic) : 
+    if pandemic[point] < 100 : 
+        return ('stable')
+    der = (1/7)*(pandemic[point+7] - pandemic[point]) / pandemic[point]
+    derder=(1/49) * (pandemic[point + 7] + pandemic[point-7] - 2*pandemic[point] ) / pandemic[point]
+    if  der < -0.05: 
+        return  'big decrease'
+    elif der <-0.03:
+        return 'decrease'
+    elif der < 0.03 :
+        if abs(derder) > 0.003 : 
+            return 'inflexion'
+        else :
+            return 'stable'
+    elif der < 0.2 :
+        return 'increase'
+    else : 
+        return 'big increase'
+
+
+
+
+def sort_list(names, index): 
+    names_copy=names.copy()
+    index_copy=index.copy()
+    names_copy.sort(key=lambda x : index_copy[names.index(x)])
+    return names_copy
