@@ -1,4 +1,0 @@
-python test1.py 
-tmux new-session -s session2 python test1.py
-
-tmux detach client

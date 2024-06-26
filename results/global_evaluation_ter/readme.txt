@@ -1,1 +1,0 @@
-ici les perfs des modèles entrainés à la fin. Normalement on a déjà les dico mais on vérifie que ce sont les mêmes que ceux qu'on verra dans global_comparison

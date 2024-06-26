@@ -104,139 +104,156 @@ if __name__ =='__main__':
         for model in models1D:
             try : 
                 model.train(train_dates = [i for i in range(point[0])], data = n_hospitalized[:point[0]])
+                error_on_training=False
+
             except:
-                if reach ==7 : 
-                    dico_wis_1D_reach_7[str(point)].append(np.inf)
-                    dico_rmse_1D_reach_7[str(point)].append(np.inf)
-                else:
-                    dico_wis_1D_reach_14[str(point)].append(np.inf)
-                    dico_rmse_1D_reach_14[str(point)].append(np.inf)
-            for reach in [7, 14]:
-                intervals=[]
-                for alpha in alphas:
-                    try : 
-                        prediction, interval = model.predict(reach, alpha)
-                        interval_low=interval[0][-1]
-                        interval_high=interval[1][-1]
-                         
-                        prediction=prediction[-1]
-                    except : 
-                        interval_low=0
-                        interval_high=0
-                        prediction=np.inf
-                    intervals.append((interval_low, interval_high))
+                dico_wis_1D_reach_7[str(point)].append(np.inf)
+                dico_rmse_1D_reach_7[str(point)].append(np.inf)
+                dico_wis_1D_reach_14[str(point)].append(np.inf)
+                dico_rmse_1D_reach_14[str(point)].append(np.inf)
+                prediction_7.append(np.inf)
+                prediction_14.append(np.inf)
+                error_on_training=True
+            if not error_on_training :   
+                for reach in [7, 14]:
+                    intervals=[]
+                    for alpha in alphas:
+                        try : 
+                            prediction, interval = model.predict(reach, alpha)
+                            interval_low=interval[0][-1]
+                            interval_high=interval[1][-1]
+                            
+                            prediction=prediction[-1]
+                        except : 
+                            interval_low=0
+                            interval_high=0
+                            prediction=np.inf
+                        intervals.append((interval_low, interval_high))
 
-                if reach ==7 : 
-                    prediction_7.append(prediction)
+                    if reach ==7 : 
+                        prediction_7.append(prediction)
 
-                else:
-                    prediction_14.append(prediction)
-                
+                    else:
+                        prediction_14.append(prediction)
+                    
 
-                if prediction ==np.inf: 
-                    wis=np.inf
-                    RMSE=np.inf
-                else :
-                    try : 
-                        wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
-                    except : 
+                    if prediction ==np.inf: 
                         wis=np.inf
-                    try : 
-                        RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
-                    except : 
                         RMSE=np.inf
-                if reach ==7 : 
-                    dico_wis_1D_reach_7[str(point)].append(wis)
-                    dico_rmse_1D_reach_7[str(point)].append(RMSE)
-                else:
-                    dico_wis_1D_reach_14[str(point)].append(wis)
-                    dico_rmse_1D_reach_14[str(point)].append(RMSE)
+                    else :
+                        try : 
+                            wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                        except : 
+                            wis=np.inf
+                        try : 
+                            RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                        except : 
+                            RMSE=np.inf
+                    if reach ==7 : 
+                        dico_wis_1D_reach_7[str(point)].append(wis)
+                        dico_rmse_1D_reach_7[str(point)].append(RMSE)
+                    else:
+                        dico_wis_1D_reach_14[str(point)].append(wis)
+                        dico_rmse_1D_reach_14[str(point)].append(RMSE)
         
 
         for model in models3D:
                 try: 
                     model.train(train_dates = [i for i in range(point[0])], data = data3D[:,:point[0]])
+                    error_on_training=False
                 except:
-                    if reach ==7 : 
-                        dico_wis_3D_reach_7[str(point)].append(np.inf)
-                        dico_rmse_3D_reach_7[str(point)].append(np.inf)
-                    else:
-                        dico_wis_3D_reach_14[str(point)].append(np.inf)
-                        dico_rmse_3D_reach_14[str(point)].append(np.inf)
-                for reach in [7, 14]:
-                    intervals=[]
-                    for alpha in alphas:
-                        try: 
-                            prediction, interval = model.predict(reach, alpha)
-                            interval_low=interval[0][-1]
-                            interval_high=interval[1][-1]
-                            prediction=prediction[-1]
+                    dico_wis_3D_reach_7[str(point)].append(np.inf)
+                    dico_rmse_3D_reach_7[str(point)].append(np.inf)
+                    dico_wis_3D_reach_14[str(point)].append(np.inf)
+                    dico_rmse_3D_reach_14[str(point)].append(np.inf)
+                    prediction_7.append(np.inf)
+                    prediction_14.append(np.inf)
+                    error_on_training=True
+                if not error_on_training :
+                    for reach in [7, 14]:
+                        intervals=[]
+                        for alpha in alphas:
+                            try: 
+                                prediction, interval = model.predict(reach, alpha)
+                                interval_low=interval[0][-1]
+                                interval_high=interval[1][-1]
+                                prediction=prediction[-1]
 
-                        except : 
-                            interval_low=0
-                            interval_high=0
-                            prediction=np.inf
-                        intervals.append((interval_low, interval_high)) 
+                            except : 
+                                interval_low=0
+                                interval_high=0
+                                prediction=np.inf
+                            intervals.append((interval_low, interval_high)) 
 
-                    if reach ==7 :
-                        prediction_7.append(prediction)
-                    
-                    else:
-                        prediction_14.append(prediction)
-                    
-                           
-                    if prediction == np.inf:
-                        wis=np.inf
-                        RMSE=np.inf
-                    else : 
-                        try : 
-                            wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
-                        except : 
+                        if reach ==7 :
+                            prediction_7.append(prediction)
+                        
+                        else:
+                            prediction_14.append(prediction)
+                        
+                            
+                        if prediction == np.inf:
                             wis=np.inf
-                        try :
-                             
-                            RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
-                        except :
                             RMSE=np.inf
-    
-                    if reach ==7 : 
-                        dico_wis_3D_reach_7[str(point)].append(wis)
-                        dico_rmse_3D_reach_7[str(point)].append(RMSE)
-                    else:
-                        dico_wis_3D_reach_14[str(point)].append(wis)
-                        dico_rmse_3D_reach_14[str(point)].append(RMSE)
+                        else : 
+                            try : 
+                                wis=WIS(prediction=prediction, intervals = intervals, point_of_evaluation = n_hospitalized[point[0]+reach-1], alphas = alphas , weights = weights)
+                            except : 
+                                wis=np.inf
+                            try :
+                                
+                                RMSE=np.sqrt((prediction - n_hospitalized[point[0]+reach-1])**2)
+                            except :
+                                RMSE=np.inf
+        
+                        if reach ==7 : 
+                            dico_wis_3D_reach_7[str(point)].append(wis)
+                            dico_rmse_3D_reach_7[str(point)].append(RMSE)
+                        else:
+                            dico_wis_3D_reach_14[str(point)].append(wis)
+                            dico_rmse_3D_reach_14[str(point)].append(RMSE)
         df_results_7.loc[str(point[0])] = prediction_7 + [n_hospitalized[point[0]+7-1]]
         df_results_14.loc[str(point[0])] = prediction_14 + [n_hospitalized[point[0]+14-1]]
     
 
-    # # write results : 
+    for key in dico_wis_1D_reach_7.keys():
+        assert(len(dico_wis_1D_reach_7[key])==9)
+        assert(len(dico_rmse_1D_reach_7[key])==9)
+        assert(len(dico_wis_1D_reach_14[key])==9)
+        assert(len(dico_rmse_1D_reach_14[key])==9)
+        assert(len(dico_wis_3D_reach_7[key])==5)
+        assert(len(dico_rmse_3D_reach_7[key])==5)
+        assert(len(dico_wis_3D_reach_14[key])==5)
+        assert(len(dico_rmse_3D_reach_14[key])==5)
+    
 
-    # reach=7
-    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    # write results : 
+    reach=7
+    with open('./results/global_evaluation_from_zero/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_rmse_3D_reach_7, f)
     
-    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_wis_3D_reach_7, f)
 
-    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_rmse_1D_reach_7, f)
 
-    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_wis_1D_reach_7, f)
     
 
     reach=14
 
-    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_RMSE_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_rmse_3D_reach_14, f)
     
-    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_WIS_of_3D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_wis_3D_reach_14, f)
 
-    with open('./results/global_evaluation_ter/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_RMSE_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_rmse_1D_reach_14, f)
 
-    with open('./results/global_evaluation_ter/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
+    with open('./results/global_evaluation_from_zero/evaluation_with_WIS_of_1D_models_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'_and_reach_='+str(reach)+'.json', 'w') as f:
             json.dump(dico_wis_1D_reach_14, f)
 
     df_results_7.to_csv('./results/predictions_of_the_models/predictions_7_days_on_pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv')
