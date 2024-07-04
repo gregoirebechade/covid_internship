@@ -15,10 +15,10 @@ import json
 
 if __name__ =='__main__': 
     args = sys.argv # the arguments give the pandemic on which evaluate the models 
-    mob_of_the_pandemic=(args[1])
-    number_of_the_pandemic=(args[2])
-    # mob_of_the_pandemic=int(args[1])
-    # number_of_the_pandemic=int(args[2])
+    # mob_of_the_pandemic=(args[1])
+    # number_of_the_pandemic=(args[2])
+    mob_of_the_pandemic=int(args[1])
+    number_of_the_pandemic=int(args[2])
     path_to_file='all_pandemics/pandemic_'+str(mob_of_the_pandemic)+'_'+str(number_of_the_pandemic)+'.csv'
     df=pd.read_csv(path_to_file)
     
