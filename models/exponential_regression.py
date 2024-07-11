@@ -12,14 +12,53 @@ import scipy.stats
 
 
 def exponential_func(x, a, b, c):
+    """
+    Exponential regression 
+
+    Parameters
+    ----------
+    x : np.array
+        The input data
+    a: float
+        The first parameter 
+    b : float
+        The second parameter 
+    c : float
+        The third parameter 
+
+    
+    """
     return a*np.exp(b*(x))+c
 
 def h(theta, x_i):# theta represent the parameters of the model
+    """
+    Exponential regression
+    
+    """
     return theta[0]*np.exp(theta[1]*(x_i))+theta[2]
 
 
 
 def grad_theta_h(theta, x): # function to compute the gradient of h (which represent the prediction function) with respect to theta, the parameters of the model
+    
+    """
+    Compute the gradient of the exponential regression with respect to theta 
+
+    Parameters
+    ----------
+    theta : np.array
+        The parameter of the exponential regression
+    x : float
+        The input data
+    
+    Returns
+    -------
+    grad : np.array
+        The gradient of the exponential regression with respect to theta
+
+    
+    """
+    
     a=theta[0]
     b=theta[1]
     c=theta[2]
@@ -31,6 +70,24 @@ def grad_theta_h(theta, x): # function to compute the gradient of h (which repre
 
 class ExponentialRegression(Model): 
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.name='Exponential regression'
         self.data=data
         train_dates=np.array(train_dates)
@@ -44,6 +101,27 @@ class ExponentialRegression(Model):
 
 
     def predict(self, reach, alpha):
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
         assert self.trained, 'The model has not been trained yet'
         a=self.p[0]
         b=self.p[1]
@@ -79,6 +157,7 @@ class ExponentialRegression(Model):
 
 
 def exponential_function_m(X, a, b,c, d, e): 
+    """Exponential regression with multiple variables"""
     i, n_infected, mobility = X
 
     return a * np.exp(b * mobility + c * i+ d * n_infected) +e
@@ -102,21 +181,32 @@ def grad_theta_h_m(theta, x):
 
 
 def shift(x: np.array, n:float): 
+    # shifts the array x of n values
     return np.concatenate((np.array([ x[0] for i in range(int(n))]), x))[:len(x)] # we assume that the n first values are the same as the first value of the array
-
-def intermediate(x: np.array, a, b, c, d, e, shift1, shift2, n_infected_normalized, mobility): 
-    res=[]
-    for elt in x: 
-        uno=((shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e) + (1-(shift1 - int(shift1)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)+1], mobility[int(elt-shift2)]], a, b, c, d, e)
-        dos=((shift2 - int(shift2)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)]], a, b, c, d, e) + (1-(shift2 - int(shift2)))*exponential_function_m([elt, n_infected_normalized[int(elt-shift1)], mobility[int(elt-shift2)+1]], a, b, c, d, e)
-        res.append(0.5*uno + 0.5 * dos)
-    return res
 
 
 
 class MultiDimensionalExponentialRegression(Multi_Dimensional_Model): 
 
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.name='multi exponential regression'
         self.data=data
         maxi=np.max(data[1])
@@ -161,6 +251,27 @@ class MultiDimensionalExponentialRegression(Multi_Dimensional_Model):
 
 
     def predict(self, reach, alpha):
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
         assert self.trained, 'The model has not been trained yet'
         a=self.p[0]
         b=self.p[1]

@@ -4,7 +4,26 @@ import scipy.stats
 from useful_functions import predict_model
 from sklearn.linear_model import BayesianRidge
 
-def grad_theta_h_theta(h, theta, x): # function to compute the gradient of h (which represent the prediction function) with respect to tehta, the parameters of the model
+def grad_theta_h_theta(h, theta, x): 
+    """
+    function to compute the gradient of h (which represent the prediction function) with respect to theta, the parameters of the model
+
+    Parameters
+    ----------
+    h : function
+        The function to differenciate
+    theta : np.array
+        The parameters of the model
+    x : np.array
+        The input data
+    
+    Returns
+    -------
+    grad : np.array
+        The gradient of h with respect to theta
+         
+    """
+    
     grad=np.zeros(len(theta))
     for i in range(len(theta)): # this is numerical gradient
         theta_plus=theta.copy()
@@ -14,6 +33,20 @@ def grad_theta_h_theta(h, theta, x): # function to compute the gradient of h (wh
 
 
 def create_br_model(coefs): 
+    """
+    create a Bayesian regression model 
+
+    Parameters
+    ----------
+    coefs : np.array
+        The coefficients of the model
+    
+    Returns
+    -------
+    br : BayesianRidge
+        The Bayesian Ridge model
+    
+    """
 
     br=BayesianRidge()
     br.fit(np.array([0 for i in range(len(coefs))]).reshape(1, -1), [1])
@@ -21,6 +54,22 @@ def create_br_model(coefs):
     return br
 
 def prediction_br_model(theta, x ): 
+    """
+    Computes the prediction of the BR model for a given input
+
+    Parameters
+    ----------
+    theta : np.array
+        The parameters of the model
+    x : np.array
+        The input data
+    
+    Returns
+
+    prediction : float
+        The prediction of the model 
+    
+    """
     br = create_br_model(theta)
     return br.predict(x.reshape(1, -1))[0]
 
@@ -28,6 +77,27 @@ class BayesianRegressionModel(Model):
     
 
     def train(self, train_dates, data): 
+
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
+         
+
         n_days=30
         if n_days >= len(train_dates)/2: 
             n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions than the number of points to avoid negative sigma2
@@ -48,6 +118,26 @@ class BayesianRegressionModel(Model):
     
 
     def predict(self, reach, alpha): 
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+        
         prediction = predict_model(self.model, self.mydata, self.y, reach)
         covariance_matrix=self.model.sigma_
         last_day=self.mydata[-1]

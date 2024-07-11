@@ -325,6 +325,29 @@ class Multi_SIRD_model(Multi_Dimensional_Model):
 
     
     def predict(self, reach,  alpha):
+
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
+        
         mob_predicted=np.array([self.data[2][-1] for i in range(reach)])
         reach=len(mob_predicted)
         s_0=1000000 -1

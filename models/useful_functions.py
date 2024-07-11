@@ -1,14 +1,39 @@
 import numpy as np
 from scipy.stats import wasserstein_distance
+from Model import Model
+import pandas as pd
 
 
+def differenciate(x: np.array): 
+    """
+    Compute the approximate differenciation of an array 
 
-def differenciate(x): 
+    Parameters 
+    ----------
+    x : np.array
+        The array to differentiate
+    
+    Returns
+    -------
+    np.array
+        The approximate derivative of the array
+    
+    """
     dx=[x[i+1]-x[i] for i in range(len(x)-1)]
     return dx
 
 
-def shift(x: np.array, n:float): 
+def shift(x: np.array, n:int): 
+    """
+    Shift an array by n values
+    Parameters 
+    ----------
+    x : np.array
+        The array to shift
+    n : int
+
+
+    """
     if n >0 : 
         return np.concatenate((np.array([ x[0] for i in range(int(n))]), x))[:len(x)] # we assume that the n first values are the same as the first value of the array
     elif n < 0 :
@@ -18,6 +43,31 @@ def shift(x: np.array, n:float):
     
 
 def plot_predictions(models: list, data: np.array, dates_of_pandemic: np.array, reach: int, points_of_evaluation: list, fig, ax):
+    """
+    To plot the predictions of a list of models on the data on which they performed the predictuions
+
+    Parameters
+    ----------
+    models : list
+        The list of models
+    data : np.array
+        The data on which the models performed the predictions
+    dates_of_pandemic : np.array
+        The dates of the pandemic 
+    reach : int
+        The number of days to forecast
+    points_of_evaluation : list
+        The points of evaluation of the models
+    fig : matplotlib.figure.Figure
+        The figure on which to plot the predictions 
+    ax : matplotlib.axes.Axes
+        The axes on which to plot the predictions
+    
+    Returns
+    -------
+    None
+
+    """
     new_deaths, n_infected, mobility = data
     ax.plot(dates_of_pandemic, new_deaths, c='black')
     colours=['blue', 'orange', 'green', 'red', 'purple', 'brown', 'pink', 'gray', 'olive', 'cyan']
@@ -48,7 +98,27 @@ def plot_predictions(models: list, data: np.array, dates_of_pandemic: np.array, 
 
 
 
-def predict_model(model, data_train,y_train,  reach): 
+def predict_model(model:Model, data_train: np.array,y_train: np.array,  reach: int ): 
+    """
+    Makes the prediction of a model reach days ahead
+
+    Parameters
+    ----------
+    model : Model
+        The model to predict with
+    data_train : np.array
+        The training data
+    y_train : np.array
+        The training labels
+    reach : int
+        The number of days to forecast
+    
+    Returns
+    -------
+    np.array
+        The forecasted values  
+    
+    """
     prediction_reach_days_ahead=[]
     a=np.concatenate((data_train[-1], np.array([y_train[-1]])))[1:]
     predict=model.predict(a.reshape(1, -1))
@@ -63,7 +133,23 @@ def predict_model(model, data_train,y_train,  reach):
 
 
 
-def diff_between_2_arrays(array1, array2): # this function punishes the pandemics when they do not have the same amplitude (difference in maximum), but also when their derivatives do not have the same amplitude, and when their second derivatives do not have the same amplitude
+def diff_between_2_arrays(array1: np.array, array2: np.array): # this function punishes the pandemics when they do not have the same amplitude (difference in maximum), but also when their derivatives do not have the same amplitude, and when their second derivatives do not have the same amplitude
+    """
+    Loss to assess the difference between two pandemics to measure the diversity of a set of pandemics 
+
+    Parameters
+    ----------
+    array1 : np.array
+        The first pandemic
+    array2 : np.array
+        The second pandemic
+
+    Returns
+    -------
+    float
+        The diversity measure between the two pandemics
+
+    """
     derive1=np.array(differenciate(array1))
     derive2=np.array(differenciate(array2))
     derivee1=np.array(differenciate(derive1))
@@ -100,7 +186,25 @@ def diff_between_2_arrays(array1, array2): # this function punishes the pandemic
     return np.sum(res**2)
             
 
-def diff_between_2_arrays_2(array1, array2): # same function but with wassertsein distance instead of absolute difference
+def diff_between_2_arrays_2(array1: np.array, array2: np.array): # same function but with wassertsein distance instead of absolute difference
+
+    """
+    Loss to assess the difference between two pandemics to measure the diversity of a set of pandemics
+
+    Parameters
+    ----------
+
+    array1 : np.array
+        The first pandemic
+    array2 : np.array
+        The second pandemic
+
+    Returns
+    -------
+    float
+        The diversity measure between the two pandemics
+
+    """
     derive1=np.array(differenciate(array1))
     derive2=np.array(differenciate(array2))
     derivee1=np.array(differenciate(derive1))
@@ -140,15 +244,72 @@ def diff_between_2_arrays_2(array1, array2): # same function but with wassertsei
 
 
 
-def dissemblance_1(pandemic1, pandemic2, pandemic3, pandemic4):
+def dissemblance_1(pandemic1: np.array, pandemic2: np.array, pandemic3: np.array, pandemic4: np.array):
+    """
+    assess the diversity of a set of 4 pandemics
+
+    Parameters
+    ----------
+    pandemic1 : np.array
+        The first pandemic
+    pandemic2 : np.array
+        The second pandemic
+    pandemic3 : np.array
+        The third pandemic
+    pandemic4 : np.array
+        The fourth pandemic
+    
+    Returns
+    -------
+    float
+        The diversity measure between the four pandemics
+    """
     return np.sum([abs(pandemic1[i]-pandemic2[i]) for i in range(len(pandemic1))])+np.sum([abs(pandemic1[i]-pandemic3[i]) for i in range(len(pandemic1))])+np.sum([abs(pandemic1[i]-pandemic4[i]) for i in range(len(pandemic1))])+np.sum([abs(pandemic2[i]-pandemic3[i]) for i in range(len(pandemic1))])+np.sum([abs(pandemic2[i]-pandemic4[i]) for i in range(len(pandemic1))])+np.sum([abs(pandemic3[i]-pandemic4[i]) for i in range(len(pandemic1))])
 
 
-def dissemblance_2(pandemic1, pandemic2, pandemic3, pandemic4): 
+def dissemblance_2(pandemic1: np.array, pandemic2: np.array, pandemic3: np.array, pandemic4: np.array):
+    """
+    assess the diversity of a set of 4 pandemics
+
+    Parameters
+    ----------
+    pandemic1 : np.array
+        The first pandemic
+    pandemic2 : np.array
+        The second pandemic
+    pandemic3 : np.array
+        The third pandemic
+    pandemic4 : np.array
+        The fourth pandemic
+    
+    Returns
+    -------
+    float
+        The diversity measure between the four pandemics
+    """
     return diff_between_2_arrays(pandemic1, pandemic2)+diff_between_2_arrays(pandemic1, pandemic3)+diff_between_2_arrays(pandemic1, pandemic4)+diff_between_2_arrays(pandemic2, pandemic3)+diff_between_2_arrays(pandemic2, pandemic4)+diff_between_2_arrays(pandemic3, pandemic4)
 
 
-def dissemblance_3(pandemic1, pandemic2, pandemic3, pandemic4): 
+def dissemblance_3(pandemic1: np.array, pandemic2: np.array, pandemic3: np.array, pandemic4: np.array):
+    """
+    assess the diversity of a set of 4 pandemics
+
+    Parameters
+    ----------
+    pandemic1 : np.array
+        The first pandemic
+    pandemic2 : np.array
+        The second pandemic
+    pandemic3 : np.array
+        The third pandemic
+    pandemic4 : np.array
+        The fourth pandemic
+    
+    Returns
+    -------
+    float
+        The diversity measure between the four pandemics
+    """
     pandemic1_normalized = np.array(pandemic1/sum(np.abs(pandemic1)))
     pandemic2_normalized = np.array(pandemic2/sum(np.abs(pandemic2)))
     pandemic3_normalized = np.array(pandemic3/sum(np.abs(pandemic3)))
@@ -156,10 +317,29 @@ def dissemblance_3(pandemic1, pandemic2, pandemic3, pandemic4):
     return wasserstein_distance(pandemic1_normalized, pandemic2_normalized)+wasserstein_distance(pandemic1_normalized, pandemic3_normalized)+wasserstein_distance(pandemic1_normalized, pandemic4_normalized)+wasserstein_distance(pandemic2_normalized, pandemic3_normalized)+wasserstein_distance(pandemic2_normalized, pandemic4_normalized)+wasserstein_distance(pandemic3_normalized, pandemic4_normalized)
 
 
-def dissemblance_4(pandemic1, pandemic2, pandemic3, pandemic4): 
+def dissemblance_4(pandemic1: np.array, pandemic2: np.array, pandemic3: np.array, pandemic4: np.array):
+    """
+    assess the diversity of a set of 4 pandemics
+
+    Parameters
+    ----------
+    pandemic1 : np.array
+        The first pandemic
+    pandemic2 : np.array
+        The second pandemic
+    pandemic3 : np.array
+        The third pandemic
+    pandemic4 : np.array
+        The fourth pandemic
+    
+    Returns
+    -------
+    float
+        The diversity measure between the four pandemics
+    """
     return diff_between_2_arrays_2(pandemic1, pandemic2)+diff_between_2_arrays_2(pandemic1, pandemic3)+diff_between_2_arrays_2(pandemic1, pandemic4)+diff_between_2_arrays_2(pandemic2, pandemic3)+diff_between_2_arrays_2(pandemic2, pandemic4)+diff_between_2_arrays_2(pandemic3, pandemic4)
 
-def df_to_dict(df): 
+def df_to_dict(df: pd.Dataframe): 
     df.drop(['Unnamed: 0'], axis=1, inplace=True)
     dict={}
     for column in df.columns : 
@@ -168,43 +348,19 @@ def df_to_dict(df):
 
 
 
-def concat_dico(dico1, dico2): 
+def concat_dico(dico1: dict, dico2: dict): 
     dico={}
     for key in dico1.keys(): 
         dico[key]=dico1[key]+dico2[key]
     return dico
 
 
-def get_classement(maliste): 
+def get_classement(maliste: list): 
     return [sorted(maliste).index(i) for i in (maliste)]
 
 
 
-
-
-def classify(point, pandemic) : 
-    if pandemic[point] < 100 : 
-        return ('stable')
-    der = (1/7)*(pandemic[point+7] - pandemic[point]) / pandemic[point]
-    derder=(1/49) * (pandemic[point + 7] + pandemic[point-7] - 2*pandemic[point] ) / pandemic[point]
-    if  der < -0.05: 
-        return  'big decrease'
-    elif der <-0.03:
-        return 'decrease'
-    elif der < 0.03 :
-        if abs(derder) > 0.003 : 
-            return 'inflexion'
-        else :
-            return 'stable'
-    elif der < 0.2 :
-        return 'increase'
-    else : 
-        return 'big increase'
-
-
-
-
-def sort_list(names, index): 
+def sort_list(names: list,index: list): 
     names_copy=names.copy()
     index_copy=index.copy()
     names_copy.sort(key=lambda x : index_copy[names.index(x)])

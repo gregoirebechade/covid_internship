@@ -8,6 +8,31 @@ import numpy as np
 class ARIMA_Model(Model):
 
     def train(self, train_dates, data, grid_search=False, p=3, d=0, q=3): 
+        """
+        trains the Arima model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        grid_search : bool, optional
+            If True, the function will try to find the best parameters for the ARIMA model. The default is False.
+        p : int, optional
+            The number of autoregressive terms. The default is 3.
+        d : int, optional
+            The order of differenciation. The default is 0.
+        q : int, optional
+            The number of moving average terms. The default is 3.
+        
+        Returns
+        -------
+        None
+
+
+        
+        """
         self.name='Arima'
         self.data=data
         if grid_search:
@@ -43,6 +68,24 @@ class ARIMA_Model(Model):
         self.trained= True
     
     def predict(self, reach, alpha):
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
         assert self.trained, 'The model has not been trained yet'
         predifore=self.fitted.get_forecast(reach).predicted_mean # this is an array of size reach
         assert type(predifore) == np.ndarray, 'The prediction should be a numpy array'
@@ -60,6 +103,25 @@ class ARIMA_Model(Model):
 class VAR_m(Multi_Dimensional_Model):
 
     def train(self, train_dates, data): 
+
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.name='VAR'
         # the data is a array of shape (3, n) where n is the number of days
         # we have to transpose it so the VAR model reads it correctly but not in the self.data attribute as it is used in a different way for the .plot() method in the mother class
@@ -69,6 +131,25 @@ class VAR_m(Multi_Dimensional_Model):
         self.trained= True
     
     def predict(self, reach, alpha):
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
         assert self.trained, 'The model has not been trained yet'
         lag=self.fitted.k_ar
         ints=self.fitted.forecast_interval(self.data.transpose()[-lag:], steps=reach, alpha=alpha)

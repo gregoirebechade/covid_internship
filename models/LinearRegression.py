@@ -7,6 +7,23 @@ from useful_functions import predict_model
 
 
 def estimate_sigma2(linear_regression, data, y): 
+    """
+    Estimation of sigma^2 through the variance of the noise
+
+    Parameters
+    ----------
+    linear_regression : LinearRegression
+        The linear regression model
+    data : np.array
+        The input data
+    y : np.array
+        The output data
+    
+    Returns
+    -------
+    
+    """
+
     predictions = linear_regression.predict(data)
     d=linear_regression.coef_.shape[0]
     n=len(y)
@@ -15,6 +32,7 @@ def estimate_sigma2(linear_regression, data, y):
 
 
 def compute_covariance_matrix(linear_regression, data, y): 
+
     sigma2=estimate_sigma2(linear_regression, data, y)
     X=data
     return np.linalg.inv(np.dot(X.T, X))*sigma2
@@ -23,6 +41,23 @@ class LinearRegressionModel(Model):
     
 
     def train(self, train_dates, data): 
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+
+        """
         n_days=30
         if n_days >= len(train_dates)/2: 
             n_days = len(train_dates)//2 -1 # we avoid to have a RL with more dimensions thanh the number of points to avoid negative
@@ -44,6 +79,27 @@ class LinearRegressionModel(Model):
 
 
     def predict(self, reach, alpha): 
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
         prediction = predict_model(self.model, self.mydata, self.y, reach)
         covariance_matrix=compute_covariance_matrix(self.model, self.mydata, self.y)
         last_day=self.mydata[-1]

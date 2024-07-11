@@ -28,6 +28,37 @@ def derive_sirh(x, beta, N, gamma_i,gamma_h,  h): # the derivative of the sirh m
 
 
 def run_sirh(x0, beta, gamma_i, gamma_h,h,  t, dt):
+    """
+    Runs a Euler intergation of the equation of the SIRH model 
+
+    Parameters
+    ----------
+    x0 : np.array
+        The initial state of the model
+    beta : float
+        The transmission rate
+    gamma_i : float
+        The recovery rate of the infected individuals
+    gamma_h : float
+        The recovery rate of the hospitalized individuals
+    h : float
+        The rate of hospitalization
+    t : float
+        The number of days to forecast
+    dt : float
+        The time step of the integration
+    
+    Returns
+    -------
+    s_final : np.array
+        The time-series of susceptible individuals
+    i_final : np.array
+        The time-serie of infected individuals
+    r_final : np.array
+        The time-serie of recovered individuals
+    h_final : np.array
+        The time-serie of hospitalized individuals
+    """
     
     x=x0
     S=[x[0]]
@@ -63,6 +94,9 @@ def differenciate(x):
     return dx
 
 def sirh_for_optim(x, beta, gamma_i, gamma_h, h):
+    """
+    Returns the number of hospitalized individuals for each day of the pandemic for the optimization function for SIRH1
+    """
     # x is a list of dates (0 - 122)
     x0=[s_0, i_0, r_0, h_0]
     t=len(x)
@@ -75,6 +109,9 @@ def sirh_for_optim(x, beta, gamma_i, gamma_h, h):
 
 
 def sirh_for_optim_3(x, beta,gamma_h,  h):
+    """
+    Returns the number of hospitalized individuals for each day of the pandemic for the optimization function for SIRH3
+    """
     # x is a list of dates (0 - 122)
     x0=[s_0, i_0, r_0, h_0]
     t=len(x)
@@ -84,6 +121,9 @@ def sirh_for_optim_3(x, beta,gamma_h,  h):
 
 
 def sirh_for_optim_4(x, beta, gamma_i,  h):
+    """
+    Returns the number of hospitalized individuals for each day of the pandemic for the optimization function for SIRH4
+    """
     # x is a list of dates (0 - 122)
     x0=[s_0, i_0, r_0, h_0]
     t=len(x)
@@ -92,6 +132,9 @@ def sirh_for_optim_4(x, beta, gamma_i,  h):
     return h_arr
 
 def sirh_for_optim_2(x, beta, h):
+    """
+    Returns the number of hospitalized individuals for each day of the pandemic for the optimization function for SIRH2
+    """
     # x is a list of dates (0 - 122)
     x0=[s_0, i_0, r_0, h_0]
     t=len(x)
@@ -100,6 +143,26 @@ def sirh_for_optim_2(x, beta, h):
     return h_arr 
 
 def grad_theta_h_theta(x0, theta, reach, the_gamma_constant=None): # different case that depend on the number of parameters to optimize
+    """
+    Compute the gradient of the estimation with respect to theta
+
+    Parameters
+    ----------
+    x0 : np.array
+        The initial state of the model
+    theta : np.array
+        The parameters of the model
+    reach : int
+        The number of days to forecast
+    the_gamma_constant : str
+        The gamma constant that is not optimized
+
+    Returns 
+    -------
+    grad : np.array
+        The gradient of the estimation with respect to theta
+    
+    """
     grad=np.zeros((len(theta), reach))
     for i in range(len(grad)): 
         if len(theta)==2: 
@@ -131,6 +194,9 @@ def grad_theta_h_theta(x0, theta, reach, the_gamma_constant=None): # different c
 
 
 class SIRH_model_2(Model): 
+    """
+    A SIRH model of the second type that uses the value of the mobility to get a time varying transmission rate and is fitted to both number of hospitalized and iinfected curves
+    """
     s_0=1000000 -1
     i_0=1
     r_0=0
@@ -142,6 +208,20 @@ class SIRH_model_2(Model):
         self.reset_state=reset_state
         self.N=s_0+i_0+r_0+h_0
     def train( self, train_dates,  data):
+        """
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+        """
         self.name='SIRH'
         self.data=data
         self.train_dates=train_dates
@@ -179,6 +259,24 @@ class SIRH_model_2(Model):
             self.trained= True
 
     def predict(self, reach, alpha):
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+        """
+
+
         S,I,R,H=run_sirh([s_0, i_0, r_0, h_0], self.beta, self.gamma_i, self.gamma_h, self.h , len(self.train_dates), 0.001)
         self.S=S
         self.I=I
@@ -222,6 +320,39 @@ class SIRH_model_2(Model):
 
 
 def run_sirh_m(x0, a, b , gamma_i, gamma_h,h, mobility , dt):
+    """
+    Runs a Euler intergation of the equation of the multi SIRH model 
+
+    Parameters
+    ----------
+    x0 : np.array
+        The initial state of the model
+    a : float
+        The intercept of the transmission rate
+    b : float
+        The slope of the transmission rate
+    gamma_i : float
+        The recovery rate of the infected individuals
+    gamma_h : float
+        The recovery rate of the hospitalized individuals
+    h : float
+        The rate of hospitalization
+    mobility : np.array 
+        The mobility data
+    dt : float
+        The time step of the integration
+    
+    Returns
+    -------
+    s_final : np.array
+        The time-series of susceptible individuals
+    i_final : np.array
+        The time-serie of infected individuals
+    r_final : np.array
+        The time-serie of recovered individuals
+    h_final : np.array
+        The time-serie of hospitalized individuals
+    """
     t=len(mobility)
     x=x0
     S=[x[0]]
@@ -252,7 +383,32 @@ def run_sirh_m(x0, a, b , gamma_i, gamma_h,h, mobility , dt):
     return s_final, i_final, r_final, h_final
 
 def sirh_for_optim_m( x, a, b ,h, mobility, gamma_i=0.2, gamma_h=0.2): # returns first the number of deaths and then the number of total infected
+    """
+    Concatenation of both infected and hospitalized individuals for the optimization function
+
+    Parameters
+    ----------
+    x : np.array
+        The dates of the pandemic
+    a : float
+        The intercept of the transmission rate
+    b : float
+        The slope of the transmission rate
+    h : float
+        The rate of hospitalization
+    mobility : np.array
+        The mobility data
+    gamma_i : float
+        The recovery rate of the infected individuals
+    gamma_h : float
+        The recovery rate of the hospitalized individuals
     
+    Returns
+    -------
+    np.array
+        The concatenation of the hospitalized and infected individuals
+    
+    """
     s_0=1000000 -1
     i_0=1
     r_0=0
@@ -261,7 +417,6 @@ def sirh_for_optim_m( x, a, b ,h, mobility, gamma_i=0.2, gamma_h=0.2): # returns
     dt=0.001
 
     S, I, R, H = run_sirh_m(x0, a, b , gamma_i, gamma_h, h, mobility ,   dt)
-    zer=np.array([0])
     h_arr=np.array(H)
     I_arr=np.array(I)
     return np.concatenate((h_arr, I_arr))
@@ -270,6 +425,38 @@ def sirh_for_optim_m( x, a, b ,h, mobility, gamma_i=0.2, gamma_h=0.2): # returns
 
 
 def sirh_for_optim_normalized(x, a, b, h, mobility, n_hospitalized, n_infected,  taking_I_into_account=True, gamma_i=0.2, gamma_h=0.2): # returns firts the number of deaths and then the number of total infected
+    """
+    Normalization of the number of hospitalized and infected individuals for the optimization function
+    
+    Parameters
+    ----------
+    x : np.array
+        The dates of the pandemic
+    a : float
+        The intercept of the transmission rate
+    b : float
+        The slope of the transmission rate
+    h : float
+        The rate of hospitalization
+    mobility : np.array
+        The mobility data
+    n_hospitalized : np.array
+        The time series of the number of hospitalized individuals
+    n_infected : np.array
+        The time series of the number of infected individuals
+    taking_I_into_account : bool
+        Whether to take the infected individuals into account or not
+    gamma_i : float
+        The recovery rate of the infected individuals
+    gamma_h : float
+        The recovery rate of the hospitalized individuals
+    
+    Returns
+    -------
+    np.array
+       The objective function to fit in the training phase
+    
+    """
     I_and_H=sirh_for_optim_m(x, a, b, h, mobility, gamma_i, gamma_h)
     I=I_and_H[len(I_and_H)//2:]
     H=I_and_H[:len(I_and_H)//2]
@@ -281,6 +468,18 @@ def sirh_for_optim_normalized(x, a, b, h, mobility, n_hospitalized, n_infected, 
 
 
 def grad_theta_h_theta_m(x0, theta, mob_predicted ): # for gamma constant
+    """
+    compute the gradient of the estimation with respect to theta
+
+    Parameters
+    ----------
+    x0 : np.array
+        The initial state of the model
+    theta : np.array
+        The parameters of the model
+    mob_predicted : np.array
+        The mobility data estimated that will be used in the prediction 
+    """
     reach=len(mob_predicted) 
     grad=np.zeros((len(theta), reach))
     for i in range(len(grad)): 
@@ -298,6 +497,24 @@ def grad_theta_h_theta_m(x0, theta, mob_predicted ): # for gamma constant
 
 
 def grad_theta_h_theta_m_bis(x0, theta, mob_predicted ): # for gamma not constants
+    """
+    Compute the gradient of the estimation with respect to theta
+    
+    Parameters
+    ----------
+    x0 : np.array
+        The initial state of the model
+    theta : np.array
+        The parameters of the model
+    mob_predicted : np.array
+        The mobility data estimated that will be used in the prediction
+    
+    Returns 
+    -------
+    grad : np.array
+        The gradient of the estimation with respect to theta
+        
+    """
     reach=len(mob_predicted) 
     grad=np.zeros((len(theta), reach))
     for i in range(len(grad)): 
@@ -321,6 +538,24 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
         self.gamma_constants=gamma_constants
         self.taking_I_into_account=taking_I_into_account
     def train( self,train_dates,   data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.data=data
         self.train_dates=[i for i in range(len(data[0]))]
         if self.taking_I_into_account: 
@@ -355,6 +590,27 @@ class Multi_SIRH_model(Multi_Dimensional_Model):
         
         self.trained= True
     def predict(self, reach,  alpha, method='covariance'):
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
         mob_predicted=np.array([self.data[2][-1] for i in range(reach)])
         reach=len(mob_predicted)
         s_0=1000000 -1

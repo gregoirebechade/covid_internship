@@ -1,6 +1,6 @@
 # Pandemic Forecasting Models
 
-This repository enables the use and comparison of different forecasts for pandemic propagation.
+This repository enables the use and compare different forecasts for pandemic propagation. 13 models are implemented and tested over 324 different pandemics. 
 
 ## Directory Structure
 
@@ -16,8 +16,9 @@ This repository enables the use and comparison of different forecasts for pandem
     - `08_multidimensional_models.ipynb`: Adapts previous code for multidimensional models (i.e., models that take into account mobility and infection data).
     - `09_SIRH_model.ipynb`: Implements the SIRH model, a variation of the SIR model.
     - `10_machine_learning_models.ipynb`: Implements machine learning models: linear and Bayesian regressions.
-    - `11_figures.ipynb`: Contains the figures used in the paper.
+    - `11_correcting_results.ipynb`: File to correct the outputs of global_comparison.py. 
     - `12_global_evaluation.ipynb`: Analyzes the global evaluation on all 324 generated pandemics.
+    - '13_test_on_real_data.ipynb': Tests the models on real data from France and Swedeb
 
 - `models/`
     - `Model.py`: The base class for all models containing essential functions.
@@ -37,7 +38,7 @@ This repository enables the use and comparison of different forecasts for pandem
     - Other JSON and TXT files corresponding to outputs of the notebooks for specific tests.
 
 - `all_pandemics/`
-    - Contains 324 CSV files corresponding to the 324 generated pandemics. Each file includes the number of infected, number of hospitalized, mobility used, and the reproduction number (R_eff). Refer to `generating_pandemics.py` for more details on the pandemic generation.
+    - Contains 324 CSV files corresponding to the 324 generated pandemics and also the CSV files corresponding to Swedish and French data. Each file includes the number of infected, number of hospitalized, mobility used, and the reproduction number (R_eff). Refer to `generating_pandemics.py` for more details on the pandemic generation.
 
 - Root directory files:
     - `comparison_of_models_n_hospitalized.py` and `comparison_of_models.py`: Enable comparison of models on a single pandemic, targeting new deaths or number of hospitalized individuals.

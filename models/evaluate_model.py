@@ -4,6 +4,24 @@ from Model import Model
 
 
 def IS(interval : tuple, point : float, alpha: float) -> float: 
+    """
+    Compute the interval score of a prediction 
+    Parameters
+    ----------
+    interval : tuple
+        The confidence interval
+    point : float
+        The point to evaluate the prediction on
+    alpha : float
+        The confidence level
+    
+    Returns
+    -------
+    float
+        The interval score of the prediction
+    
+    
+    """
     assert interval[0] <= interval[1] , print(interval[0], interval[1])
     
     assert alpha >= 0
@@ -49,6 +67,7 @@ def WIS(prediction: float, intervals : list, point_of_evaluation : float, alphas
 
 
 def evaluate_model(model: Model, data: np.array, alphas: list, evaluation_point_indexs: list, reach: int, weights: list) -> float: 
+
     loss=0
     for index in evaluation_point_indexs:
         model.train(train_dates = [i for i in range(index)], data = data[:index] )

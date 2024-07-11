@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class Model: # base class for all the models
+
     def __init__(self) :
         self.trained=False
         self.type='1D'
@@ -11,12 +12,45 @@ class Model: # base class for all the models
         self.train_dates=None
         self.model=None
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.train_dates=train_dates
         self.data=data # to be implemented in the child class
     def predict(self, reach, alphas):
         pass # to be implemented in the child class 
 
     def plot(self, reach, alpha, title=None, xlabel=None, ylabel=None): # to plot the predictions of the model
+        '''
+        Plot the forecast of the model
+        Parameters
+        ----------
+        reach : int
+            The number of periods to forecast
+            alpha : float          The confidence level
+            title : str            The title of the plot
+            xlabel : str           The label of the x-axis
+            ylabel : str           The label of the y-axis
+                
+        Returns
+        -------
+        None
+        '''
         assert self.trained, 'The model has not been trained yet'
         prediction, intervals = self.predict(reach, alpha)
         ci_low=[max(0, intervals[0][i]) for i in range(len(intervals[0]))]
@@ -39,12 +73,31 @@ class Multi_Dimensional_Model:
     def __init__(self) :
         self.trained=False
         self.type='3D'
+        Model.plot()
     def reinitialize(self): 
         self.trained=False
         self.data=None
         self.train_dates=None
         self.model=None
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.train_dates=train_dates
         self.data=data # to be implemented in the child class
     def predict(self, reach, alphas):

@@ -8,6 +8,24 @@ from Model import Model, Multi_Dimensional_Model
 
 class MovingAverage(Model): 
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.data=data
         self.name = 'Moving Average'
         self.train_dates=train_dates
@@ -15,6 +33,28 @@ class MovingAverage(Model):
         self.trained=True
     
     def predict(self, reach, alpha, method='hessian'):
+
+        """
+        Predicts the number of cases for the next reach days
+
+        Parameters
+        ----------
+        reach : int
+            The number of days to forecast
+        alpha : float
+            The confidence level
+        
+        Returns 
+        -------
+        predifore : np.array
+            The forecasted number of cases
+        [ci_low, ci_high] : list of np.array
+
+         
+        """
+
+
+
         assert self.trained, 'The model has not been trained yet'
         sigma2=(1/(7-1))*np.sum((self.data[-7:]-self.value)**2)
         self.prediction=np.array([self.value for i in range(reach)])
@@ -37,6 +77,24 @@ class MovingAverage(Model):
     
 class MovingAverageMulti(Multi_Dimensional_Model): 
     def train(self, train_dates, data):
+        """
+
+        Trains the model on the data
+
+        Parameters
+        ----------
+        train_dates : list of datetime objects
+            The dates of the training data
+        data : np.array
+            The training data
+        
+        Returns
+        -------
+        None
+
+        
+
+        """
         self.name = 'Moving Average multi'
         self.data=data
         self.train_dates=train_dates
