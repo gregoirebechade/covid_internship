@@ -84,6 +84,14 @@ def run_sirh(x0, beta, gamma_i, gamma_h,h,  t, dt):
             i_final.append(I[i])
             r_final.append(R[i])
             h_final.append(H[i])
+    s_final.append(S[-1])
+    i_final.append(I[-1])
+    r_final.append(R[-1])
+    h_final.append(H[-1])
+    s_final=s_final[1:]
+    i_final=i_final[1:]
+    r_final=r_final[1:]
+    h_final=h_final[1:]
     return s_final, i_final, r_final, h_final
     
 
@@ -305,6 +313,8 @@ class SIRH_model_2(Model):
             grad=grad_theta_h_theta([self.S[-1], self.I[-1], self.R[-1], self.H[-1]], [self.beta,self.gamma_i,  self.h], reach, the_gamma_constant='gamma_h')
         cov=self.cov
         vars=np.diagonal((grad.transpose() @ cov @ grad).transpose())
+        self.vars=vars
+        self.grad=grad
         assert(len(vars)==reach, str(len(vars)) + 'different from ' + str(reach))
         for i in range(len(vars)): 
             down = scipy.stats.norm.ppf(alpha/2, loc=self.prediction[i], scale=np.sqrt(vars[i]))

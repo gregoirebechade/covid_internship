@@ -339,7 +339,7 @@ def dissemblance_4(pandemic1: np.array, pandemic2: np.array, pandemic3: np.array
     """
     return diff_between_2_arrays_2(pandemic1, pandemic2)+diff_between_2_arrays_2(pandemic1, pandemic3)+diff_between_2_arrays_2(pandemic1, pandemic4)+diff_between_2_arrays_2(pandemic2, pandemic3)+diff_between_2_arrays_2(pandemic2, pandemic4)+diff_between_2_arrays_2(pandemic3, pandemic4)
 
-def df_to_dict(df: pd.Dataframe): 
+def df_to_dict(df: pd.DataFrame): 
     df.drop(['Unnamed: 0'], axis=1, inplace=True)
     dict={}
     for column in df.columns : 
