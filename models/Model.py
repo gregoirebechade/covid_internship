@@ -73,7 +73,6 @@ class Multi_Dimensional_Model:
     def __init__(self) :
         self.trained=False
         self.type='3D'
-        Model.plot()
     def reinitialize(self): 
         self.trained=False
         self.data=None
